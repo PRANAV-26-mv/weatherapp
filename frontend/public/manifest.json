@@ -1,0 +1,21 @@
+{
+  "short_name": "WeatherGPT",
+  "name": "WeatherGPT - AI Weather & Disaster Intelligence",
+  "icons": [
+    {
+      "src": "https://unpkg.com/lucide-static@0.344.0/icons/cloud-lightning.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "https://unpkg.com/lucide-static@0.344.0/icons/cloud-lightning.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#080B11",
+  "theme_color": "#FF9933",
+  "display": "standalone",
+  "orientation": "portrait"
+}
