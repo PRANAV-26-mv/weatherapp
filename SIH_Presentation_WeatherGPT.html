@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIH Presentation - WeatherGPT AI Platform</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+      --card-bg: rgba(30, 41, 59, 0.7);
+      --accent-saffron: #f97316;
+      --accent-cyan: #06b6d4;
+      --accent-emerald: #10b981;
+      --accent-purple: #8b5cf6;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg-gradient);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow-x: hidden;
+    }
+
+    .presentation-container {
+      width: 90vw;
+      max-width: 1200px;
+      height: 85vh;
+      max-height: 720px;
+      position: relative;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid var(--border-color);
+      border-radius: 24px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 30px rgba(6, 182, 212, 0.15);
+      backdrop-filter: blur(16px);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .slide-header {
+      padding: 20px 32px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(30, 41, 59, 0.4);
+    }
+
+    .badge {
+      background: linear-gradient(135deg, var(--accent-saffron), #ea580c);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .slide-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(to right, #fff, #93c5fd);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .slide-body {
+      flex: 1;
+      padding: 32px;
+      overflow-y: auto;
+      display: none;
+    }
+
+    .slide-body.active {
+      display: block;
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .slide-footer {
+      padding: 16px 32px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(15, 23, 42, 0.6);
+    }
+
+    .nav-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border-color);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-btn:hover {
+      background: var(--accent-cyan);
+      color: #000;
+      box-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
+    }
+
+    .slide-indicator {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 24px;
+    }
+
+    .card h3 {
+      font-family: 'Outfit', sans-serif;
+      color: var(--accent-cyan);
+      margin-bottom: 12px;
+      font-size: 1.15rem;
+    }
+
+    ul {
+      list-style: none;
+    }
+
+    li {
+      margin-bottom: 10px;
+      position: relative;
+      padding-left: 20px;
+      color: #cbd5e1;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    li::before {
+      content: "✦";
+      position: absolute;
+      left: 0;
+      color: var(--accent-saffron);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 0.85rem;
+    }
+
+    th, td {
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    th {
+      background: rgba(6, 182, 212, 0.15);
+      color: var(--accent-cyan);
+      font-family: 'Outfit', sans-serif;
+    }
+
+    tr:nth-child(even) {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    /* Print Stylesheet for Exporting to PDF */
+    @media print {
+      body {
+        background: #fff !important;
+        color: #000 !important;
+      }
+      .presentation-container {
+        width: 100% !important;
+        height: auto !important;
+        max-height: none !important;
+        box-shadow: none !important;
+        border: none !important;
+      }
+      .slide-body {
+        display: block !important;
+        page-break-after: always;
+      }
+      .slide-footer, .nav-btn {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="presentation-container">
+  <div class="slide-header">
+    <span class="badge">SMART INDIA HACKATHON 2026</span>
+    <h2 class="slide-title" id="current-slide-title">Slide Title</h2>
+    <span style="font-family: 'Outfit'; font-weight: 700; color: var(--accent-saffron);">WeatherGPT</span>
+  </div>
+
+  <!-- SLIDE 1: Problem Statement & Team Details -->
+  <div class="slide-body active" data-title="Slide 1: Problem Statement & Team Overview">
+    <div class="grid-2">
+      <div class="card" style="border-left: 4px solid var(--accent-saffron);">
+        <h3>📌 Problem Statement Details</h3>
+        <ul>
+          <li><strong>Problem Statement ID:</strong> SIH2026-MET-01</li>
+          <li><strong>Title:</strong> AI-Powered Multilingual Weather Telemetry & Hyperlocal Disaster Intelligence System</li>
+          <li><strong>Theme:</strong> Disaster Management, Agriculture & Climate Action</li>
+          <li><strong>Category:</strong> Software Category</li>
+        </ul>
+      </div>
+      <div class="card" style="border-left: 4px solid var(--accent-cyan);">
+        <h3>👥 Team Information</h3>
+        <ul>
+          <li><strong>Team Name:</strong> WeatherGPT Innovators</li>
+          <li><strong>Team ID:</strong> SIH-2026-TEAM-99</li>
+          <li><strong>Institution:</strong> Registered Portal Team</li>
+          <li><strong>Core Stack:</strong> FastAPI, React 18, PostgreSQL, Gemini AI</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card" style="margin-top: 20px; background: rgba(249, 115, 22, 0.1); border-color: rgba(249, 115, 22, 0.3);">
+      <h3 style="color: var(--accent-saffron);">🎯 Executive Summary</h3>
+      <p style="color: #e2e8f0; font-size: 0.95rem; line-height: 1.6;">
+        WeatherGPT resolves the critical gap between raw meteorological satellite data and rural Indian citizens by providing <strong>Voice-to-Voice intelligence in 12 Indian languages</strong>, hyperlocal telemetry matching, real-time IMD disaster warnings, and full PostgreSQL data persistence.
+      </p>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: Proposed Solution -->
+  <div class="slide-body" data-title="Slide 2: Proposed Solution & Innovation">
+    <div class="grid-2">
+      <div class="card">
+        <h3>💡 Detailed Proposed Solution</h3>
+        <ul>
+          <li><strong>Multilingual Voice Assistant:</strong> Direct spoken responses in Hindi, Tamil, Telugu, Kannada, Malayalam, Marathi, Bengali, Gujarati, Punjabi, Odia, Assamese, and English.</li>
+          <li><strong>Hyperlocal Precision:</strong> Resolves small towns and micro-locations (e.g. Sathyamangalam, Annur, Pollachi) with fuzzy typo matching algorithms.</li>
+          <li><strong>Instant Disaster Broadcasts:</strong> WebSockets real-time push alerts for severe thunderstorms, floods, cyclones, and heatwaves.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>🚀 Uniqueness & Innovation</h3>
+        <ul>
+          <li><strong>Voice-First Design:</strong> Built for non-literate farmers and coastal fishermen to query live weather naturally by voice.</li>
+          <li><strong>Permanent Home Pinning:</strong> Stores pinned user coordinates in PostgreSQL for automatic launch customization.</li>
+          <li><strong>Zero-Downtime Architecture:</strong> Production PostgreSQL database engine backed by an offline-resilient local SQLite fallback.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: Technical Architecture & Methodology -->
+  <div class="slide-body" data-title="Slide 3: Technical Architecture & Methodology">
+    <div class="grid-3">
+      <div class="card">
+        <h3>🎨 Frontend Stack</h3>
+        <ul>
+          <li>React 18 & TypeScript</li>
+          <li>Vite Fast Build Tool</li>
+          <li>Tailwind CSS Glassmorphism</li>
+          <li>Web Speech Audio API</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>⚡ Backend & AI Engine</h3>
+        <ul>
+          <li>FastAPI Python 3.14</li>
+          <li>Google Cloud Gemini 1.5 Flash</li>
+          <li>Open-Meteo Telemetry API</li>
+          <li>WebSockets Alert Manager</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>🗄️ Database & Storage</h3>
+        <ul>
+          <li>PostgreSQL Main DB</li>
+          <li>SQLAlchemy 2.0 ORM</li>
+          <li>10 Relational Schema Tables</li>
+          <li>Resilient SQLite Fallback</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card" style="margin-top: 20px; text-align: center;">
+      <h3 style="color: var(--accent-emerald);">🔄 End-to-End System Flowchart</h3>
+      <p style="color: #cbd5e1; font-size: 0.9rem;">
+        Voice Input ➔ Speech Transcription ➔ Location Geocoding & Fuzzy Match ➔ Telemetry Ingestion ➔ Gemini AI Reasoning ➔ Text-to-Speech Synthesis ➔ PostgreSQL Logging
+      </p>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: Feasibility, Risks & Strategies -->
+  <div class="slide-body" data-title="Slide 4: Feasibility, Risks & Mitigation Strategies">
+    <div class="grid-2">
+      <div class="card">
+        <h3>📈 Feasibility & Viability</h3>
+        <ul>
+          <li><strong>High Technical Feasibility:</strong> Lightweight REST API architecture running on open standards.</li>
+          <li><strong>Scalable Cloud Deployment:</strong> Containerized backend ready for GCP / AWS / Render.</li>
+          <li><strong>Cost Efficient:</strong> Leverages open-access meteorological data streams.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>🛡️ Risks & Mitigation Strategies</h3>
+        <ul>
+          <li><strong>Risk: Low Rural Bandwidth</strong> ➔ <em>Mitigation: Lightweight PWA local telemetry caching.</em></li>
+          <li><strong>Risk: Database Disconnections</strong> ➔ <em>Mitigation: Automatic SQLAlchemy connection pre-pinging & SQLite fallback.</em></li>
+          <li><strong>Risk: Misspelled Voice Queries</strong> ➔ <em>Mitigation: Levenshtein distance fuzzy string matching.</em></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: Impact & Benefits -->
+  <div class="slide-body" data-title="Slide 5: Potential Impact & Benefits">
+    <div class="grid-2">
+      <div class="card">
+        <h3>🎯 Target Beneficiaries</h3>
+        <ul>
+          <li><strong>Farmers & Agriculture Workers:</strong> Rain and temperature advice for irrigation and harvesting.</li>
+          <li><strong>Coastal Fishermen:</strong> Marine tide, swell, wave height, and wind warnings.</li>
+          <li><strong>Disaster Response Officers:</strong> Broadcast emergency alerts for severe weather events.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>🌱 Social & Economic Impact</h3>
+        <ul>
+          <li><strong>Life-Saving Early Warnings:</strong> Spoken disaster alerts in native dialects reduce casualties.</li>
+          <li><strong>Economic Protection:</strong> Protects crops and maritime assets from unexpected extreme weather.</li>
+          <li><strong>Historical Climate Awareness:</strong> Tracks 30-year temperature anomalies in PostgreSQL.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: PostgreSQL Database Architecture -->
+  <div class="slide-body" data-title="Slide 6: PostgreSQL Database Structure (10 Tables)">
+    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 12px;">Live Database Engine integrated across 10 specialized tables in PostgreSQL:</p>
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Domain / Feature</th>
+          <th>Table Name</th>
+          <th>Schema Key Attributes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>👤 User Profiles</td><td><code>users</code></td><td>Username, Email, Preferred Language, Theme, Pinned Home Location</td></tr>
+        <tr><td>2</td><td>📍 Locations</td><td><code>locations</code></td><td>Name, State, Latitude, Longitude, Category, Alert Radius</td></tr>
+        <tr><td>3</td><td>🌦️ Current Weather</td><td><code>current_weather</code></td><td>Temp, Feels Like, Humidity, Wind, Pressure, UV Index, Sunrise, Sunset</td></tr>
+        <tr><td>4</td><td>🔮 Forecast Data</td><td><code>forecast_data</code></td><td>Hourly & Daily forecast items, Max/Min Temp, Rain Probability</td></tr>
+        <tr><td>5</td><td>🚨 Disaster Alerts</td><td><code>disaster_alerts</code></td><td>Alert Code, Hazard Type, Severity Level, Headline, IMD Guidance</td></tr>
+        <tr><td>6</td><td>🗺️ Affected Areas</td><td><code>affected_areas</code></td><td>Alert ID, Location Name, Radius, GeoJSON Polygon Boundary</td></tr>
+        <tr><td>7</td><td>🔔 Notifications</td><td><code>notification_history</code></td><td>Recipient Contact, Push/SMS/WhatsApp, Message Content, Delivery Status</td></tr>
+        <tr><td>8</td><td>🎙️ Voice Queries</td><td><code>voice_queries</code></td><td>Transcription Text, Duration, Detected Language, Confidence Score</td></tr>
+        <tr><td>9</td><td>📊 Climate History</td><td><code>climate_history</code></td><td>Record Date, Avg/Max/Min Temp, Precipitation, Anomaly Rating</td></tr>
+        <tr><td>10</td><td>💬 Chat History</td><td><code>chat_history</code></td><td>Session ID, User Query, Bot Response, Language, Tools Called</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="slide-footer">
+    <button class="nav-btn" id="prev-btn">← Previous Slide</button>
+    <span class="slide-indicator" id="slide-num">Slide 1 of 6</span>
+    <button class="nav-btn" id="next-btn">Next Slide →</button>
+  </div>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide-body');
+  const titleEl = document.getElementById('current-slide-title');
+  const numEl = document.getElementById('slide-num');
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+
+  let currentIndex = 0;
+
+  function updateSlide(index) {
+    slides.forEach((slide, i) => {
+      slide.classList.toggle('active', i === index);
+    });
+    titleEl.textContent = slides[index].getAttribute('data-title');
+    numEl.textContent = `Slide ${index + 1} of ${slides.length}`;
+    
+    prevBtn.style.opacity = index === 0 ? '0.5' : '1';
+    nextBtn.style.opacity = index === slides.length - 1 ? '0.5' : '1';
+  }
+
+  prevBtn.addEventListener('click', () => {
+    if (currentIndex > 0) {
+      currentIndex--;
+      updateSlide(currentIndex);
+    }
+  });
+
+  nextBtn.addEventListener('click', () => {
+    if (currentIndex < slides.length - 1) {
+      currentIndex++;
+      updateSlide(currentIndex);
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft' && currentIndex > 0) {
+      currentIndex--;
+      updateSlide(currentIndex);
+    } else if (e.key === 'ArrowRight' && currentIndex < slides.length - 1) {
+      currentIndex++;
+      updateSlide(currentIndex);
+    }
+  });
+
+  updateSlide(0);
+</script>
+
+</body>
+</html>
