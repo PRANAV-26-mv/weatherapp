@@ -11,6 +11,7 @@ import { WeatherChart } from './components/Charts/WeatherChart';
 import { LeafletWeatherMap } from './components/Map/LeafletWeatherMap';
 import { ImageUploader } from './components/Vision/ImageUploader';
 import { LanguageWelcomeModal } from './components/UI/LanguageWelcomeModal';
+import { UserGuideModal } from './components/UI/UserGuideModal';
 
 // Page Components
 import { ChatPage } from './components/Pages/ChatPage';
@@ -33,6 +34,7 @@ export function App() {
   const [isLangModalOpen, setIsLangModalOpen] = useState<boolean>(() => {
     return !localStorage.getItem('weathergpt_has_chosen_lang');
   });
+  const [isGuideModalOpen, setIsGuideModalOpen] = useState<boolean>(false);
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     return (localStorage.getItem('weathergpt_theme') as 'dark' | 'light') || 'dark';
   });
@@ -180,12 +182,20 @@ export function App() {
           localStorage.setItem('weathergpt_user_lang', code);
         }}
         onOpenLanguageModal={() => setIsLangModalOpen(true)}
+        onOpenGuideModal={() => setIsGuideModalOpen(true)}
         onSelectLocation={handleSelectLocation}
         onDetectCurrentLocation={handleDetectCurrentLocation}
         permanentLocation={permanentLocation}
         activeAlertCount={INITIAL_DISASTER_ALERTS.length}
         theme={theme}
         onToggleTheme={toggleTheme}
+      />
+
+      {/* Interactive User Guide & Help Modal */}
+      <UserGuideModal
+        isOpen={isGuideModalOpen}
+        onClose={() => setIsGuideModalOpen(false)}
+        onOpenLanguageModal={() => setIsLangModalOpen(true)}
       />
 
       {/* Geolocation Feedback Banner */}

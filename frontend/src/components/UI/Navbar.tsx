@@ -28,7 +28,8 @@ import {
   Moon,
   Cpu,
   Brain,
-  CheckCircle2
+  CheckCircle2,
+  HelpCircle
 } from 'lucide-react';
 import { searchLocation } from '../../services/weatherApi';
 
@@ -38,6 +39,7 @@ interface NavbarProps {
   currentLang: string;
   onSelectLanguage: (code: string) => void;
   onOpenLanguageModal?: () => void;
+  onOpenGuideModal?: () => void;
   onSelectLocation: (name: string, lat: number, lon: number) => void;
   onDetectCurrentLocation: () => void;
   permanentLocation?: { name: string; lat: number; lon: number } | null;
@@ -52,6 +54,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   currentLang,
   onSelectLanguage,
   onOpenLanguageModal,
+  onOpenGuideModal,
   onSelectLocation,
   onDetectCurrentLocation,
   permanentLocation,
@@ -236,6 +239,18 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Header Right Actions - Sleek & Compact */}
         <div className="flex items-center gap-1.5 shrink-0">
+          {/* Quick User Guide Button */}
+          {onOpenGuideModal && (
+            <button
+              onClick={onOpenGuideModal}
+              className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-saffron/20 hover:bg-saffron text-saffron hover:text-black border border-saffron/40 text-[10px] font-bold transition-all shadow-sm"
+              title="Open WeatherGPT User Guide & Instructions"
+            >
+              <HelpCircle className="w-3.5 h-3.5" />
+              <span>User Guide</span>
+            </button>
+          )}
+
           {/* Light / Dark Mode Switcher */}
           <button
             onClick={onToggleTheme}
