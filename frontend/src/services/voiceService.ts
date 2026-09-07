@@ -15,6 +15,22 @@ const LANGUAGE_LOCALE_MAP: Record<string, string> = {
   ur: 'ur-IN',
 };
 
+const FULL_LANGUAGE_NAME_KEYWORDS: Record<string, string[]> = {
+  ta: ['ta-in', 'tamil', 'தமிழ்'],
+  hi: ['hi-in', 'hindi', 'हिन्दी', 'हिंदी'],
+  te: ['te-in', 'telugu', 'తెలుగు'],
+  kn: ['kn-in', 'kannada', 'ಕನ್ನಡ'],
+  ml: ['ml-in', 'malayalam', 'മലയാളം'],
+  mr: ['mr-in', 'marathi', 'मराठी'],
+  bn: ['bn-in', 'bn-bd', 'bengali', 'বাংলা'],
+  gu: ['gu-in', 'gujarati', 'ગુજરાતી'],
+  pa: ['pa-in', 'punjabi', 'ਪੰਜਾਬੀ'],
+  or: ['or-in', 'odia', 'oriya', 'ଓଡ଼ିଆ'],
+  as: ['as-in', 'assamese', 'অসমীয়া'],
+  ur: ['ur-in', 'ur-pk', 'urdu', 'اردو'],
+  en: ['en-in', 'en-us', 'en-gb', 'english'],
+};
+
 let currentAudioInstance: HTMLAudioElement | null = null;
 
 export function stopVoiceSpeech(): void {
@@ -38,22 +54,23 @@ export function speakInLanguage(
   if (!text) return;
   const cleanText = text.replace(/[*#_`]/g, '').trim();
   const locale = LANGUAGE_LOCALE_MAP[langCode] || 'en-IN';
+  const targetKeywords = FULL_LANGUAGE_NAME_KEYWORDS[langCode] || [langCode.toLowerCase()];
 
-  // 1. Try Browser SpeechSynthesis if an EXPLICIT MATCHED VOICE is installed in the browser
-  if ('speechSynthesis' in window) {
+  // 1. Try Browser SpeechSynthesis ONLY for English ('en') if an exact voice is present.
+  // For ALL regional languages (ta, hi, te, kn, ml, mr, bn, gu, pa, or, as, ur), browser SpeechSynthesis
+  // on Windows/Linux browsers lacks local regional synth packages and reads native script using English voice.
+  // Routing all regional languages directly to Google Neural TTS Native Audio Stream guarantees 100% authentic native speech!
+  if (langCode === 'en' && 'speechSynthesis' in window) {
     window.speechSynthesis.cancel();
     const voices = window.speechSynthesis.getVoices();
 
-    const matchedVoice = voices.find(
-      (v) =>
-        v.lang.toLowerCase() === locale.toLowerCase() ||
-        v.lang.toLowerCase().startsWith(langCode.toLowerCase()) ||
-        v.lang.toLowerCase().includes(langCode.toLowerCase()) ||
-        v.name.toLowerCase().includes(langCode.toLowerCase())
-    );
+    const matchedVoice = voices.find((v) => {
+      const vLang = v.lang.toLowerCase();
+      const vName = v.name.toLowerCase();
+      return targetKeywords.some((kw) => vLang === kw || vLang.startsWith(`${kw}-`) || vLang.startsWith('en') || vName.includes(kw));
+    });
 
-    // ONLY use window.speechSynthesis if a true matched voice is found for non-English languages
-    if (matchedVoice && (langCode === 'en' || matchedVoice.lang.toLowerCase().includes(langCode.toLowerCase()) || matchedVoice.name.toLowerCase().includes(langCode.toLowerCase()))) {
+    if (matchedVoice) {
       const utterance = new SpeechSynthesisUtterance(cleanText);
       utterance.lang = matchedVoice.lang || locale;
       utterance.voice = matchedVoice;
