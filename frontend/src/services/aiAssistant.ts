@@ -561,7 +561,6 @@ export async function processUserChatMessage(
 ): Promise<ChatMessage> {
   const queryLower = userText.toLowerCase();
   const dict = LOCALIZED_BOT_RESPONSES[langCode] || {};
-  const condText = translateWeatherCondition(currentWeather.conditionText, langCode);
 
   // 1. Detect target location (e.g. if user asks "weather in Tokyo", "rain in Delhi", "AQI in London")
   const { weather: targetWeather, isCustomLocation } = await detectTargetLocation(userText, currentWeather);
@@ -626,24 +625,48 @@ export async function processUserChatMessage(
   // Attempt Google Cloud Gemini API call for location or general queries
   const geminiAnswer = await callGoogleCloudGeminiAPI(userText, targetWeather.locationName, targetWeather, langCode);
 
-  // Scenario 3: Intent - Will it rain / Forecast check
-  if (queryLower.includes('rain') || queryLower.includes('barish') || queryLower.includes('mazhai') || queryLower.includes('varsham') || queryLower.includes('vrishti') || queryLower.includes('forecast') || queryLower.includes('மழை')) {
+  // Scenario 3: Intent - Will it rain / Tomorrow rain / Forecast check
+  if (queryLower.includes('rain') || queryLower.includes('barish') || queryLower.includes('mazhai') || queryLower.includes('varsham') || queryLower.includes('vrishti') || queryLower.includes('forecast') || queryLower.includes('மழை') || queryLower.includes('மழையா') || queryLower.includes('بارش') || queryLower.includes('వర్షం') || queryLower.includes('మಳೆ')) {
     const daily = await getDailyForecast(targetWeather.coords.lat, targetWeather.coords.lon);
-    const todayRainProb = daily[0]?.rainProbabilityPct || 40;
-    const precipMm = daily[0]?.precipitationMm || 2.4;
+    
+    // Check if query specifically targets tomorrow
+    const isTomorrow = queryLower.includes('tomorrow') || queryLower.includes('naalai') || queryLower.includes('நாளை') || queryLower.includes('kal') || queryLower.includes('कल') || queryLower.includes('repu') || queryLower.includes('రేపు') || queryLower.includes('naale') || queryLower.includes('ನಾಳೆ');
+    const targetDay = isTomorrow ? (daily[1] || daily[0]) : daily[0];
 
-    let summaryText = todayRainProb > 50
-      ? `High probability of rain (${todayRainProb}%) today in **${targetWeather.locationName}**. Expected precipitation is around ${precipMm} mm. Consider taking an umbrella when heading out!`
-      : `Moderate to low chance of rain (${todayRainProb}%) today in **${targetWeather.locationName}**. Conditions remain mostly ${targetWeather.conditionText.toLowerCase()}.`;
+    const rainProb = targetDay?.rainProbabilityPct || (targetWeather.tempC > 30 ? 60 : 30);
+    const precipMm = targetDay?.precipitationMm || (rainProb > 50 ? 4.5 : 0.2);
+    const condText = translateWeatherCondition(targetDay?.conditionText || targetWeather.conditionText, langCode);
 
-    if (dict.rain_high && todayRainProb > 50) {
-      summaryText = dict.rain_high.replace('{location}', targetWeather.locationName).replace('{prob}', String(todayRainProb)).replace('{precip}', String(precipMm));
-    } else if (dict.rain_low && todayRainProb <= 50) {
-      summaryText = dict.rain_low.replace('{location}', targetWeather.locationName).replace('{prob}', String(todayRainProb)).replace('{condition}', condText);
-    }
+    const isRainy = rainProb >= 40 || precipMm > 0.5 || (targetDay?.conditionText || '').toLowerCase().includes('rain') || (targetDay?.conditionText || '').toLowerCase().includes('drizzle');
+
+    const YES_NO_MAP: Record<string, { yes: string; no: string }> = {
+      en: { yes: `YES 🌧️ — Rain is expected in {location} ${isTomorrow ? 'tomorrow' : 'today'} (Probability: {prob}%, Expected Rainfall: {precip} mm). Be sure to carry an umbrella!`, no: `NO ☀️ — Rain is unlikely in {location} ${isTomorrow ? 'tomorrow' : 'today'} (Probability: only {prob}%, Condition: {condition}). Enjoy clear skies!` },
+      ta: { yes: `ஆம் 🌧️ — ${isTomorrow ? 'நாளை' : 'இன்று'} {location} நகரில் மழை பெய்ய வாய்ப்புள்ளது (மழை வாய்ப்பு: {prob}%, மழை அளவு: {precip} மி.மீ). வெளியே செல்லும்போது குடை எடுத்துச் செல்லவும்!`, no: `இல்லை ☀️ — ${isTomorrow ? 'நாளை' : 'இன்று'} {location} நகரில் மழை பெய்ய வாய்ப்பில்லை (மழை வாய்ப்பு: {prob}%, வானிலை {condition} ஆக இருக்கும்).` },
+      hi: { yes: `हाँ 🌧️ — ${isTomorrow ? 'कल' : 'आज'} {location} में बारिश होने की संभावना है (संभावना: {prob}%, बारिश: {precip} मिमी)। बाहर निकलते समय छाता साथ रखें!`, no: `नहीं ☀️ — ${isTomorrow ? 'कल' : 'आज'} {location} में बारिश की संभावना नहीं है (संभावना केवल {prob}%, मौसम {condition} रहेगा)।` },
+      te: { yes: `అవును 🌧️ — ${isTomorrow ? 'రేపు' : 'ఈరోజు'} {location} లో వర్షం పడే అవకాశం ఉంది (వర్షం అవకాశం: {prob}%, వర్షపాతం: {precip} మి.మీ). గొడుగు తీసుకువెళ్లండి!`, no: `లేదు ☀️ — ${isTomorrow ? 'రేపు' : 'ఈరోజు'} {location} లో వర్షం పడే అవకాశం లేదు (వర్షం అవకాశం కేవలం {prob}%, వాతావరణం {condition} గా ఉంటుంది).` },
+      kn: { yes: `ಹೌದು 🌧️ — ${isTomorrow ? 'ನಾಳೆ' : 'ಇಂದು'} {location} ನಲ್ಲಿ ಮಳೆಯಾಗುವ ಸಾಧ್ಯತೆಯಿದೆ (ಮಳೆಯ ಸಾಧ್ಯತೆ: {prob}%, ಮಳೆಯ ಪ್ರಮಾಣ: {precip} ಮಿ.ಮೀ). ಛತ್ರಿ ತೆಗೆದುಕೊಂಡು ಹೋಗಿ!`, no: `ಇಲ್ಲ ☀️ — ${isTomorrow ? 'ನಾಳೆ' : 'ಇಂದು'} {location} ನಲ್ಲಿ ಮಳೆಯಾಗುವ ಸಾಧ್ಯತೆಯಿಲ್ಲ (ಮಳೆಯ ಸಾಧ್ಯತೆ ಕೇವಲ {prob}%, ಹವಾಮಾನವು {condition} ಆಗಿರುತ್ತದೆ).` },
+      ml: { yes: `അതെ 🌧️ — ${isTomorrow ? 'നാളെ' : 'ഇന്ന്'} {location} സ്ഥലത്ത് മഴ പെയ്യാൻ സാധ്യതയുണ്ട് (മഴ സാധ്യത: {prob}%, മഴയുടെ അളവ്: {precip} മി.മീ). കുട കരുതുക!`, no: `ഇല്ല ☀️ — ${isTomorrow ? 'നാളെ' : 'ഇന്ന്'} {location} സ്ഥലത്ത് മഴ പെയ്യാൻ സാധ്യതയില്ല (മഴ സാധ്യത കേവലം {prob}%, കാലാവസ്ഥ {condition} ആയിരിക്കും).` },
+      mr: { yes: `होय 🌧️ — ${isTomorrow ? 'उद्या' : 'आज'} {location} मध्ये पाऊस पडण्याची शक्यता आहे (पावसाची शक्यता: {prob}%, पाऊस: {precip} मिमी). छत्री सोबत ठेवा!`, no: `नाही ☀️ — ${isTomorrow ? 'उद्या' : 'आज'} {location} मध्ये पाऊस पडण्याची शक्यता नाही (पावसाची शक्यता फक्त {prob}%, हवामान {condition} राहील).` },
+      bn: { yes: `হ্যাঁ 🌧️ — ${isTomorrow ? 'আগামীকাল' : 'আজ'} {location} এ বৃষ্টি হওয়ার সম্ভাবনা রয়েছে (বৃষ্টির সম্ভাবনা: {prob}%, বৃষ্টিপাত: {precip} মিমি)। ছাতা সাথে রাখুন!`, no: `না ☀️ — ${isTomorrow ? 'আগামীকাল' : 'আজ'} {location} এ বৃষ্টি হওয়ার সম্ভাবনা নেই (বৃষ্টির সম্ভাবনা মাত্র {prob}%, আবহাওয়া {condition} থাকবে)।` },
+      gu: { yes: `હા 🌧️ — ${isTomorrow ? 'આવતીકાલે' : 'આજે'} {location} માં વરસાદ થવાની શક્યતા છે (વરસાદની શક્યતા: {prob}%, વરસાદ: {precip} મીમી). છતરી સાથે રાખો!`, no: `ના ☀️ — ${isTomorrow ? 'આવતીકાલે' : 'આજે'} {location} માં વરસાદની શક્યતા નથી (વરસાદની શક્યતા માત્ર {prob}%, હવામાન {condition} રહેશે).` },
+      pa: { yes: `ਹਾਂ 🌧️ — ${isTomorrow ? 'ਕੱਲ੍ਹ' : 'ਅੱਜ'} {location} ਵਿੱਚ ਬਾਰਿਸ਼ ਹੋਣ ਦੀ ਸੰਭਾਵਨਾ ਹੈ (ਬਾਰਿਸ਼ ਦੀ ਸੰਭਾਵਨਾ: {prob}%, ਬਾਰਿਸ਼: {precip} ਮਿਲੀਮੀਟਰ)। ਛੱਤਰੀ ਨਾਲ ਰੱਖੋ!`, no: `ਨਹੀਂ ☀️ — ${isTomorrow ? 'ਕੱਲ੍ਹ' : 'ਅੱਜ'} {location} ਵਿੱਚ ਬਾਰਿਸ਼ ਦੀ ਸੰਭਾਵਨਾ ਨਹੀਂ ਹੈ (ਬਾਰਿਸ਼ ਦੀ ਸੰਭਾਵਨਾ ਸਿਰਫ਼ {prob}%, ਮੌਸਮ {condition} ਰਹੇਗਾ)।` },
+      or: { yes: `ହଁ 🌧️ — ${isTomorrow ? 'ଆସନ୍ତାକାଲି' : 'ଆଜି'} {location} ରେ ବର୍ଷା ହେବାର ସମ୍ଭାବନା ଅଛି (ବର୍ଷାର ସମ୍ଭାବନା: {prob}%, ବର୍ଷା: {precip} ମିମି)। ଛତା ସାଙ୍ଗରେ ରଖନ୍ତୁ!`, no: `ନା ☀️ — ${isTomorrow ? 'ଆସନ୍ତାକାଲି' : 'ଆଜି'} {location} ରେ ବର୍ଷା ହେବାର ସମ୍ଭାବନା ନାହିଁ (ବର୍ଷାର ସମ୍ଭାବନା କେବଳ {prob}%, ପାଣିପାଗ {condition} ରହିବ)।` },
+      as: { yes: `হয় 🌧️ — ${isTomorrow ? 'কাইলৈ' : 'আজি'} {location} ত বৰষুণ হোৱাৰ সম্ভাৱনা আছে (বৰষুণৰ সম্ভাৱনা: {prob}%, বৰষুণ: {precip} মিমি)। ছাতি লগত ৰাখক!`, no: `নহয় ☀️ — ${isTomorrow ? 'কাইলৈ' : 'আজি'} {location} ত বৰষুণৰ সম্ভাৱনা নাই (বৰষুণৰ সম্ভাৱনা কেৱল {prob}%, বতৰ {condition} থাকিব)।` },
+      ur: { yes: `جی ہاں 🌧️ — ${isTomorrow ? 'کل' : 'آج'} {location} میں بارش کا امکان ہے (بارش کا امکان: {prob}%، متوقع بارش: {precip} ملی میٹر)۔ چھتری ساتھ رکھیں!`, no: `جی نہیں ☀️ — ${isTomorrow ? 'کل' : 'آج'} {location} میں بارش کا امکان نہیں ہے (بارش کا امکان صرف {prob}%، موسم زیادہ تر {condition} رہے گا)۔` }
+    };
+
+    const langEntry = YES_NO_MAP[langCode] || YES_NO_MAP['en'];
+    const rawVerdictTemplate = isRainy ? langEntry.yes : langEntry.no;
+    const formattedVerdict = rawVerdictTemplate
+      .replace('{location}', targetWeather.locationName)
+      .replace('{prob}', String(rainProb))
+      .replace('{precip}', String(precipMm))
+      .replace('{condition}', condText);
+
+    let summaryText = formattedVerdict;
 
     if (geminiAnswer) {
-      summaryText = `${geminiAnswer}\n\n📍 **Live Rain Telemetry for ${targetWeather.locationName}**:\n• Rain Probability: ${todayRainProb}%\n• Expected Precipitation: ${precipMm} mm`;
+      summaryText = `${formattedVerdict}\n\n${geminiAnswer}`;
     }
 
     return {
@@ -653,8 +676,8 @@ export async function processUserChatMessage(
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       weatherCard: targetWeather,
       forecastData: daily,
-      sources: ['Google Cloud AI Engine', 'Open-Meteo High Resolution Model'],
-      toolCalled: `get_forecast(${targetWeather.locationName}, 7_days)`,
+      sources: ['Google Cloud AI Engine', 'Open-Meteo High Resolution Forecast'],
+      toolCalled: `get_forecast(${targetWeather.locationName}, ${isTomorrow ? 'tomorrow' : 'today'})`,
     };
   }
 
