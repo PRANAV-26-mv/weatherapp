@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { CurrentWeatherData, ChatMessage } from '../../types';
-import { processUserChatMessage } from '../../services/aiAssistant';
+import { processUserChatMessage, getLocalizedWelcomeMessage, getLocalizedQuickPrompts } from '../../services/aiAssistant';
 import { WeatherCard } from '../Weather/WeatherCard';
 import { ForecastCard } from '../Weather/ForecastCard';
 import { DisasterAlertBanner } from '../Alerts/DisasterAlertBanner';
 import { VoiceButton } from '../UI/VoiceButton';
 import { CameraModal } from '../UI/CameraModal';
 import { Send, Bot, User, CheckCircle2, Camera, Paperclip, X, Image as ImageIcon, Key } from 'lucide-react';
+import { translate } from '../../services/i18n';
 
 interface ChatPageProps {
   currentWeather: CurrentWeatherData;
@@ -22,25 +23,37 @@ export const ChatPage: React.FC<ChatPageProps> = ({ currentWeather, langCode = '
   const [apiKeyInput, setApiKeyInput] = useState(() => localStorage.getItem('VITE_GEMINI_API_KEY') || '');
   const [savedSuccess, setSavedSuccess] = useState(false);
 
-  const [messages, setMessages] = useState<ChatMessage[]>([
+  const [messages, setMessages] = useState<ChatMessage[]>(() => [
     {
       id: 'welcome-1',
       sender: 'assistant',
-      text: `Hello! I am **WeatherGPT**, your AI meteorological assistant powered by **Google Cloud AI**. Ask me any general science question (e.g., *"What causes monsoons?"*, *"Why is the sky blue?"*), check weather for **any city** (e.g., *"Weather in Tokyo"*, *"Rain in Delhi"*), or upload a photo for AI vision analysis in **${currentWeather.locationName}**.`,
+      text: getLocalizedWelcomeMessage(currentWeather.locationName, langCode),
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       weatherCard: currentWeather,
       sources: ['Google Cloud Gemini 1.5 Flash AI', 'Open-Meteo High Resolution Weather API'],
     },
   ]);
 
-  const quickPrompts = [
-    'What causes a monsoon?',
-    'Weather in Tokyo today',
-    'How do tropical cyclones form?',
-    'Air quality (AQI) in New Delhi',
-    'Why is the sky blue?',
-    'Analyze this sky photo for storm risk.',
-  ];
+  // Update initial welcome message if user switches language while on ChatPage
+  useEffect(() => {
+    setMessages((prev) => {
+      if (prev.length === 1 && prev[0].id === 'welcome-1') {
+        return [
+          {
+            id: 'welcome-1',
+            sender: 'assistant',
+            text: getLocalizedWelcomeMessage(currentWeather.locationName, langCode),
+            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            weatherCard: currentWeather,
+            sources: ['Google Cloud Gemini 1.5 Flash AI', 'Open-Meteo High Resolution Weather API'],
+          },
+        ];
+      }
+      return prev;
+    });
+  }, [langCode, currentWeather]);
+
+  const quickPrompts = getLocalizedQuickPrompts(langCode);
 
   const handleSendMessage = async (textToSend?: string) => {
     const query = textToSend || inputQuery || (attachedImage ? 'Analyze this attached weather image.' : '');
@@ -102,10 +115,10 @@ export const ChatPage: React.FC<ChatPageProps> = ({ currentWeather, langCode = '
           </div>
           <div>
             <h2 className="text-2xl font-extrabold text-white font-heading">
-              Ask WeatherGPT & Vision AI
+              {translate('btn_ask_ai', langCode)} (WeatherGPT AI)
             </h2>
             <p className="text-xs text-gray-400">
-              NLP Engine: <strong className="text-saffron">Google Cloud Gemini 1.5 Flash (NLU & Vision)</strong> • Speech STT/TTS ({langCode.toUpperCase()})
+              NLP Engine: <strong className="text-saffron">Google Cloud Gemini 1.5 Flash AI</strong> • Speech STT/TTS ({langCode.toUpperCase()})
             </p>
           </div>
         </div>
@@ -300,7 +313,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({ currentWeather, langCode = '
 
         <input
           type="text"
-          placeholder={`Ask WeatherGPT or snap a sky photo (${langCode.toUpperCase()})...`}
+          placeholder={`${translate('btn_ask_ai', langCode)} (${langCode.toUpperCase()})...`}
           value={inputQuery}
           onChange={(e) => setInputQuery(e.target.value)}
           className="flex-1 bg-transparent text-sm text-white placeholder-gray-400 focus:outline-none px-2"

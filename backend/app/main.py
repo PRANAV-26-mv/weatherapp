@@ -296,16 +296,94 @@ async def ai_chat_handler(payload: Dict, db: Session = Depends(get_db)):
         pressure = weather_context.get("pressureHpa", 1012)
         rain_prob = weather_context.get("rainProbabilityPct", 20)
 
-        ai_text = (
-            f"🌤️ **Google Cloud AI Weather Analysis for {target_loc_name}**\n\n"
-            f"• **Current Temperature**: {temp_c}°C\n"
-            f"• **Atmospheric Condition**: {condition}\n"
-            f"• **Relative Humidity**: {humidity}%\n"
-            f"• **Wind Speed & Direction**: {wind_speed} km/h\n"
-            f"• **Barometric Pressure**: {pressure} hPa\n"
-            f"• **Rain Probability**: {rain_prob}%\n\n"
-            f"**Summary**: Conditions in {target_loc_name} are currently {condition.lower()} with comfortable humidity level of {humidity}%. Rain risk remains low to moderate ({rain_prob}%)."
-        )
+        if lang_code == 'ta':
+            ai_text = (
+                f"🌤️ **{target_loc_name} நகரத்தின் வானிலை விவரங்கள்**\n\n"
+                f"• **வெப்பநிலை**: {temp_c}°C\n"
+                f"• **வானிலை நிலை**: {condition}\n"
+                f"• **ஈரப்பதம்**: {humidity}%\n"
+                f"• **காற்றின் வேகம்**: மணிக்கு {wind_speed} கி.மீ\n"
+                f"• **அழுத்தம்**: {pressure} hPa\n"
+                f"• **மழை வாய்ப்பு**: {rain_prob}%\n\n"
+                f"**சுருக்கம்**: {target_loc_name} நகரில் வானிலை {condition} ஆகவும், ஈரப்பதம் {humidity}% ஆகவும் உள்ளது."
+            )
+        elif lang_code == 'hi':
+            ai_text = (
+                f"🌤️ **{target_loc_name} का लाइव मौसम विश्लेषण**\n\n"
+                f"• **वर्तमान तापमान**: {temp_c}°C\n"
+                f"• **मौसम स्थिति**: {condition}\n"
+                f"• **सापेक्ष आर्द्रता**: {humidity}%\n"
+                f"• **हवा की गति**: {wind_speed} किमी/घंटा\n"
+                f"• **वायुमंडलीय दबाव**: {pressure} hPa\n"
+                f"• **बारिश की संभावना**: {rain_prob}%\n\n"
+                f"**सारांश**: {target_loc_name} में वर्तमान मौसम {condition} है और आर्द्रता {humidity}% है।"
+            )
+        elif lang_code == 'te':
+            ai_text = (
+                f"🌤️ **{target_loc_name} ప్రత్యక్ష వాతావరణ విశ్లేషణ**\n\n"
+                f"• **ప్రస్తుత ఉష్ణోగ్రత**: {temp_c}°C\n"
+                f"• **వాతావరణ పరిస్థితి**: {condition}\n"
+                f"• **తేమ**: {humidity}%\n"
+                f"• **గాలి వేగం**: గంటకు {wind_speed} కి.మీ\n"
+                f"• **పీడనం**: {pressure} hPa\n"
+                f"• **వర్షం అవకాశం**: {rain_prob}%\n\n"
+                f"**సారాంశం**: {target_loc_name} లో వాతావరణం ప్రస్తుతం {condition} గా ఉంది."
+            )
+        elif lang_code == 'kn':
+            ai_text = (
+                f"🌤️ **{target_loc_name} ನೇರ ಹವಾಮಾನ ವಿಶ್ಲೇಷಣೆ**\n\n"
+                f"• **ಪ್ರಸ್ತುತ ತಾಪಮಾನ**: {temp_c}°C\n"
+                f"• **ಹವಾಮಾನ ಸ್ಥಿತಿ**: {condition}\n"
+                f"• **ಆರ್ದ್ರತೆ**: {humidity}%\n"
+                f"• **ಗಾಳಿಯ ವೇಗ**: ಗಂಟೆಗೆ {wind_speed} ಕಿ.ಮೀ\n"
+                f"• **ಒತ್ತಡ**: {pressure} hPa\n"
+                f"• **ಮಳೆಯ ಸಾಧ್ಯತೆ**: {rain_prob}%\n\n"
+                f"**ಸಾರಾಂಶ**: {target_loc_name} ನಲ್ಲಿ ಪ್ರಸ್ತುತ ಹವಾಮಾನ {condition} ಆಗಿದೆ."
+            )
+        elif lang_code == 'ml':
+            ai_text = (
+                f"🌤️ **{target_loc_name} തത്സമയ കാലാവസ്ഥാ വിശകലനം**\n\n"
+                f"• **ഇപ്പോഴത്തെ താപനില**: {temp_c}°C\n"
+                f"• **കാലാവസ്ഥാ അവസ്ഥ**: {condition}\n"
+                f"• **ആർദ്രത**: {humidity}%\n"
+                f"• **കാറ്റിന്റെ വേഗത**: മണിക്കൂറിൽ {wind_speed} കി.മീ\n"
+                f"• **മർദ്ദം**: {pressure} hPa\n"
+                f"• **മഴ സാധ്യത**: {rain_prob}%\n\n"
+                f"**ചുരുക്കം**: {target_loc_name} സ്ഥലത്ത് കാലാവസ്ഥ {condition} ആയി തുടരുന്നു."
+            )
+        elif lang_code == 'mr':
+            ai_text = (
+                f"🌤️ **{target_loc_name} प्रत्यक्ष हवामान विश्लेषण**\n\n"
+                f"• **सध्याचे तापमान**: {temp_c}°C\n"
+                f"• **हवामान स्थिती**: {condition}\n"
+                f"• **आर्द्रता**: {humidity}%\n"
+                f"• **वाऱ्याचा वेग**: {wind_speed} किमी/तास\n"
+                f"• **दाब**: {pressure} hPa\n"
+                f"• **पावसाची शक्यता**: {rain_prob}%\n\n"
+                f"**सारांश**: {target_loc_name} मधील हवामान {condition} आहे."
+            )
+        elif lang_code == 'bn':
+            ai_text = (
+                f"🌤️ **{target_loc_name} লাইভ আবহাওয়া বিশ্লেষণ**\n\n"
+                f"• **বর্তমান তাপমাত্রা**: {temp_c}°C\n"
+                f"• **আবহাওয়ার অবস্থা**: {condition}\n"
+                f"• **আর্দ্রতা**: {humidity}%\n"
+                f"• **বাতাসের গতি**: প্রতি ঘণ্টায় {wind_speed} কিমি\n"
+                f"• **চাপ**: {pressure} hPa\n"
+                f"• **বৃষ্টির সম্ভাবনা**: {rain_prob}%\n\n"
+                f"**সারসংক্ষেপ**: {target_loc_name} এ আবহাওয়া বর্তমানে {condition}।"
+            )
+        else:
+            ai_text = (
+                f"🌤️ **Google Cloud AI Weather Analysis for {target_loc_name}**\n\n"
+                f"• **Current Temperature**: {temp_c}°C\n"
+                f"• **Atmospheric Condition**: {condition}\n"
+                f"• **Relative Humidity**: {humidity}%\n"
+                f"• **Wind Speed & Direction**: {wind_speed} km/h\n"
+                f"• **Barometric Pressure**: {pressure} hPa\n"
+                f"• **Rain Probability**: {rain_prob}%\n\n"
+                f"**Summary**: Conditions in {target_loc_name} are currently {condition.lower()} with comfortable humidity level of {humidity}%. Rain risk remains low to moderate ({rain_prob}%)."
+            )
 
     # 3. 💬 Persist Chat Record to PostgreSQL chat_history Table
     try:
