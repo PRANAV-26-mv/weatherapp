@@ -39,21 +39,23 @@ export function speakInLanguage(
   const cleanText = text.replace(/[*#_`]/g, '').trim();
   const locale = LANGUAGE_LOCALE_MAP[langCode] || 'en-IN';
 
-  // 1. Try Browser SpeechSynthesis with explicit matchedVoice selection
+  // 1. Try Browser SpeechSynthesis if an EXPLICIT MATCHED VOICE is installed in the browser
   if ('speechSynthesis' in window) {
     window.speechSynthesis.cancel();
-
     const voices = window.speechSynthesis.getVoices();
+
     const matchedVoice = voices.find(
       (v) =>
         v.lang.toLowerCase() === locale.toLowerCase() ||
         v.lang.toLowerCase().startsWith(langCode.toLowerCase()) ||
-        v.lang.toLowerCase().includes(langCode.toLowerCase())
+        v.lang.toLowerCase().includes(langCode.toLowerCase()) ||
+        v.name.toLowerCase().includes(langCode.toLowerCase())
     );
 
-    if (matchedVoice) {
+    // ONLY use window.speechSynthesis if a true matched voice is found for non-English languages
+    if (matchedVoice && (langCode === 'en' || matchedVoice.lang.toLowerCase().includes(langCode.toLowerCase()) || matchedVoice.name.toLowerCase().includes(langCode.toLowerCase()))) {
       const utterance = new SpeechSynthesisUtterance(cleanText);
-      utterance.lang = locale;
+      utterance.lang = matchedVoice.lang || locale;
       utterance.voice = matchedVoice;
       utterance.rate = 0.95;
 
@@ -67,39 +69,48 @@ export function speakInLanguage(
     }
   }
 
-  // 2. Universal Native Online Audio Voice Stream Fallback (Guarantees Tamil, Hindi, Telugu, Kannada, etc. output)
-  try {
-    const truncatedText = cleanText.length > 200 ? cleanText.slice(0, 200) : cleanText;
-    const encodedQuery = encodeURIComponent(truncatedText);
-    const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${langCode}&q=${encodedQuery}`;
-    
-    const audio = new Audio(audioUrl);
-    currentAudioInstance = audio;
+  // 2. High Quality Native Audio Stream via Backend Proxy & Direct Google TTS (Guarantees Tamil, Hindi, Telugu, Kannada, Malayalam, etc. output)
+  const truncatedText = cleanText.length > 280 ? cleanText.slice(0, 280) : cleanText;
+  const encodedQuery = encodeURIComponent(truncatedText);
+  
+  // Try Backend Proxy first (bypasses CORS/Origin restriction on localhost), fallback to direct stream
+  const backendProxyUrl = `http://localhost:8000/api/tts/speak?text=${encodedQuery}&lang=${langCode}`;
+  const directGoogleUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${langCode}&q=${encodedQuery}`;
 
-    if (onStart) audio.onplay = onStart;
-    if (onEnd) {
-      audio.onended = onEnd;
-      audio.onerror = onEnd;
-    }
+  const audio = new Audio(backendProxyUrl);
+  currentAudioInstance = audio;
 
-    audio.play().catch((err) => {
-      console.warn('Native speech playback fallback:', err);
-      // Final fallback attempt with browser synthesis if audio block occurs
-      if ('speechSynthesis' in window) {
-        const fallbackUtterance = new SpeechSynthesisUtterance(cleanText);
-        fallbackUtterance.lang = locale;
-        if (onStart) fallbackUtterance.onstart = onStart;
-        if (onEnd) {
-          fallbackUtterance.onend = onEnd;
-          fallbackUtterance.onerror = onEnd;
-        }
-        window.speechSynthesis.speak(fallbackUtterance);
-      } else if (onEnd) {
-        onEnd();
+  if (onStart) audio.onplay = onStart;
+  if (onEnd) {
+    audio.onended = onEnd;
+    audio.onerror = () => {
+      // Secondary attempt with direct Google TTS stream
+      const fallbackAudio = new Audio(directGoogleUrl);
+      currentAudioInstance = fallbackAudio;
+      if (onStart) fallbackAudio.onplay = onStart;
+      if (onEnd) {
+        fallbackAudio.onended = onEnd;
+        fallbackAudio.onerror = onEnd;
       }
-    });
-  } catch (err) {
-    console.error('Speech synthesis execution failed:', err);
-    if (onEnd) onEnd();
+      fallbackAudio.play().catch((err) => {
+        console.warn('Native speech playback fallback:', err);
+        if (onEnd) onEnd();
+      });
+    };
   }
+
+  audio.play().catch(() => {
+    // If backend proxy play is interrupted, fallback to direct stream
+    const fallbackAudio = new Audio(directGoogleUrl);
+    currentAudioInstance = fallbackAudio;
+    if (onStart) fallbackAudio.onplay = onStart;
+    if (onEnd) {
+      fallbackAudio.onended = onEnd;
+      fallbackAudio.onerror = onEnd;
+    }
+    fallbackAudio.play().catch((err) => {
+      console.warn('Direct native TTS audio fallback:', err);
+      if (onEnd) onEnd();
+    });
+  });
 }

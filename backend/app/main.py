@@ -399,12 +399,25 @@ async def ai_chat_handler(payload: Dict, db: Session = Depends(get_db)):
     except Exception as db_err:
         print(f"Error persisting chat record to database: {db_err}")
 
-    return {
-        "text": ai_text,
-        "tool_called": tool_called,
-        "sources": [sources_used],
-        "confidence": 0.98
-    }
+@app.get("/api/tts/speak")
+async def tts_proxy_endpoint(text: str, lang: str = "en"):
+    """Proxy endpoint streaming native audio for Tamil, Hindi, Telugu, Kannada, Malayalam, Marathi, Bengali, Gujarati, Punjabi, Odia, Assamese, Urdu, etc."""
+    try:
+        import urllib.parse
+        clean_text = text.strip()[:300]
+        encoded_text = urllib.parse.quote(clean_text)
+        url = f"https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl={lang}&q={encoded_text}"
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        }
+        async with httpx.AsyncClient() as client:
+            res = await client.get(url, headers=headers, timeout=10.0)
+            if res.status_code == 200:
+                from fastapi.responses import Response
+                return Response(content=res.content, media_type="audio/mpeg")
+    except Exception as e:
+        print(f"TTS Proxy endpoint exception: {e}")
+    raise HTTPException(status_code=500, detail="TTS Audio stream generation failed")
 
 @app.websocket("/ws/alerts")
 async def websocket_alerts_endpoint(websocket: WebSocket):
