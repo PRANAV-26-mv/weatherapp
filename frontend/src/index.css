@@ -25,6 +25,33 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* User-Friendly Text Sizing Adjustments */
+html.text-size-large {
+  font-size: 115%;
+}
+
+html.text-size-xlarge {
+  font-size: 130%;
+}
+
+/* Outdoor High-Contrast Mode */
+html.high-contrast-mode body {
+  background-color: #000000 !important;
+  color: #FFFFFF !important;
+}
+
+html.high-contrast-mode .glass-card,
+html.high-contrast-mode .glass-panel {
+  background: #000000 !important;
+  border: 2px solid #FF9933 !important;
+  color: #FFFFFF !important;
+}
+
+html.high-contrast-mode p,
+html.high-contrast-mode span {
+  color: #FFFFFF !important;
+}
+
 h1, h2, h3, h4, h5, h6, .font-heading {
   font-family: 'Outfit', sans-serif;
 }

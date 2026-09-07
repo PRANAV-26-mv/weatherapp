@@ -12,6 +12,7 @@ import { LeafletWeatherMap } from './components/Map/LeafletWeatherMap';
 import { ImageUploader } from './components/Vision/ImageUploader';
 import { LanguageWelcomeModal } from './components/UI/LanguageWelcomeModal';
 import { UserGuideModal } from './components/UI/UserGuideModal';
+import { FloatingAccessibilityWidget } from './components/UI/FloatingAccessibilityWidget';
 
 // Page Components
 import { ChatPage } from './components/Pages/ChatPage';
@@ -464,6 +465,16 @@ export function App() {
           <span>Alerts</span>
         </button>
       </div>
+
+      {/* Global Easy Floating Accessibility Widget */}
+      {currentWeather && (
+        <FloatingAccessibilityWidget
+          currentLang={currentLang}
+          onOpenLanguageModal={() => setIsLangModalOpen(true)}
+          onOpenGuideModal={() => setIsGuideModalOpen(true)}
+          weatherSpeechText={`Current weather in ${currentWeather.locationName} is ${currentWeather.tempC} degrees Celsius, ${currentWeather.conditionText}. Relative humidity is ${currentWeather.humidity} percent with wind speed of ${currentWeather.windSpeedKmh} kilometers per hour.`}
+        />
+      )}
 
       {/* Footer */}
       <Footer />

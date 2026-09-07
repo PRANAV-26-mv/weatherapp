@@ -156,8 +156,40 @@ export const WeatherCard: React.FC<WeatherCardProps> = ({
         </div>
       </div>
 
+      {/* Easy Plain-Language Daily Practical Tips */}
+      <div className="mt-4 pt-3 border-t border-white/10">
+        <div className="text-[10px] font-bold text-saffron uppercase tracking-wider mb-2">Easy Daily Advice & Tips</div>
+        <div className="flex flex-wrap items-center gap-2">
+          {weather.tempC > 32 ? (
+            <span className="px-2.5 py-1 rounded-lg bg-orange-500/20 text-orange-300 border border-orange-500/30 text-xs font-semibold flex items-center gap-1">
+              ☀️ High heat: Stay hydrated & wear light cotton clothes
+            </span>
+          ) : weather.tempC < 20 ? (
+            <span className="px-2.5 py-1 rounded-lg bg-blue-500/20 text-blue-300 border border-blue-500/30 text-xs font-semibold flex items-center gap-1">
+              🧥 Cool weather: Carry a warm light jacket
+            </span>
+          ) : (
+            <span className="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-semibold flex items-center gap-1">
+              🌿 Pleasant weather: Great day for outdoor activity & farming
+            </span>
+          )}
+
+          {weather.humidity > 70 && (
+            <span className="px-2.5 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-xs font-semibold flex items-center gap-1">
+              💧 High humidity: Stay in well-ventilated areas
+            </span>
+          )}
+
+          {weather.windSpeedKmh > 20 && (
+            <span className="px-2.5 py-1 rounded-lg bg-yellow-500/20 text-yellow-300 border border-yellow-500/30 text-xs font-semibold flex items-center gap-1">
+              💨 Gusty winds: Secure loose outdoor items
+            </span>
+          )}
+        </div>
+      </div>
+
       {/* Sun Schedule */}
-      <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-xs text-gray-300">
+      <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs text-gray-300">
         <div className="flex items-center gap-2">
           <Sunrise className="w-4 h-4 text-amber-400" />
           <span>Sunrise: <strong className="text-white">{weather.sunrise} AM</strong></span>
