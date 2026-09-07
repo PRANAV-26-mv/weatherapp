@@ -15,30 +15,30 @@ export const UserGuideModal: React.FC<UserGuideModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md p-4 animate-in fade-in duration-200">
-      <div className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-slate-900/95 border border-saffron/30 rounded-2xl shadow-2xl p-6 text-white">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md p-3 sm:p-4 animate-in fade-in duration-200">
+      <div className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-slate-900/95 border border-saffron/30 rounded-2xl shadow-2xl p-4 sm:p-5 text-white">
         
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-6">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-gradient-to-tr from-saffron to-amber-500 text-black font-bold">
-              <Sparkles className="w-6 h-6" />
+        <div className="flex items-center justify-between border-b border-white/10 pb-3 mb-4">
+          <div className="flex items-center gap-2.5">
+            <div className="p-2 rounded-xl bg-gradient-to-tr from-saffron to-amber-500 text-black font-bold">
+              <Sparkles className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-xl font-bold font-outfit text-white">WeatherGPT Quick User Guide</h2>
-              <p className="text-xs text-slate-400">Everything you need to know about navigating & using the AI platform</p>
+              <h2 className="text-lg sm:text-xl font-bold font-outfit text-white">WeatherGPT Quick User Guide</h2>
+              <p className="text-[11px] text-slate-400">Everything you need to know about navigating & using the AI platform</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-lg bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white transition-colors"
+            className="p-1.5 rounded-lg bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white transition-colors"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* User Guide Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
           
           {/* Card 1: Multilingual Voice Intelligence */}
           <div className="p-4 rounded-xl bg-slate-800/60 border border-white/10 hover:border-saffron/40 transition-all">

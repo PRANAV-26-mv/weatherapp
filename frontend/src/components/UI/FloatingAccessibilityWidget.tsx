@@ -58,22 +58,22 @@ export const FloatingAccessibilityWidget: React.FC<FloatingAccessibilityWidgetPr
       
       {/* Expanded Quick Easy Action Menu */}
       {isOpen && (
-        <div className="bg-slate-950/95 border border-saffron/40 p-4 rounded-2xl shadow-2xl backdrop-blur-xl w-72 text-white animate-in slide-in-from-bottom-5 duration-200">
+        <div className="bg-slate-950/95 border border-saffron/40 p-3 sm:p-3.5 rounded-2xl shadow-2xl backdrop-blur-xl w-64 text-white animate-in slide-in-from-bottom-5 duration-200">
           
-          <div className="flex items-center justify-between border-b border-white/10 pb-2.5 mb-3">
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-saffron" />
-              <span className="text-xs font-bold font-outfit text-white">Easy Access & Accessibility</span>
+          <div className="flex items-center justify-between border-b border-white/10 pb-2 mb-2.5">
+            <div className="flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-saffron" />
+              <span className="text-[11px] font-bold font-outfit text-white">Easy Access & Accessibility</span>
             </div>
             <button 
               onClick={() => setIsOpen(false)}
               className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-white/10"
             >
-              <X className="w-4 h-4" />
+              <X className="w-3.5 h-3.5" />
             </button>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-2.5">
             
             {/* 1. Text Size Controller for Easy Reading */}
             <div>

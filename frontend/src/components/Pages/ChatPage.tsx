@@ -106,18 +106,18 @@ export const ChatPage: React.FC<ChatPageProps> = ({ currentWeather, langCode = '
   };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6">
+    <div className="max-w-5xl mx-auto space-y-4">
       {/* Page Header */}
-      <div className="glass-card p-6 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="p-3 rounded-2xl bg-saffron/20 text-saffron border border-saffron/40">
-            <Bot className="w-7 h-7" />
+      <div className="glass-card p-3.5 sm:p-4.5 flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-2.5">
+          <div className="p-2 rounded-xl bg-saffron/20 text-saffron border border-saffron/40">
+            <Bot className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="text-2xl font-extrabold text-white font-heading">
+            <h2 className="text-lg sm:text-xl font-extrabold text-white font-heading">
               {translate('btn_ask_ai', langCode)} (WeatherGPT AI)
             </h2>
-            <p className="text-xs text-gray-400">
+            <p className="text-[11px] text-gray-400">
               NLP Engine: <strong className="text-saffron">Google Cloud Gemini 1.5 Flash AI</strong> • Speech STT/TTS ({langCode.toUpperCase()})
             </p>
           </div>
@@ -126,7 +126,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({ currentWeather, langCode = '
         <div className="flex items-center gap-2">
           <button
             onClick={() => setIsKeyModalOpen(true)}
-            className="px-3 py-1.5 rounded-full bg-saffron/10 hover:bg-saffron/20 border border-saffron/30 text-saffron text-xs font-bold flex items-center gap-1.5 transition-all"
+            className="px-2.5 py-1 rounded-full bg-saffron/10 hover:bg-saffron/20 border border-saffron/30 text-saffron text-[11px] font-bold flex items-center gap-1.5 transition-all"
             title="Configure Google Cloud Gemini API Key"
           >
             <Key className="w-3.5 h-3.5" />

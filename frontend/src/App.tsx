@@ -220,37 +220,37 @@ export function App() {
           <>
             {/* ROUTE 1: HOMEPAGE */}
             {currentTab === 'home' && (
-              <div className="space-y-6">
+              <div className="space-y-4">
                 {/* Hero Section */}
-                <section className="relative glass-card p-6 md:p-8 overflow-hidden border border-white/10">
+                <section className="relative glass-card p-4 sm:p-5 md:p-6 overflow-hidden border border-white/10">
                   <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-br from-saffron/20 via-indiagreen/10 to-transparent blur-3xl pointer-events-none" />
 
-                  <div className="max-w-3xl space-y-4 relative z-10">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-pill border border-saffron/30 text-saffron text-[11px] font-bold">
-                      <Sparkles className="w-3.5 h-3.5" />
+                  <div className="max-w-3xl space-y-3 relative z-10">
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full glass-pill border border-saffron/30 text-saffron text-[10px] sm:text-[11px] font-bold">
+                      <Sparkles className="w-3 h-3" />
                       <span>WeatherGPT AI Intelligence Platform</span>
                     </div>
 
-                    <h1 className="text-3xl md:text-5xl font-extrabold text-white tracking-tight leading-tight font-heading">
+                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white tracking-tight leading-tight font-heading">
                       {translate('hero_headline', currentLang)}
                     </h1>
 
-                    <p className="text-sm md:text-base text-gray-300 leading-relaxed font-normal">
+                    <p className="text-xs sm:text-sm text-gray-300 leading-relaxed font-normal">
                       {translate('hero_supporting', currentLang)}
                     </p>
 
-                    <div className="flex flex-wrap items-center gap-3 pt-1">
+                    <div className="flex flex-wrap items-center gap-2.5 pt-0.5">
                       <button
                         onClick={handleDetectCurrentLocation}
-                        className="saffron-gradient-btn px-5 py-2.5 rounded-xl text-xs font-extrabold flex items-center gap-2 shadow-lg shadow-saffron/30"
+                        className="saffron-gradient-btn px-4 py-2 rounded-xl text-xs font-extrabold flex items-center gap-1.5 shadow-md shadow-saffron/25"
                       >
-                        <Navigation className="w-4 h-4 animate-pulse" />
+                        <Navigation className="w-3.5 h-3.5 animate-pulse" />
                         <span>Detect Phone Live Location 📍</span>
                       </button>
 
                       <button
                         onClick={() => setCurrentTab('chat')}
-                        className="px-5 py-2.5 rounded-xl glass-pill text-xs font-extrabold text-white hover:border-saffron/60 transition-all flex items-center gap-2"
+                        className="px-4 py-2 rounded-xl glass-pill text-xs font-extrabold text-white hover:border-saffron/60 transition-all flex items-center gap-1.5"
                       >
                         <MessageSquare className="w-3.5 h-3.5 text-saffron" />
                         <span>{translate('btn_ask_ai', currentLang)}</span>

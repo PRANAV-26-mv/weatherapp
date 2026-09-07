@@ -79,25 +79,25 @@ export const LanguageWelcomeModal: React.FC<LanguageWelcomeModalProps> = ({
   const selectedLangObj = SUPPORTED_LANGUAGES.find((l) => l.code === selected) || SUPPORTED_LANGUAGES[0];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-lg p-4 animate-in fade-in duration-300">
-      <div className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto bg-slate-950/95 border border-saffron/40 rounded-3xl shadow-2xl p-6 md:p-8 text-white">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-lg p-3 sm:p-4 animate-in fade-in duration-300">
+      <div className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto bg-slate-950/95 border border-saffron/40 rounded-2xl shadow-2xl p-4 sm:p-5 text-white">
         
         {/* Header Badge & Title */}
-        <div className="text-center max-w-xl mx-auto mb-6">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-saffron/20 text-saffron border border-saffron/30 text-xs font-bold uppercase tracking-wider mb-3">
-            <Sparkles className="w-3.5 h-3.5" />
+        <div className="text-center max-w-xl mx-auto mb-4">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-saffron/20 text-saffron border border-saffron/30 text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-2">
+            <Sparkles className="w-3 h-3" />
             <span>Select Operating Language</span>
           </div>
-          <h2 className="text-2xl md:text-3xl font-extrabold font-outfit text-white tracking-tight mb-2">
+          <h2 className="text-xl md:text-2xl font-extrabold font-outfit text-white tracking-tight mb-1.5">
             Choose Your Preferred Language
           </h2>
-          <p className="text-xs md:text-sm text-slate-300">
+          <p className="text-xs text-slate-300">
             WeatherGPT website interface, AI assistance, and voice output will speak natively in your language.
           </p>
         </div>
 
         {/* Language Selection Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 mb-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-2.5 mb-4">
           {SUPPORTED_LANGUAGES.map((lang) => {
             const isSelected = selected === lang.code;
             return (
@@ -107,22 +107,22 @@ export const LanguageWelcomeModal: React.FC<LanguageWelcomeModalProps> = ({
                   setSelected(lang.code);
                   handleTestVoice(lang.code);
                 }}
-                className={`cursor-pointer relative p-3.5 rounded-2xl border transition-all duration-200 flex flex-col justify-between ${
+                className={`cursor-pointer relative p-2.5 sm:p-3 rounded-xl border transition-all duration-200 flex flex-col justify-between ${
                   isSelected
-                    ? 'bg-gradient-to-b from-saffron/25 to-amber-950/50 border-saffron shadow-lg shadow-saffron/15 ring-2 ring-saffron/40 scale-[1.02]'
+                    ? 'bg-gradient-to-b from-saffron/25 to-amber-950/50 border-saffron shadow-lg shadow-saffron/15 ring-2 ring-saffron/40 scale-[1.01]'
                     : 'bg-slate-900/60 border-white/10 hover:border-saffron/40 hover:bg-slate-800/60'
                 }`}
               >
                 {isSelected && (
-                  <CheckCircle2 className="w-4 h-4 text-saffron absolute top-2.5 right-2.5" />
+                  <CheckCircle2 className="w-3.5 h-3.5 text-saffron absolute top-2 right-2" />
                 )}
 
                 <div>
-                  <div className="text-base font-bold text-white mb-0.5">{lang.nativeName}</div>
-                  <div className="text-xs text-slate-400 font-medium">{lang.name}</div>
+                  <div className="text-sm sm:text-base font-bold text-white mb-0.5">{lang.nativeName}</div>
+                  <div className="text-[11px] text-slate-400 font-medium">{lang.name}</div>
                 </div>
 
-                <div className="mt-3 pt-2 border-t border-white/10 flex items-center justify-between">
+                <div className="mt-2 pt-1.5 border-t border-white/10 flex items-center justify-between">
                   <span className="text-[9px] px-1.5 py-0.5 rounded bg-white/5 text-slate-400 font-mono">
                     {lang.script}
                   </span>
@@ -132,7 +132,7 @@ export const LanguageWelcomeModal: React.FC<LanguageWelcomeModalProps> = ({
                     className="p-1 rounded-full bg-saffron/20 hover:bg-saffron text-saffron hover:text-black transition-colors"
                     title={`Listen to Voice Sample in ${lang.name}`}
                   >
-                    <Volume2 className="w-3.5 h-3.5" />
+                    <Volume2 className="w-3 h-3" />
                   </button>
                 </div>
               </div>
