@@ -1,56 +1,108 @@
 import type { ChatMessage, CurrentWeatherData, VisionAnalysisResult } from '../types';
 import { searchLocation, getCurrentWeather, getDailyForecast, getAirQuality, INITIAL_DISASTER_ALERTS } from './weatherApi';
+import { translateWeatherCondition } from './i18n';
+
+const LANGUAGE_NAME_MAP: Record<string, string> = {
+  en: 'English',
+  hi: 'Hindi (हिन्दी)',
+  ta: 'Tamil (தமிழ்)',
+  te: 'Telugu (తెలుగు)',
+  kn: 'Kannada (ಕನ್ನಡ)',
+  ml: 'Malayalam (മലയാളം)',
+  mr: 'Marathi (मराठी)',
+  bn: 'Bengali (বাংলা)',
+  gu: 'Gujarati (ગુજરાતી)',
+  pa: 'Punjabi (ਪੰਜਾਬੀ)',
+  or: 'Odia (ଓଡ଼ିଆ)',
+  as: 'Assamese (অসমীয়া)',
+  ur: 'Urdu (اردو)',
+};
 
 const LOCALIZED_BOT_RESPONSES: Record<string, Record<string, string>> = {
   hi: {
     rain_high: "आज आपके शहर ({location}) में बारिश की संभावना अधिक ({prob}%) है। लगभग {precip} मिमी बारिश की उम्मीद है। बाहर निकलते समय छाता साथ रखें!",
-    rain_low: "आज आपके शहर ({location}) में बारिश की संभावना कम से मध्यम ({prob}%) है। मौसम मुख्य रूप से साफ रहेगा।",
+    rain_low: "आज आपके शहर ({location}) में बारिश की संभावना कम से मध्यम ({prob}%) है। मौसम मुख्य रूप से {condition} रहेगा।",
     alert_status: "मौसम चेतावनी स्थिति ({location}): 1 सक्रिय गंभीर चेतावनी प्रभावी है।",
     agri_title: "🌾 **कृषि मौसम सलाह (किसान मित्र) - {location}**",
     aqi_title: "🍃 **वायु गुणवत्ता विश्लेषण - {location}**",
   },
   ta: {
-    rain_high: "இன்று உங்கள் நகரில் ({location}) மழைக்கான வாய்ப்பு அதிகம் ({prob}%). குடை எடுத்துச் செல்லவும்!",
-    rain_low: "இன்று உங்கள் நகரில் ({location}) மழைக்கான வாய்ப்பு குறைவு ({prob}%).",
+    rain_high: "இன்று உங்கள் நகரில் ({location}) மழைக்கான வாய்ப்பு அதிகம் ({prob}%). சுமார் {precip} மி.மீ மழை எதிர்பார்க்கப்படுகிறது. குடை எடுத்துச் செல்லவும்!",
+    rain_low: "இன்று உங்கள் நகரில் ({location}) மழைக்கான வாய்ப்பு குறைவு ({prob}%). வானிலை {condition} ஆக இருக்கும்.",
     alert_status: "வானிலை எச்சரிக்கை ({location}): 1 தீவிர எச்சரிக்கை அமலில் உள்ளது.",
     agri_title: "🌾 **விவசாய ஆலோசனை - {location}**",
     aqi_title: "🍃 **காற்றின் தரம் - {location}**",
   },
   te: {
-    rain_high: "ఈరోజు మీ నగరంలో ({location}) వర్షం పడే అవకాశం ఎక్కువ ({prob}%). గొడుగు తీసుకువెళ్లండి!",
-    rain_low: "ఈరోజు మీ నగరంలో ({location}) వర్షం పడే అవకాశం తక్కువ ({prob}%).",
+    rain_high: "ఈరోజు మీ నగరంలో ({location}) వర్షం పడే అవకాశం ఎక్కువ ({prob}%). దాదాపు {precip} మి.మీ వర్షం కురిసే అవకాశం ఉంది. గొడుగు తీసుకువెళ్లండి!",
+    rain_low: "ఈరోజు మీ నగరంలో ({location}) వర్షం పడే అవకాశం తక్కువ ({prob}%). వాతావరణం {condition} గా ఉంటుంది.",
     alert_status: "వాతావరణ హెచ్చరిక ({location}): 1 తీవ్రమైన హెచ్చరిక అమలులో ఉంది.",
     agri_title: "🌾 **వ్యవసాయ సలహా - {location}**",
     aqi_title: "🍃 **గాలి నాణ్యత - {location}**",
   },
   kn: {
-    rain_high: "ಇಂದು ನಿಮ್ಮ ನಗರದಲ್ಲಿ ({location}) ಮಳೆಯಾಗುವ ಸಾಧ್ಯತೆ ಹೆಚ್ಚು ({prob}%). ಛತ್ರಿ ತೆಗೆದುಕೊಂಡು ಹೋಗಿ!",
-    rain_low: "ಇಂದು ನಿಮ್ಮ ನಗರದಲ್ಲಿ ({location}) ಮಳೆಯಾಗುವ ಸಾಧ್ಯತೆ ಕಡಿಮೆ ({prob}%).",
+    rain_high: "ಇಂದು ನಿಮ್ಮ ನಗರದಲ್ಲಿ ({location}) ಮಳೆಯಾಗುವ ಸಾಧ್ಯತೆ ಹೆಚ್ಚು ({prob}%). ಸುಮಾರು {precip} ಮಿ.ಮೀ ಮಳೆ ನಿರೀಕ್ಷಿಸಲಾಗಿದೆ. ಛತ್ರಿ ತೆಗೆದುಕೊಂಡು ಹೋಗಿ!",
+    rain_low: "ಇಂದು ನಿಮ್ಮ ನಗರದಲ್ಲಿ ({location}) ಮಳೆಯಾಗುವ ಸಾಧ್ಯತೆ ಕಡಿಮೆ ({prob}%). ಹವಾಮಾನವು {condition} ಆಗಿರುತ್ತದೆ.",
     alert_status: "ಹವಾಮಾನ ಎಚ್ಚರಿಕೆ ({location}): 1 ಸಕ್ರಿಯ ತೀವ್ರ ಎಚ್ಚರಿಕೆ ಚಾಲನೆಯಲ್ಲಿದೆ.",
     agri_title: "🌾 **ಕೃಷಿ ಸಲಹೆ - {location}**",
     aqi_title: "🍃 **ವಾಯು ಗುಣಮಟ್ಟ - {location}**",
   },
   ml: {
-    rain_high: "ഇന്ന് നിങ്ങളുടെ നഗരത്തിൽ ({location}) മഴ പെയ്യാൻ സാധ്യത കൂടുതലാണ് ({prob}%). കുട കരുതുക!",
-    rain_low: "ഇന്ന് നിങ്ങളുടെ നഗരത്തിൽ ({location}) മഴ പെയ്യാൻ സാധ്യത കുറവാണ് ({prob}%).",
+    rain_high: "ഇന്ന് നിങ്ങളുടെ നഗരത്തിൽ ({location}) മഴ പെയ്യാൻ സാധ്യത കൂടുതലാണ് ({prob}%). ഏകദേശം {precip} മി.മീ മഴ പ്രതീക്ഷിക്കുന്നു. കുട കരുതുക!",
+    rain_low: "ഇന്ന് നിങ്ങളുടെ നഗരത്തിൽ ({location}) മഴ പെയ്യാൻ സാധ്യത കുറവാണ് ({prob}%). കാലാവസ്ഥ {condition} ആയിരിക്കും.",
     alert_status: "കാലാവസ്ഥാ മുന്നറിയിപ്പ് ({location}): 1 മുന്നറിയിപ്പ് നിലവിലുണ്ട്.",
     agri_title: "🌾 **കാർഷിക നിർദ്ദേശം - {location}**",
     aqi_title: "🍃 **വായു ഗുണനിലവാരം - {location}**",
   },
   mr: {
-    rain_high: "आज तुमच्या शहरात ({location}) पावसाची शक्यता जास्त ({prob}%) आहे. छत्री सोबत ठेवा!",
-    rain_low: "आज तुमच्या शहरात ({location}) पावसाची शक्यता कमी ({prob}%) आहे.",
+    rain_high: "आज तुमच्या शहरात ({location}) पावसाची शक्यता जास्त ({prob}%) आहे. सुमारे {precip} मिमी पावसाची अपेक्षा आहे. छत्री सोबत ठेवा!",
+    rain_low: "आज तुमच्या शहरात ({location}) पावसाची शक्यता कमी ({prob}%) आहे. हवामान {condition} राहील.",
     alert_status: "हवामान इशारा ({location}): 1 गंभीर इशारा सक्रिय आहे.",
     agri_title: "🌾 **शेती सल्ला - {location}**",
     aqi_title: "🍃 **हवेची गुणवत्ता - {location}**",
   },
   bn: {
-    rain_high: "আজ আপনার শহরে ({location}) বৃষ্টির সম্ভাবনা বেশি ({prob}%)। বাইরে যাওয়ার সময় ছাতা সাথে রাখুন!",
-    rain_low: "আজ আপনার শহরে ({location}) বৃষ্টির সম্ভাবনা কম ({prob}%)।",
+    rain_high: "আজ আপনার শহরে ({location}) বৃষ্টির সম্ভাবনা বেশি ({prob}%)। প্রায় {precip} মিমি বৃষ্টিপাত হতে পারে। বাইরে যাওয়ার সময় ছাতা সাথে রাখুন!",
+    rain_low: "আজ আপনার শহরে ({location}) বৃষ্টির সম্ভাবনা কম ({prob}%)। আবহাওয়া {condition} থাকবে।",
     alert_status: "আবহাওয়া সতর্কতা ({location}): ১টি সতর্কবার্তা কার্যকর আছে।",
     agri_title: "🌾 **কৃষি পরামর্শ - {location}**",
     aqi_title: "🍃 **বাতাসের মান - {location}**",
   },
+  gu: {
+    rain_high: "આજે તમારા શહેરમાં ({location}) વરસાદની શક્યતા વધુ ({prob}%) છે. આશરે {precip} મીમી વરસાદની અપેક્ષા છે. બહાર નીકળતી વખતે છતરી સાથે રાખો!",
+    rain_low: "આજે તમારા શહેરમાં ({location}) વરસાદની શક્યતા ઓછી ({prob}%) છે. હવામાન {condition} રહેશે.",
+    alert_status: "હવામાન ચેતવણી ({location}): 1 ગંભીર ચેતવણી સક્રિય છે.",
+    agri_title: "🌾 **ખેતી સલાહ - {location}**",
+    aqi_title: "🍃 **હવાની ગુણવત્તા - {location}**",
+  },
+  pa: {
+    rain_high: "ਅੱਜ ਤੁਹਾਡੇ ਸ਼ਹਿਰ ({location}) ਵਿੱਚ ਬਾਰਿਸ਼ ਦੀ ਸੰਭਾਵਨਾ ਜ਼ਿਆਦਾ ({prob}%) ਹੈ। ਲਗਭਗ {precip} ਮਿਲੀਮੀਟਰ ਬਾਰਿਸ਼ ਦੀ ਉਮੀਦ ਹੈ। ਛੱਤਰੀ ਨਾਲ ਰੱਖੋ!",
+    rain_low: "ਅੱਜ ਤੁਹਾਡੇ ਸ਼ਹਿਰ ({location}) ਵਿੱਚ ਬਾਰਿਸ਼ ਦੀ ਸੰਭਾਵਨਾ ਘੱਟ ({prob}%) ਹੈ। ਮੌਸਮ {condition} ਰਹੇਗਾ।",
+    alert_status: "ਮੌਸਮ ਚੇਤਾਵਨੀ ({location}): 1 ਗੰਭੀਰ ਚੇਤਾਵਨੀ ਸਰਗਰਮ ਹੈ।",
+    agri_title: "🌾 **ਖੇਤੀਬਾੜੀ ਸਲਾਹ - {location}**",
+    aqi_title: "🍃 **ਹਵਾ ਦੀ ਗੁਣਵੱਤਾ - {location}**",
+  },
+  or: {
+    rain_high: "ଆଜି ଆପଣଙ୍କ ସହର ({location}) ରେ ବର୍ଷାର ସମ୍ଭାବନା ଅଧିକ ({prob}%)। ପ୍ରାୟ {precip} ମିମି ବର୍ଷା ଆଶା କରାଯାଉଛି। ଛତା ସାଙ୍ଗରେ ରଖନ୍ତୁ!",
+    rain_low: "ଆଜି ଆପଣଙ୍କ ସହର ({location}) ରେ ବର୍ଷାର ସମ୍ଭାବନା କମ୍ ({prob}%)। ପାଣିପାଗ {condition} ରହିବ।",
+    alert_status: "ପାଣିପାଗ ଚେତାବନୀ ({location}): ୧ଟି ଗମ୍ଭୀର ଚେତାବନୀ ସକ୍ରିୟ ଅଛି।",
+    agri_title: "🌾 **କୃଷି ପରାମର୍ଶ - {location}**",
+    aqi_title: "🍃 **ବାୟୁ ଗୁଣବତ୍ତା - {location}**",
+  },
+  as: {
+    rain_high: "আজি আপোনাৰ চহৰত ({location}) বৰষুণৰ সম্ভাৱনা অধিক ({prob}%)। প্রায় {precip} মিমি বৰষুণৰ আশা কৰা হৈছে। ছাতি লগত ৰাখক!",
+    rain_low: "আজি আপোনাৰ চহৰত ({location}) বৰষুণৰ সম্ভাৱনা কম ({prob}%)। বতৰ {condition} থাকিব।",
+    alert_status: "বতৰৰ সতৰ্কতা ({location}): ১টা সতৰ্কবাৰ্তা কাৰ্যকৰী হৈ আছে।",
+    agri_title: "🌾 **কৃষি পৰামৰ্শ - {location}**",
+    aqi_title: "🍃 **বায়ুৰ গুণমান - {location}**",
+  },
+  ur: {
+    rain_high: "آج آپ کے شہر ({location}) میں بارش کا امکان زیادہ ({prob}%) ہے۔ تقریباً {precip} ملی میٹر بارش کی توقع ہے۔ چھتری ساتھ رکھیں!",
+    rain_low: "آج آپ کے شہر ({location}) میں بارش کا امکان کم ({prob}%) ہے۔ موسم بیشتر {condition} رہے گا۔",
+    alert_status: "موسمی انتباہ ({location}): 1 شدید انتباہ نافذ العمل ہے۔",
+    agri_title: "🌾 **زراعت کی ہدایت - {location}**",
+    aqi_title: "🍃 **ہوا کا معیار - {location}**",
+  }
 };
 
 const KNOWN_CITIES = [
@@ -67,22 +119,60 @@ const KNOWN_CITIES = [
   'kathmandu', 'karachi', 'islamabad', 'kabul'
 ];
 
+export function generateLocalizedDefaultWeatherReport(weather: CurrentWeatherData, langCode: string = 'en'): string {
+  const condition = translateWeatherCondition(weather.conditionText, langCode);
+  const loc = weather.locationName;
+  const temp = weather.tempC;
+  const feels = weather.feelsLikeC;
+  const wind = weather.windSpeedKmh;
+  const hum = weather.humidity;
+  const press = weather.pressureHpa;
+  const uv = weather.uvIndex;
+
+  switch (langCode) {
+    case 'hi':
+      return `**${loc}** का सत्यापित लाइव मौसम समाचार:\n\n• **तापमान**: ${temp}°C (महसूस होता है ${feels}°C)\n• **मौसम स्थिति**: ${condition}\n• **हवा की गति**: ${wind} किमी/घंटा\n• **आर्द्रता**: ${hum}%\n• **वायुमंडलीय दबाव**: ${press} hPa\n• **यूवी इंडेक्स**: ${uv}`;
+    case 'ta':
+      return `**${loc}** நகரத்தின் தற்போதைய வானிலை விவரங்கள்:\n\n• **வெப்பநிலை**: ${temp}°C (உணர்வது ${feels}°C)\n• **வானிலை நிலை**: ${condition}\n• **காற்றின் வேகம்**: மணிக்கு ${wind} கி.மீ\n• **ஈரப்பதம்**: ${hum}%\n• **அழுத்தம்**: ${press} hPa\n• **UV குறியீடு**: ${uv}`;
+    case 'te':
+      return `**${loc}** ప్రత్యక్ష వాతావరణ సమాచారం:\n\n• **ఉష్ణోగ్రత**: ${temp}°C (అనిపిస్తుంది ${feels}°C)\n• **వాతావరణ పరిస్థితి**: ${condition}\n• **గాలి వేగం**: గంటకు ${wind} కి.మీ\n• **తేమ**: ${hum}%\n• **పీడనం**: ${press} hPa\n• **UV ఇండెక్స్**: ${uv}`;
+    case 'kn':
+      return `**${loc}** ನ ನೇರ ಹವಾಮಾನ ಮಾಹಿತಿ:\n\n• **ತಾಪಮಾನ**: ${temp}°C (ಅನುಭವವಾಗುವುದು ${feels}°C)\n• **ಹವಾಮಾನ ಸ್ಥಿತಿ**: ${condition}\n• **ಗಾಳಿಯ ವೇಗ**: ಗಂಟೆಗೆ ${wind} ಕಿ.ಮೀ\n• **ಆರ್ದ್ರತೆ**: ${hum}%\n• **ಒತ್ತಡ**: ${press} hPa\n• **UV ಸೂಚ್ಯಂಕ**: ${uv}`;
+    case 'ml':
+      return `**${loc}** പ്രദേശത്തെ തത്സമയ കാലാവസ്ഥാ വിവരങ്ങൾ:\n\n• **താപനില**: ${temp}°C (അനുഭവപ്പെടുന്നത് ${feels}°C)\n• **കാലാവസ്ഥാ അവസ്ഥ**: ${condition}\n• **കാറ്റിന്റെ വേഗത**: മണിക്കൂറിൽ ${wind} കി.മീ\n• **ആർദ്രത**: ${hum}%\n• **മർദ്ദം**: ${press} hPa\n• **UV സൂചിക**: ${uv}`;
+    case 'mr':
+      return `**${loc}** मधील हवामानाचा तपशील:\n\n• **तापमान**: ${temp}°C (जाणवते ${feels}°C)\n• **हवामान स्थिती**: ${condition}\n• **वाऱ्याचा वेग**: ${wind} किमी/तास\n• **आर्द्रता**: ${hum}%\n• **दाब**: ${press} hPa\n• **युव्ही इंडेक्स**: ${uv}`;
+    case 'bn':
+      return `**${loc}** এর লাইভ আবহাওয়া তথ্য:\n\n• **তাপমাত্রা**: ${temp}°C (অনুভূত ${feels}°C)\n• **আবহাওয়ার অবস্থা**: ${condition}\n• **বাতাসের গতি**: প্রতি ঘণ্টায় ${wind} কিমি\n• **আর্দ্রতা**: ${hum}%\n• **চাপ**: ${press} hPa\n• **ইউভি ইনডেক্স**: ${uv}`;
+    case 'gu':
+      return `**${loc}** નું વર્તમાન હવામાન વિગત:\n\n• **તાપમાન**: ${temp}°C (અનુભવાય છે ${feels}°C)\n• **હવામાન સ્થિતિ**: ${condition}\n• **પવનની ગતિ**: કલાકના ${wind} કિમી\n• **ભેજ**: ${hum}%\n• **દબાણ**: ${press} hPa\n• **યુવી ઇન્ડેક્સ**: ${uv}`;
+    case 'pa':
+      return `**${loc}** ਦੀ ਮੌਜੂਦਾ ਮੌਸਮ ਜਾਣਕਾਰੀ:\n\n• **ਤਾਪਮਾਨ**: ${temp}°C (ਮਹਿਸੂਸ ਹੁੰਦਾ ਹੈ ${feels}°C)\n• **ਮੌਸਮ ਦੀ ਸਥਿਤੀ**: ${condition}\n• **ਹਵਾ ਦੀ ਗਤੀ**: ${wind} ਕਿਲੋਮੀਟਰ/ਘੰਟਾ\n• **ਨਮੀ**: ${hum}%\n• **ਦਬਾਅ**: ${press} hPa\n• **ਯੂਵੀ ਇੰਡੈਕਸ**: ${uv}`;
+    case 'or':
+      return `**${loc}** ର ବର୍ତ୍ତମାନର ପାଣିପାଗ ସୂଚନା:\n\n• **ତାପମାତ୍ରା**: ${temp}°C (ଅନୁଭୂତ ${feels}°C)\n• **ପାଣିପାଗ ସ୍ଥିତି**: ${condition}\n• **ପବନର ବେଗ**: ଘଣ୍ଟାପ୍ରତି ${wind} କିମି\n• **ଆର୍ଦ୍ରତା**: ${hum}%\n• **ଚାପ**: ${press} hPa\n• **UV ସୂଚକାଙ୍କ**: ${uv}`;
+    case 'as':
+      return `**${loc}** ৰ বৰ্তমানৰ বতৰৰ তথ্য:\n\n• **উষ্ণতা**: ${temp}°C (অনুভূত ${feels}°C)\n• **বতৰৰ অৱস্থা**: ${condition}\n• **বতাহৰ গতি**: ঘণ্টা ${wind} কিমি\n• **আৰ্দ্ৰতা**: ${hum}%\n• **চাপ**: ${press} hPa\n• **UV সূচক**: ${uv}`;
+    case 'ur':
+      return `**${loc}** کی لائیو موسمی تفصیلات:\n\n• **درجہ حرارت**: ${temp}°C (محسوس ہوتا ہے ${feels}°C)\n• **موسمی صورتحال**: ${condition}\n• **ہوا کی رفتار**: ${wind} کلومیٹر فی گھنٹہ\n• **نمی**: ${hum}%\n• **دباؤ**: ${press} hPa\n• **یو وی انڈیکس**: ${uv}`;
+    case 'en':
+    default:
+      return `Here is the verified weather intelligence for **${loc}**:\n\n• **Temperature**: ${temp}°C (Feels like ${feels}°C)\n• **Conditions**: ${weather.conditionText}\n• **Wind**: ${wind} km/h ${weather.windDirectionText}\n• **Humidity**: ${hum}%\n• **Pressure**: ${press} hPa\n• **UV Index**: ${uv}`;
+  }
+}
+
 async function detectTargetLocation(
   query: string,
   defaultWeather: CurrentWeatherData
 ): Promise<{ weather: CurrentWeatherData; isCustomLocation: boolean }> {
   const qLower = query.toLowerCase();
 
-  // Pattern 1: Prepositions like "in Delhi", "weather for Tokyo", "forecast at London", "of Sydney"
   const prepMatch = qLower.match(/(?:in|for|at|of|near|around)\s+([a-z\s]{3,25})/i);
   let searchCandidate = prepMatch ? prepMatch[1].trim() : '';
 
-  // Clean candidate from common trailing prompt words
   searchCandidate = searchCandidate
     .replace(/\s+(today|now|tomorrow|right now|city|forecast|weather|aqi|temperature|climate|details|report|situation|status)$/i, '')
     .trim();
 
-  // Pattern 2: Direct match against known global cities
   if (!searchCandidate || searchCandidate.length < 3) {
     for (const city of KNOWN_CITIES) {
       if (qLower.includes(city)) {
@@ -116,13 +206,14 @@ async function callGoogleCloudGeminiAPI(
   langCode: string = 'en'
 ): Promise<string | null> {
   const apiKey = localStorage.getItem('VITE_GEMINI_API_KEY') || (import.meta as any).env?.VITE_GEMINI_API_KEY || (window as any).GEMINI_API_KEY;
+  const languageName = LANGUAGE_NAME_MAP[langCode] || 'English';
 
   if (apiKey) {
     try {
       const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
       const promptText = `You are WeatherGPT, an advanced AI meteorological intelligence assistant powered by Google Cloud AI.
 Answer the user's question directly, accurately, and concisely.
-CRITICAL MANDATE: You MUST write your ENTIRE response in language code "${langCode}" (e.g., if langCode is 'hi' respond in Hindi, 'ta' respond in Tamil, 'te' respond in Telugu, 'kn' respond in Kannada, 'ml' respond in Malayalam, 'mr' respond in Marathi, 'bn' respond in Bengali, 'en' respond in English, 'gu' respond in Gujarati, 'pa' respond in Punjabi, 'or' respond in Odia, 'as' respond in Assamese, 'ur' respond in Urdu).
+CRITICAL MANDATE: You MUST write your ENTIRE response natively in the script and words of ${languageName} (language code: "${langCode}"). Do NOT answer in English unless the language code is 'en'.
 User Question: "${userText}"
 Location Context: ${locationName}
 ${weatherContext ? `Live Telemetry Context: ${weatherContext.tempC}°C, Humidity ${weatherContext.humidity}%, Condition ${weatherContext.conditionText}` : ''}`;
@@ -455,6 +546,7 @@ export async function processUserChatMessage(
 ): Promise<ChatMessage> {
   const queryLower = userText.toLowerCase();
   const dict = LOCALIZED_BOT_RESPONSES[langCode] || {};
+  const condText = translateWeatherCondition(currentWeather.conditionText, langCode);
 
   // 1. Detect target location (e.g. if user asks "weather in Tokyo", "rain in Delhi", "AQI in London")
   const { weather: targetWeather, isCustomLocation } = await detectTargetLocation(userText, currentWeather);
@@ -531,7 +623,7 @@ export async function processUserChatMessage(
     if (dict.rain_high && todayRainProb > 50) {
       summaryText = dict.rain_high.replace('{location}', targetWeather.locationName).replace('{prob}', String(todayRainProb)).replace('{precip}', String(precipMm));
     } else if (dict.rain_low && todayRainProb <= 50) {
-      summaryText = dict.rain_low.replace('{location}', targetWeather.locationName).replace('{prob}', String(todayRainProb));
+      summaryText = dict.rain_low.replace('{location}', targetWeather.locationName).replace('{prob}', String(todayRainProb)).replace('{condition}', condText);
     }
 
     if (geminiAnswer) {
@@ -617,7 +709,7 @@ export async function processUserChatMessage(
   const daily = await getDailyForecast(targetWeather.coords.lat, targetWeather.coords.lon);
   const defaultText = geminiAnswer
     ? geminiAnswer
-    : `Here is the verified weather intelligence for **${targetWeather.locationName}**:\n\n• **Temperature**: ${targetWeather.tempC}°C (Feels like ${targetWeather.feelsLikeC}°C)\n• **Conditions**: ${targetWeather.conditionText}\n• **Wind**: ${targetWeather.windSpeedKmh} km/h ${targetWeather.windDirectionText}\n• **Humidity**: ${targetWeather.humidity}%\n• **Pressure**: ${targetWeather.pressureHpa} hPa\n• **UV Index**: ${targetWeather.uvIndex}`;
+    : generateLocalizedDefaultWeatherReport(targetWeather, langCode);
 
   return {
     id: `msg-${Date.now()}`,

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { CurrentWeatherData, HourlyForecastItem, DailyForecastItem } from './types';
 import { getCurrentWeather, getHourlyForecast, getDailyForecast, INITIAL_DISASTER_ALERTS } from './services/weatherApi';
-import { translate } from './services/i18n';
+import { translate, getLocalizedWeatherSpeechText } from './services/i18n';
 import { Navbar } from './components/UI/Navbar';
 import { Footer } from './components/UI/Footer';
 import { WeatherCard } from './components/Weather/WeatherCard';
@@ -472,7 +472,7 @@ export function App() {
           currentLang={currentLang}
           onOpenLanguageModal={() => setIsLangModalOpen(true)}
           onOpenGuideModal={() => setIsGuideModalOpen(true)}
-          weatherSpeechText={`Current weather in ${currentWeather.locationName} is ${currentWeather.tempC} degrees Celsius, ${currentWeather.conditionText}. Relative humidity is ${currentWeather.humidity} percent with wind speed of ${currentWeather.windSpeedKmh} kilometers per hour.`}
+          weatherSpeechText={getLocalizedWeatherSpeechText(currentWeather, currentLang)}
         />
       )}
 

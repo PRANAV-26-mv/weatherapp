@@ -14,6 +14,7 @@ import {
   Clock
 } from 'lucide-react';
 import { VoiceButton } from '../UI/VoiceButton';
+import { translate, translateWeatherCondition, getLocalizedWeatherSpeechText } from '../../services/i18n';
 
 interface WeatherCardProps {
   weather: CurrentWeatherData;
@@ -28,7 +29,8 @@ export const WeatherCard: React.FC<WeatherCardProps> = ({
   isPermanentHome = false,
   onSetPermanentHome,
 }) => {
-  const speechText = `Current weather in ${weather.locationName} is ${weather.tempC} degrees Celsius, ${weather.conditionText}. Humidity is ${weather.humidity} percent with wind speed of ${weather.windSpeedKmh} kilometers per hour.`;
+  const speechText = getLocalizedWeatherSpeechText(weather, langCode);
+  const conditionDisplay = translateWeatherCondition(weather.conditionText, langCode);
 
   return (
     <div className="glass-card p-5 md:p-6 relative overflow-hidden group">
@@ -55,16 +57,16 @@ export const WeatherCard: React.FC<WeatherCardProps> = ({
             {/* Permanent Location Badge / Pin Button */}
             {isPermanentHome ? (
               <span className="inline-flex items-center gap-1 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-saffron text-black shadow-md animate-pulse">
-                <span>🏠 Permanent Home Location</span>
+                <span>🏠 {translate('permanent_home_location', langCode)}</span>
               </span>
             ) : onSetPermanentHome ? (
               <button
                 type="button"
                 onClick={() => onSetPermanentHome(weather.locationName, weather.coords.lat, weather.coords.lon)}
                 className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-saffron/20 hover:bg-saffron text-saffron hover:text-black border border-saffron/40 transition-all cursor-pointer"
-                title="Save as Permanent Home Location"
+                title={translate('set_permanent_home', langCode)}
               >
-                <span>📌 Set as Permanent Home</span>
+                <span>📌 {translate('set_permanent_home', langCode)}</span>
               </button>
             ) : null}
           </div>
@@ -79,7 +81,7 @@ export const WeatherCard: React.FC<WeatherCardProps> = ({
           <VoiceButton mode="output" textToSpeak={speechText} langCode={langCode} />
           <div className="px-2.5 py-1 rounded-full bg-saffron/10 border border-saffron/30 text-saffron text-[11px] font-semibold flex items-center gap-1.5">
             <ShieldAlert className="w-3.5 h-3.5" />
-            <span>Grounded Weather AI</span>
+            <span>{translate('grounded_weather_ai', langCode)}</span>
           </div>
         </div>
       </div>
@@ -92,7 +94,7 @@ export const WeatherCard: React.FC<WeatherCardProps> = ({
           </span>
           <div className="flex flex-col">
             <span className="text-xs text-gray-400 font-medium">
-              Feels like <strong className="text-white">{weather.feelsLikeC}°C</strong>
+              {translate('feels_like', langCode)} <strong className="text-white">{weather.feelsLikeC}°C</strong>
             </span>
             <span className="text-[10px] text-gray-500">
               ({weather.tempF}°F)
@@ -108,10 +110,10 @@ export const WeatherCard: React.FC<WeatherCardProps> = ({
           </div>
           <div>
             <div className="text-lg font-bold text-white">
-              {weather.conditionText}
+              {conditionDisplay}
             </div>
             <div className="text-[11px] text-gray-400">
-              Cloud cover: {weather.cloudCoverPct}%
+              {translate('cloud_cover', langCode)}: {weather.cloudCoverPct}%
             </div>
           </div>
         </div>
@@ -121,68 +123,70 @@ export const WeatherCard: React.FC<WeatherCardProps> = ({
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
         <div className="bg-white/5 p-3 rounded-xl border border-white/5 flex flex-col items-center text-center">
           <Droplets className="w-4 h-4 text-blue-400 mb-1" />
-          <span className="text-[10px] text-gray-400 font-medium">Humidity</span>
+          <span className="text-[10px] text-gray-400 font-medium">{translate('humidity', langCode)}</span>
           <span className="text-sm font-bold text-white mt-0.5">{weather.humidity}%</span>
         </div>
 
         <div className="bg-white/5 p-3 rounded-xl border border-white/5 flex flex-col items-center text-center">
           <Wind className="w-4 h-4 text-emerald-400 mb-1" />
-          <span className="text-[10px] text-gray-400 font-medium">Wind</span>
+          <span className="text-[10px] text-gray-400 font-medium">{translate('wind_speed', langCode)}</span>
           <span className="text-sm font-bold text-white mt-0.5">{weather.windSpeedKmh} <span className="text-[10px] font-normal text-gray-400">km/h</span></span>
         </div>
 
         <div className="bg-white/5 p-3 rounded-xl border border-white/5 flex flex-col items-center text-center">
           <Compass className="w-4 h-4 text-saffron mb-1" />
-          <span className="text-[10px] text-gray-400 font-medium">Direction</span>
+          <span className="text-[10px] text-gray-400 font-medium">{translate('direction', langCode)}</span>
           <span className="text-sm font-bold text-white mt-0.5">{weather.windDirectionText}</span>
         </div>
 
         <div className="bg-white/5 p-3 rounded-xl border border-white/5 flex flex-col items-center text-center">
           <Gauge className="w-4 h-4 text-purple-400 mb-1" />
-          <span className="text-[10px] text-gray-400 font-medium">Pressure</span>
+          <span className="text-[10px] text-gray-400 font-medium">{translate('pressure', langCode)}</span>
           <span className="text-sm font-bold text-white mt-0.5">{weather.pressureHpa} <span className="text-[10px] font-normal text-gray-400">hPa</span></span>
         </div>
 
         <div className="bg-white/5 p-3 rounded-xl border border-white/5 flex flex-col items-center text-center">
           <Sun className="w-4 h-4 text-yellow-400 mb-1" />
-          <span className="text-[10px] text-gray-400 font-medium">UV Index</span>
+          <span className="text-[10px] text-gray-400 font-medium">{translate('uv_index', langCode)}</span>
           <span className="text-sm font-bold text-white mt-0.5">{weather.uvIndex}</span>
         </div>
 
         <div className="bg-white/5 p-3 rounded-xl border border-white/5 flex flex-col items-center text-center">
           <Eye className="w-4 h-4 text-cyan-400 mb-1" />
-          <span className="text-[10px] text-gray-400 font-medium">Visibility</span>
+          <span className="text-[10px] text-gray-400 font-medium">{translate('visibility', langCode)}</span>
           <span className="text-sm font-bold text-white mt-0.5">{weather.visibilityKm} <span className="text-[10px] font-normal text-gray-400">km</span></span>
         </div>
       </div>
 
       {/* Easy Plain-Language Daily Practical Tips */}
       <div className="mt-4 pt-3 border-t border-white/10">
-        <div className="text-[10px] font-bold text-saffron uppercase tracking-wider mb-2">Easy Daily Advice & Tips</div>
+        <div className="text-[10px] font-bold text-saffron uppercase tracking-wider mb-2">
+          {translate('easy_daily_advice', langCode)}
+        </div>
         <div className="flex flex-wrap items-center gap-2">
           {weather.tempC > 32 ? (
             <span className="px-2.5 py-1 rounded-lg bg-orange-500/20 text-orange-300 border border-orange-500/30 text-xs font-semibold flex items-center gap-1">
-              ☀️ High heat: Stay hydrated & wear light cotton clothes
+              {translate('high_heat_tip', langCode)}
             </span>
           ) : weather.tempC < 20 ? (
             <span className="px-2.5 py-1 rounded-lg bg-blue-500/20 text-blue-300 border border-blue-500/30 text-xs font-semibold flex items-center gap-1">
-              🧥 Cool weather: Carry a warm light jacket
+              {translate('cool_weather_tip', langCode)}
             </span>
           ) : (
             <span className="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-semibold flex items-center gap-1">
-              🌿 Pleasant weather: Great day for outdoor activity & farming
+              {translate('pleasant_weather_tip', langCode)}
             </span>
           )}
 
           {weather.humidity > 70 && (
             <span className="px-2.5 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-xs font-semibold flex items-center gap-1">
-              💧 High humidity: Stay in well-ventilated areas
+              {translate('high_humidity_tip', langCode)}
             </span>
           )}
 
           {weather.windSpeedKmh > 20 && (
             <span className="px-2.5 py-1 rounded-lg bg-yellow-500/20 text-yellow-300 border border-yellow-500/30 text-xs font-semibold flex items-center gap-1">
-              💨 Gusty winds: Secure loose outdoor items
+              {translate('gusty_winds_tip', langCode)}
             </span>
           )}
         </div>
@@ -192,11 +196,11 @@ export const WeatherCard: React.FC<WeatherCardProps> = ({
       <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs text-gray-300">
         <div className="flex items-center gap-2">
           <Sunrise className="w-4 h-4 text-amber-400" />
-          <span>Sunrise: <strong className="text-white">{weather.sunrise} AM</strong></span>
+          <span>{translate('sunrise', langCode)}: <strong className="text-white">{weather.sunrise} AM</strong></span>
         </div>
         <div className="flex items-center gap-2">
           <Sunset className="w-4 h-4 text-orange-400" />
-          <span>Sunset: <strong className="text-white">{weather.sunset} PM</strong></span>
+          <span>{translate('sunset', langCode)}: <strong className="text-white">{weather.sunset} PM</strong></span>
         </div>
       </div>
     </div>
