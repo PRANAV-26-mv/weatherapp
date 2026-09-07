@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Mic, MicOff, Volume2, Square } from 'lucide-react';
+import { speakInLanguage, stopVoiceSpeech } from '../../services/voiceService';
 
 interface VoiceButtonProps {
   onSpeechResult?: (text: string) => void;
@@ -63,33 +64,18 @@ export const VoiceButton: React.FC<VoiceButtonProps> = ({
 
   const speakText = () => {
     if (!textToSpeak) return;
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-
-      if (isSpeaking) {
-        setIsSpeaking(false);
-        return;
-      }
-
-      const cleanText = textToSpeak.replace(/[*#]/g, '');
-      const utterance = new SpeechSynthesisUtterance(cleanText);
-      utterance.lang = targetLocale;
-      utterance.rate = 0.95;
-
-      // Try finding exact matching voice for the Indian language locale if available
-      const voices = window.speechSynthesis.getVoices();
-      const matchedVoice = voices.find(
-        (v) => v.lang.toLowerCase().includes(langCode) || v.lang.toLowerCase().includes(targetLocale.toLowerCase())
-      );
-      if (matchedVoice) {
-        utterance.voice = matchedVoice;
-      }
-
-      utterance.onstart = () => setIsSpeaking(true);
-      utterance.onend = () => setIsSpeaking(false);
-      utterance.onerror = () => setIsSpeaking(false);
-      window.speechSynthesis.speak(utterance);
+    if (isSpeaking) {
+      stopVoiceSpeech();
+      setIsSpeaking(false);
+      return;
     }
+
+    speakInLanguage(
+      textToSpeak,
+      langCode,
+      () => setIsSpeaking(true),
+      () => setIsSpeaking(false)
+    );
   };
 
   if (mode === 'output') {

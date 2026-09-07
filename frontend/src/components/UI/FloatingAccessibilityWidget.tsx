@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Volume2, Type, Eye, HelpCircle, X, ChevronUp, Sparkles, Globe } from 'lucide-react';
 import { VoiceButton } from './VoiceButton';
+import { speakInLanguage, stopVoiceSpeech } from '../../services/voiceService';
 
 interface FloatingAccessibilityWidgetProps {
   currentLang: string;
@@ -38,27 +39,18 @@ export const FloatingAccessibilityWidget: React.FC<FloatingAccessibilityWidgetPr
   }, [highContrast]);
 
   const handleSpeakSummary = () => {
-    if (!('speechSynthesis' in window)) {
-      alert('Speech synthesis is not supported in this browser.');
-      return;
-    }
-
     if (isSpeaking) {
-      window.speechSynthesis.cancel();
+      stopVoiceSpeech();
       setIsSpeaking(false);
       return;
     }
 
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(weatherSpeechText);
-    utterance.rate = 0.9;
-    utterance.pitch = 1.0;
-
-    utterance.onend = () => setIsSpeaking(false);
-    utterance.onerror = () => setIsSpeaking(false);
-
-    setIsSpeaking(true);
-    window.speechSynthesis.speak(utterance);
+    speakInLanguage(
+      weatherSpeechText,
+      currentLang,
+      () => setIsSpeaking(true),
+      () => setIsSpeaking(false)
+    );
   };
 
   return (

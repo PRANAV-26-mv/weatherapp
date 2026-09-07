@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Volume2, CheckCircle2, Sparkles, Mic, ArrowRight } from 'lucide-react';
+import { Volume2, CheckCircle2, Sparkles, ArrowRight } from 'lucide-react';
 import { SUPPORTED_LANGUAGES } from '../../services/i18n';
-import type { IndianLanguage } from '../../types';
+import { speakInLanguage } from '../../services/voiceService';
 
 interface LanguageWelcomeModalProps {
   isOpen: boolean;
@@ -38,172 +38,139 @@ export const VOICE_GREETINGS: Record<string, string> = {
   gu: "નમસ્તે! WeatherGPT AI માં આપનું સ્વાગત છે. વેબસાઇટ અને વોઇસ આસિસ્ટન્ટ હવે ગુજરાતીમાં કામ કરશે.",
   pa: "ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ! WeatherGPT AI ਵਿੱਚ ਤੁਹਾਡਾ ਸੁਆਗਤ ਹੈ। ਮੌਸਮ ਅਤੇ ਆਵਾਜ਼ ਸਹਾਇਕ ਹੁਣ ਪੰਜਾਬੀ ਵਿੱਚ ਕੰਮ ਕਰਨਗੇ।",
   or: "ନମସ୍କାର! WeatherGPT AI କୁ ସ୍ଵାଗତ। ପାଣିପାଗ ଏବଂ ଭଏସ୍ ସହାୟକ ଓଡ଼ିଆରେ କାମ କରିବେ।",
-  as: "নমস্কাৰ! WeatherGPT AI লৈ স্বাগতম। বতৰ আৰু ভইચ সহায়ক এতিয়া অসমীয়াত কাম কৰিব।",
+  as: "নমস্কাৰ! WeatherGPT AI লৈ স্বাগতম। বতৰ আৰু ଭইચ সহায়ক এতিয়া অসমীয়াত কাম কৰিব।",
   ur: "خوش آمدید! ویڈر جی پی ٹی میں آپ کا استقبال ہے۔ ویب سائٹ اور وائس اسسٹنٹ اب اردو میں کام کریں گے۔"
 };
 
-export function speakLanguageGreeting(langCode: string) {
-  if ('speechSynthesis' in window) {
-    window.speechSynthesis.cancel();
-    const greeting = VOICE_GREETINGS[langCode] || VOICE_GREETINGS['en'];
-    const locale = LANGUAGE_LOCALE_MAP[langCode] || 'en-IN';
-    const utterance = new SpeechSynthesisUtterance(greeting);
-    utterance.lang = locale;
-    utterance.rate = 0.95;
-
-    const voices = window.speechSynthesis.getVoices();
-    const matchedVoice = voices.find(
-      (v) => v.lang.toLowerCase().includes(langCode) || v.lang.toLowerCase().includes(locale.toLowerCase())
-    );
-    if (matchedVoice) {
-      utterance.voice = matchedVoice;
-    }
-    window.speechSynthesis.speak(utterance);
-  }
+export function speakLanguageGreeting(langCode: string, onStart?: () => void, onEnd?: () => void) {
+  const greeting = VOICE_GREETINGS[langCode] || VOICE_GREETINGS['en'];
+  speakInLanguage(greeting, langCode, onStart, onEnd);
 }
 
 export const LanguageWelcomeModal: React.FC<LanguageWelcomeModalProps> = ({
   isOpen,
   onClose,
   currentLang,
-  onSelectLanguage,
+  onSelectLanguage
 }) => {
-  const [selectedCode, setSelectedCode] = useState<string>(currentLang);
-  const [playingCode, setPlayingCode] = useState<string | null>(null);
+  const [selected, setSelected] = useState<string>(currentLang);
+  const [isPlayingSample, setIsPlayingSample] = useState<boolean>(false);
 
   if (!isOpen) return null;
 
-  const handlePlaySample = (e: React.MouseEvent, code: string) => {
-    e.stopPropagation();
-    setPlayingCode(code);
-    speakLanguageGreeting(code);
-    setTimeout(() => setPlayingCode(null), 4000);
+  const handleTestVoice = (langCode: string, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    setIsPlayingSample(true);
+    speakLanguageGreeting(
+      langCode,
+      () => setIsPlayingSample(true),
+      () => setIsPlayingSample(false)
+    );
   };
 
-  const handleConfirmChoice = () => {
-    onSelectLanguage(selectedCode);
-    localStorage.setItem('weathergpt_user_lang', selectedCode);
+  const handleConfirm = () => {
+    onSelectLanguage(selected);
+    localStorage.setItem('weathergpt_user_lang', selected);
     localStorage.setItem('weathergpt_has_chosen_lang', 'true');
-    speakLanguageGreeting(selectedCode);
+    handleTestVoice(selected);
     onClose();
   };
 
-  const activeLangObj = SUPPORTED_LANGUAGES.find((l) => l.code === selectedCode) || SUPPORTED_LANGUAGES[0];
+  const selectedLangObj = SUPPORTED_LANGUAGES.find((l) => l.code === selected) || SUPPORTED_LANGUAGES[0];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-xl p-4 animate-fade-in">
-      <div className="glass-panel p-4 sm:p-6 md:p-8 rounded-3xl border border-saffron/50 max-w-2xl w-full space-y-4 md:space-y-6 shadow-2xl relative overflow-hidden max-h-[90vh] overflow-y-auto">
-        {/* Decorative Ambient Glow */}
-        <div className="absolute -top-24 -right-24 w-60 h-60 bg-saffron/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-24 -left-24 w-60 h-60 bg-indiagreen/20 rounded-full blur-3xl pointer-events-none" />
-
-        {/* Modal Header */}
-        <div className="text-center space-y-2 relative z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-saffron/20 border border-saffron/40 text-saffron text-xs font-bold shadow-lg">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-lg p-4 animate-in fade-in duration-300">
+      <div className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto bg-slate-950/95 border border-saffron/40 rounded-3xl shadow-2xl p-6 md:p-8 text-white">
+        
+        {/* Header Badge & Title */}
+        <div className="text-center max-w-xl mx-auto mb-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-saffron/20 text-saffron border border-saffron/30 text-xs font-bold uppercase tracking-wider mb-3">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Select Website & Voice Assistant Language</span>
+            <span>Select Operating Language</span>
           </div>
-
-          <h2 className="text-2xl md:text-3xl font-extrabold text-white font-heading tracking-tight">
-            Choose Your Operating Language
+          <h2 className="text-2xl md:text-3xl font-extrabold font-outfit text-white tracking-tight mb-2">
+            Choose Your Preferred Language
           </h2>
-          
-          <p className="text-xs md:text-sm text-gray-300 max-w-lg mx-auto leading-relaxed">
-            अपनी भाषा चुनें • உங்கள் மொழியைத் தேர்ந்தெடுக்கவும் • మీ భాషను ఎంచుకోండి • ನಿಮ್ಮ ಭಾಷೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ
-          </p>
-          <p className="text-[11px] text-saffron/90 font-semibold">
-            🎙️ The website UI, AI Chat, and Voice Assistant (STT & TTS) will run in your chosen language.
+          <p className="text-xs md:text-sm text-slate-300">
+            WeatherGPT website interface, AI assistance, and voice output will speak natively in your language.
           </p>
         </div>
 
-        {/* Grid of Indian Languages */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 max-h-72 overflow-y-auto p-1 scrollbar-thin scrollbar-thumb-saffron/30 relative z-10">
-          {SUPPORTED_LANGUAGES.map((lang: IndianLanguage) => {
-            const isSelected = selectedCode === lang.code;
-            const isPlaying = playingCode === lang.code;
-
+        {/* Language Selection Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 mb-6">
+          {SUPPORTED_LANGUAGES.map((lang) => {
+            const isSelected = selected === lang.code;
             return (
               <div
                 key={lang.code}
                 onClick={() => {
-                  setSelectedCode(lang.code);
-                  onSelectLanguage(lang.code);
+                  setSelected(lang.code);
+                  handleTestVoice(lang.code);
                 }}
-                className={`p-3 rounded-2xl border cursor-pointer transition-all flex flex-col justify-between space-y-2 relative group ${
+                className={`cursor-pointer relative p-3.5 rounded-2xl border transition-all duration-200 flex flex-col justify-between ${
                   isSelected
-                    ? 'bg-gradient-to-br from-saffron/30 via-saffron/10 to-transparent border-saffron shadow-lg shadow-saffron/20 scale-[1.02]'
-                    : 'bg-white/5 hover:bg-white/10 border-white/10 text-gray-300'
+                    ? 'bg-gradient-to-b from-saffron/25 to-amber-950/50 border-saffron shadow-lg shadow-saffron/15 ring-2 ring-saffron/40 scale-[1.02]'
+                    : 'bg-slate-900/60 border-white/10 hover:border-saffron/40 hover:bg-slate-800/60'
                 }`}
               >
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-gray-400 group-hover:text-white transition-colors">
-                    {lang.name}
-                  </span>
-                  {isSelected ? (
-                    <CheckCircle2 className="w-4 h-4 text-saffron fill-saffron/20 shrink-0" />
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={(e) => handlePlaySample(e, lang.code)}
-                      className={`p-1 rounded-full transition-all ${
-                        isPlaying
-                          ? 'bg-saffron text-black animate-pulse'
-                          : 'bg-white/10 hover:bg-saffron/30 text-gray-300 hover:text-saffron'
-                      }`}
-                      title={`Listen Voice Sample (${lang.name})`}
-                    >
-                      <Volume2 className="w-3.5 h-3.5" />
-                    </button>
-                  )}
-                </div>
+                {isSelected && (
+                  <CheckCircle2 className="w-4 h-4 text-saffron absolute top-2.5 right-2.5" />
+                )}
 
                 <div>
-                  <div className="text-base md:text-lg font-bold text-white font-heading">
-                    {lang.nativeName}
-                  </div>
-                  <div className="text-[10px] text-gray-400 font-mono">
-                    Script: {lang.script}
-                  </div>
+                  <div className="text-base font-bold text-white mb-0.5">{lang.nativeName}</div>
+                  <div className="text-xs text-slate-400 font-medium">{lang.name}</div>
+                </div>
+
+                <div className="mt-3 pt-2 border-t border-white/10 flex items-center justify-between">
+                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-white/5 text-slate-400 font-mono">
+                    {lang.script}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={(e) => handleTestVoice(lang.code, e)}
+                    className="p-1 rounded-full bg-saffron/20 hover:bg-saffron text-saffron hover:text-black transition-colors"
+                    title={`Listen to Voice Sample in ${lang.name}`}
+                  >
+                    <Volume2 className="w-3.5 h-3.5" />
+                  </button>
                 </div>
               </div>
             );
           })}
         </div>
 
-        {/* Selected Language Voice Guarantee Banner */}
-        <div className="p-3 rounded-2xl bg-white/5 border border-saffron/30 flex items-center justify-between gap-3 relative z-10 text-xs">
-          <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-saffron/20 text-saffron shrink-0">
-              <Mic className="w-4 h-4" />
-            </div>
+        {/* Bottom Sample Preview & Launch Button */}
+        <div className="p-4 rounded-2xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 border border-saffron/30 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3 text-left">
+            <button
+              onClick={() => handleTestVoice(selected)}
+              className={`p-3 rounded-full bg-saffron text-black font-bold flex-shrink-0 transition-transform ${
+                isPlayingSample ? 'animate-bounce scale-110' : 'hover:scale-105'
+              }`}
+              title="Test Voice Sample"
+            >
+              <Volume2 className="w-5 h-5" />
+            </button>
             <div>
-              <span className="text-gray-300">Selected Voice Target: </span>
-              <strong className="text-saffron font-bold">{activeLangObj.nativeName} ({activeLangObj.name})</strong>
-              <span className="text-[10px] text-gray-400 block font-mono">Locale Code: {LANGUAGE_LOCALE_MAP[activeLangObj.code] || 'en-IN'}</span>
+              <div className="text-xs font-bold text-saffron">
+                Selected: {selectedLangObj.nativeName} ({selectedLangObj.name})
+              </div>
+              <div className="text-[11px] text-slate-300 italic line-clamp-1">
+                "{VOICE_GREETINGS[selected]}"
+              </div>
             </div>
           </div>
 
           <button
-            type="button"
-            onClick={(e) => handlePlaySample(e, activeLangObj.code)}
-            className="px-3 py-1.5 rounded-xl bg-saffron/20 hover:bg-saffron text-saffron hover:text-black border border-saffron/40 font-bold text-[11px] flex items-center gap-1.5 transition-all shrink-0"
+            onClick={handleConfirm}
+            className="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-saffron to-amber-500 hover:from-amber-500 hover:to-saffron text-black font-extrabold text-xs uppercase tracking-wider shadow-xl hover:shadow-saffron/25 transition-all flex items-center justify-center gap-2 shrink-0"
           >
-            <Volume2 className="w-3.5 h-3.5" />
-            <span>Test Voice</span>
-          </button>
-        </div>
-
-        {/* Action Button */}
-        <div className="flex items-center justify-end gap-3 pt-1 relative z-10">
-          <button
-            type="button"
-            onClick={handleConfirmChoice}
-            className="w-full saffron-gradient-btn py-3.5 rounded-2xl text-sm font-extrabold flex items-center justify-center gap-2 shadow-xl shadow-saffron/30 hover:scale-[1.01] transition-transform"
-          >
-            <span>Start Website in {activeLangObj.nativeName} ({activeLangObj.name})</span>
+            <span>Confirm & Launch App</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>
+
       </div>
     </div>
   );
