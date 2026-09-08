@@ -1,7 +1,7 @@
 import type { ChatMessage, CurrentWeatherData, VisionAnalysisResult } from '../types';
 import { searchLocation, getCurrentWeather, getDailyForecast, getAirQuality, INITIAL_DISASTER_ALERTS } from './weatherApi';
 import { translateWeatherCondition } from './i18n';
-import { analyzeChatbotQuestion } from './googleChatbotService';
+import { analyzeChatbotQuestion, stripMarkdownAsterisks } from './googleChatbotService';
 
 export const LANGUAGE_NAME_MAP: Record<string, string> = {
   en: 'English',
@@ -622,7 +622,7 @@ export async function processUserChatMessage(
     return {
       id: `msg-${Date.now()}`,
       sender: 'assistant',
-      text: summaryText,
+      text: stripMarkdownAsterisks(summaryText),
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       weatherCard: targetWeather,
       forecastData: daily,
@@ -636,16 +636,16 @@ export async function processUserChatMessage(
     const matchedAlert = INITIAL_DISASTER_ALERTS[0];
     const alertPrefix = dict.alert_status
       ? dict.alert_status.replace('{location}', targetWeather.locationName)
-      : `Alert Status for **${targetWeather.locationName}**: Active weather advisory in effect.`;
+      : `Alert Status for ${targetWeather.locationName}: Active weather advisory in effect.`;
 
     const alertText = geminiAnswer
       ? geminiAnswer
-      : `${alertPrefix} Hazard: **${matchedAlert.hazardType}** (Severity: ${matchedAlert.severity.toUpperCase()}). Issued by ${matchedAlert.source}.`;
+      : `${alertPrefix} Hazard: ${matchedAlert.hazardType} (Severity: ${matchedAlert.severity.toUpperCase()}). Issued by ${matchedAlert.source}.`;
 
     return {
       id: `msg-${Date.now()}`,
       sender: 'assistant',
-      text: alertText,
+      text: stripMarkdownAsterisks(alertText),
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       alertData: { ...matchedAlert, affectedLocation: targetWeather.locationName },
       sources: [matchedAlert.source, 'Google Cloud Alert Gateway'],
@@ -657,16 +657,16 @@ export async function processUserChatMessage(
   if (queryLower.includes('farm') || queryLower.includes('crop') || queryLower.includes('kisan') || queryLower.includes('agriculture') || queryLower.includes('harvest') || queryLower.includes('விவசாயம்')) {
     const agriHeading = dict.agri_title
       ? dict.agri_title.replace('{location}', targetWeather.locationName)
-      : `🌾 **Farm Weather Advisory for ${targetWeather.locationName}**`;
+      : `🌾 Farm Weather Advisory for ${targetWeather.locationName}`;
 
     const agriText = geminiAnswer
       ? geminiAnswer
-      : `${agriHeading}\n\n• **Current Temp & Moisture**: ${targetWeather.tempC}°C, Humidity ${targetWeather.humidity}%\n• **Irrigation Guidance**: Soil moisture levels are moderate (${targetWeather.humidity - 10}%). Schedule light irrigation during evening hours.\n• **Pest Risk**: Moderate fungal spore risk due to relative humidity exceeding 70%.\n• **Harvest Window**: Favorable 3-day dry weather window ahead. Ideal for harvesting mature crops.`;
+      : `${agriHeading}\n\n• Current Temp & Moisture: ${targetWeather.tempC}°C, Humidity ${targetWeather.humidity}%\n• Irrigation Guidance: Soil moisture levels are moderate (${targetWeather.humidity - 10}%). Schedule light irrigation during evening hours.\n• Pest Risk: Moderate fungal spore risk due to relative humidity exceeding 70%.\n• Harvest Window: Favorable 3-day dry weather window ahead. Ideal for harvesting mature crops.`;
 
     return {
       id: `msg-${Date.now()}`,
       sender: 'assistant',
-      text: agriText,
+      text: stripMarkdownAsterisks(agriText),
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       sources: ['ICAR Agromet Advisory System', 'Google Cloud Agriculture AI'],
       toolCalled: `get_agriculture_advisory(${targetWeather.locationName})`,
@@ -678,16 +678,16 @@ export async function processUserChatMessage(
     const aqiData = await getAirQuality(targetWeather.coords.lat, targetWeather.coords.lon);
     const aqiHeading = dict.aqi_title
       ? dict.aqi_title.replace('{location}', targetWeather.locationName)
-      : `🍃 **Air Quality Intelligence for ${targetWeather.locationName}**`;
+      : `🍃 Air Quality Intelligence for ${targetWeather.locationName}`;
 
     const aqiText = geminiAnswer
       ? geminiAnswer
-      : `${aqiHeading}\n\n• **AQI**: ${aqiData.aqi} (${aqiData.statusText})\n• **PM2.5**: ${aqiData.pm25} µg/m³ | **PM10**: ${aqiData.pm10} µg/m³\n• **Health Advisory**: ${aqiData.healthAdvice}`;
+      : `${aqiHeading}\n\n• AQI: ${aqiData.aqi} (${aqiData.statusText})\n• PM2.5: ${aqiData.pm25} µg/m³ | PM10: ${aqiData.pm10} µg/m³\n• Health Advisory: ${aqiData.healthAdvice}`;
 
     return {
       id: `msg-${Date.now()}`,
       sender: 'assistant',
-      text: aqiText,
+      text: stripMarkdownAsterisks(aqiText),
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       sources: ['CPCB Air Quality Network', 'Google Cloud Atmosphere AI'],
       toolCalled: `get_air_quality(${targetWeather.locationName})`,
@@ -703,7 +703,7 @@ export async function processUserChatMessage(
   return {
     id: `msg-${Date.now()}`,
     sender: 'assistant',
-    text: defaultText,
+    text: stripMarkdownAsterisks(defaultText),
     timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     weatherCard: targetWeather,
     forecastData: daily,

@@ -8,6 +8,11 @@ import { LANGUAGE_NAME_MAP } from './aiAssistant';
 
 const LOCAL_STORAGE_KEY = 'VITE_CHATBOT_GEMINI_API_KEY';
 
+export function stripMarkdownAsterisks(text: string): string {
+  if (!text) return '';
+  return text.replace(/\*\*/g, '').replace(/\*/g, '').trim();
+}
+
 export function getChatbotApiKey(): string | null {
   const localKey = localStorage.getItem(LOCAL_STORAGE_KEY);
   if (localKey && localKey.trim().length > 10) return localKey.trim();
@@ -68,14 +73,15 @@ export async function analyzeChatbotQuestion(
 Provide a direct, accurate, professional, user-friendly, and detailed answer to the user's weather or science question.
 
 CRITICAL MANDATES:
-1. LANGUAGE: You MUST write your ENTIRE response natively in ${languageName} (language code: "${langCode}"). Do NOT write in English unless the language code is 'en'.
-2. RAIN / FORECAST VERDICT: If the user asks whether it will rain today, tomorrow, or on a specific day (e.g. 'will it rain tomorrow?', 'நாளை மழை பெய்யுமா?', 'कल बारिश होगी?'), start on line 1 with an explicit bold YES or NO verdict in the user's language!
+1. NO ASTERISKS (** or *): Do NOT use any asterisks (** or *) in your text output! Provide clean plain text responses with emojis for readability.
+2. LANGUAGE: You MUST write your ENTIRE response natively in ${languageName} (language code: "${langCode}"). Do NOT write in English unless the language code is 'en'.
+3. RAIN / FORECAST VERDICT: If the user asks whether it will rain today, tomorrow, or on a specific day (e.g. 'will it rain tomorrow?', 'நாளை மழை பெய்யுமா?', 'कल बारिश होगी?'), start on line 1 with an explicit YES or NO verdict in the user's language!
 Examples for Line 1:
 - Tamil: 'ஆம் 🌧️ — நாளை மழை பெய்ய வாய்ப்புள்ளது.' (YES) or 'இல்லை ☀️ — நாளை மழை பெய்ய வாய்ப்பில்லை.' (NO).
 - Hindi: 'हाँ 🌧️ — कल बारिश होने की संभावना है।' (YES) or 'नहीं ☀️ — कल बारिश की संभावना नहीं है।' (NO).
 - Telugu: 'అవును 🌧️ — రేపు వర్షం పడే అవకాశం ఉంది.' (YES) or 'లేదు ☀️ — రేపు వర్షం పడే అవకాశం లేదు.' (NO).
 - English: 'YES 🌧️ — Rain is expected tomorrow.' or 'NO ☀️ — No rain expected tomorrow.'
-3. ANALYSIS: Follow verdict with moisture, cloud, wind, temperature analysis, and practical safety advice.
+4. ANALYSIS: Follow verdict with moisture, cloud, wind, temperature analysis, and practical safety advice.
 
 User Question: "${query}"
 Location Context: ${locationName}
@@ -98,7 +104,7 @@ ${weatherContext ? `Live Telemetry Context: ${weatherContext.tempC}°C, Humidity
         const responseText = data.candidates?.[0]?.content?.parts?.[0]?.text;
         if (responseText) {
           return {
-            text: responseText,
+            text: stripMarkdownAsterisks(responseText),
             toolCalled: 'google_cloud_gemini_chatbot_service(generate_content)',
             sources: ['Google Cloud Gemini 1.5 Flash AI Engine', 'WMO Meteorological Standards'],
             isDedicatedKeyUsed: true,
@@ -128,7 +134,7 @@ ${weatherContext ? `Live Telemetry Context: ${weatherContext.tempC}°C, Humidity
       const data = await backendRes.json();
       if (data && data.text) {
         return {
-          text: data.text,
+          text: stripMarkdownAsterisks(data.text),
           toolCalled: data.tool_called || 'google_cloud_backend_chatbot_api',
           sources: [data.sources || 'Google Cloud AI Proxy, WMO Meteorological Network'],
           isDedicatedKeyUsed: !!apiKey
