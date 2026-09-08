@@ -59,19 +59,31 @@ def generate_fallback_analysis(query: str, location: str, weather_context: Optio
     is_tomorrow = any(k in query.lower() for k in ["tomorrow", "naalai", "நாளை", "kal", "कल", "repu", "రేపు", "నాಳೆ"])
 
     if is_rain_query:
-        is_yes = rain_prob >= 40 or "rain" in condition.lower()
+        is_yes = rain_prob >= 40 or "rain" in condition.lower() or "drizzle" in condition.lower()
+        time_frame = "tomorrow" if is_tomorrow else "today"
         if lang_code == "ta":
-            verdict = f"ஆம் 🌧️ — {is_tomorrow and 'நாளை' or 'இன்று'} {loc} நகரில் மழை பெய்ய வாய்ப்புள்ளது." if is_yes else f"இல்லை ☀️ — {is_tomorrow and 'நாளை' or 'இன்று'} {loc} நகரில் மழை பெய்ய வாய்ப்பில்லை."
-            return f"{verdict}\n\n• **வெப்பநிலை**: {temp}°C\n• **மழை வாய்ப்பு**: {rain_prob}%\n• **ஈரப்பதம்**: {humidity}%\n• **வானிலை**: {condition}\n\nவெளியே செல்லும்போது குடை எடுத்துச் செல்லவும்!"
+            time_frame_ta = "நாளை" if is_tomorrow else "இன்று"
+            if is_yes:
+                return f"ஆம் 🌧️ — {time_frame_ta} {loc} நகரில் மழை பெய்ய வாய்ப்புள்ளது (மழை வாய்ப்பு: {rain_prob}%, வானிலை: {condition}). வெளியே செல்லும்போது குடை எடுத்துச் செல்லவும்!"
+            else:
+                return f"இல்லை ☀️ — {time_frame_ta} {loc} நகரில் மழை பெய்ய வாய்ப்பில்லை (மழை வாய்ப்பு: {rain_prob}%, வானிலை: {condition})."
         elif lang_code == "hi":
-            verdict = f"हाँ 🌧️ — {is_tomorrow and 'कल' or 'आज'} {loc} में बारिश होने की संभावना है।" if is_yes else f"नहीं ☀️ — {is_tomorrow and 'कल' or 'आज'} {loc} में बारिश की संभावना नहीं है।"
-            return f"{verdict}\n\n• **तापमान**: {temp}°C\n• **बारिश की संभावना**: {rain_prob}%\n• **आर्द्रता**: {humidity}%\n• **मौसम**: {condition}\n\nबाहर निकलते समय छाता साथ रखें!"
+            time_frame_hi = "कल" if is_tomorrow else "आज"
+            if is_yes:
+                return f"हाँ 🌧️ — {time_frame_hi} {loc} में बारिश होने की संभावना है (संभावना: {rain_prob}%, मौसम: {condition})। बाहर निकलते समय छाता साथ रखें!"
+            else:
+                return f"नहीं ☀️ — {time_frame_hi} {loc} में बारिश की संभावना नहीं है (संभावना: {rain_prob}%, मौसम: {condition})।"
         elif lang_code == "te":
-            verdict = f"అవును 🌧️ — {is_tomorrow and 'రేపు' or 'ఈరోజు'} {loc} లో వర్షం పడే అవకాశం ఉంది." if is_yes else f"లేదు ☀️ — {is_tomorrow and 'రేపు' or 'ఈరోజు'} {loc} లో వర్షం పడే అవకాశం లేదు."
-            return f"{verdict}\n\n• **ఉష్ణోగ్రత**: {temp}°C\n• **వర్షం అవకాశం**: {rain_prob}%\n• **తేమ**: {humidity}%\n• **వాతావరణం**: {condition}"
+            time_frame_te = "రేపు" if is_tomorrow else "ఈరోజు"
+            if is_yes:
+                return f"అవును 🌧️ — {time_frame_te} {loc} లో వర్షం పడే అవకాశం ఉంది (వర్షం అవకాశం: {rain_prob}%, వాతావరణం: {condition}). గొడుగు తీసుకువెళ్లండి!"
+            else:
+                return f"లేదు ☀️ — {time_frame_te} {loc} లో వర్షం పడే అవకాశం లేదు (వర్షం అవకాశం: {rain_prob}%, వాతావరణం: {condition})."
         else:
-            verdict = f"YES 🌧️ — Rain is expected in {loc} {is_tomorrow and 'tomorrow' or 'today'}." if is_yes else f"NO ☀️ — Rain is unlikely in {loc} {is_tomorrow and 'tomorrow' or 'today'}."
-            return f"{verdict}\n\n• **Temperature**: {temp}°C\n• **Rain Probability**: {rain_prob}%\n• **Relative Humidity**: {humidity}%\n• **Condition**: {condition}\n\nPlan outdoor activities accordingly!"
+            if is_yes:
+                return f"YES 🌧️ — Rain is expected in {loc} {time_frame} (Probability: {rain_prob}%, Condition: {condition}). Be sure to carry an umbrella!"
+            else:
+                return f"NO ☀️ — Rain is unlikely in {loc} {time_frame} (Probability: {rain_prob}%, Condition: {condition}). Enjoy clear skies!"
 
     if lang_code == "ta":
         return f"🌤️ **{loc} நகரத்திற்கான வானிலை பகுப்பாய்வு**\n\n• **வெப்பநிலை**: {temp}°C\n• **வானிலை நிலை**: {condition}\n• **ஈரப்பதம்**: {humidity}%\n• **மழை வாய்ப்பு**: {rain_prob}%\n\nவானிலை சீராக உள்ளது. அன்றாட நடவடிக்கைகளைத் தொடங்கலாம்!"

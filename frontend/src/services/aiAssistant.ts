@@ -611,7 +611,12 @@ export async function processUserChatMessage(
     let summaryText = formattedVerdict;
 
     if (geminiAnswer) {
-      summaryText = `${formattedVerdict}\n\n${geminiAnswer}`;
+      const hasVerdictPrefix = /^(YES|NO|ஆம்|இல்லை|हाँ|नहीं|అవును|లేదు|হাঁ|না|ಹೌದು|ಇಲ್ಲ|അതെ|இல்லை|होय|नाही)/i.test(geminiAnswer.trim());
+      if (hasVerdictPrefix) {
+        summaryText = geminiAnswer.trim();
+      } else {
+        summaryText = `${formattedVerdict}\n\n${geminiAnswer.trim()}`;
+      }
     }
 
     return {
