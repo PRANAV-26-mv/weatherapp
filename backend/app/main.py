@@ -16,6 +16,7 @@ from app.models import (
     DisasterAlert, AffectedArea, NotificationHistory,
     VoiceQuery, ClimateHistory, ChatHistory
 )
+from app.chatbot_service import process_chatbot_query, get_chatbot_api_key
 
 # Load backend/.env if available
 env_path = Path(__file__).parent.parent / ".env"
@@ -247,6 +248,39 @@ async def get_active_disaster_alerts(lat: float = 19.076, lon: float = 72.8777):
 
 # Google Cloud Gemini API configuration
 GEMINI_API_KEY = os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY") or os.getenv("VITE_GEMINI_API_KEY")
+
+@app.post("/api/ai/chatbot")
+async def dedicated_chatbot_endpoint(payload: Dict, db: Session = Depends(get_db)):
+    """Dedicated Chatbot API handler powered by Google Cloud Gemini API."""
+    query = payload.get("query", "")
+    location = payload.get("location", "")
+    weather_context = payload.get("weather_context", {})
+    lang_code = payload.get("lang_code", "en")
+    api_key_override = payload.get("api_key")
+
+    res = await process_chatbot_query(
+        query=query,
+        location=location,
+        weather_context=weather_context,
+        lang_code=lang_code,
+        api_key_override=api_key_override
+    )
+
+    if res.get("text"):
+        try:
+            chat_record = ChatHistory(
+                user_query=query,
+                bot_response=res.get("text"),
+                language_code=lang_code,
+                tool_called=res.get("tool_called", "google_cloud_chatbot_service"),
+                sources_used=res.get("sources", "Google Cloud API")
+            )
+            db.add(chat_record)
+            db.commit()
+        except Exception as db_err:
+            print(f"Error persisting chatbot record: {db_err}")
+
+    return res
 
 @app.post("/api/ai/chat")
 async def ai_chat_handler(payload: Dict, db: Session = Depends(get_db)):

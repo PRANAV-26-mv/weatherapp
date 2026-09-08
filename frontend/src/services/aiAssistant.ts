@@ -1,6 +1,7 @@
 import type { ChatMessage, CurrentWeatherData, VisionAnalysisResult } from '../types';
 import { searchLocation, getCurrentWeather, getDailyForecast, getAirQuality, INITIAL_DISASTER_ALERTS } from './weatherApi';
 import { translateWeatherCondition } from './i18n';
+import { analyzeChatbotQuestion } from './googleChatbotService';
 
 export const LANGUAGE_NAME_MAP: Record<string, string> = {
   en: 'English',
@@ -268,71 +269,15 @@ async function detectTargetLocation(
   return { weather: defaultWeather, isCustomLocation: false };
 }
 
-// Google Cloud Gemini API Integration Caller
+// Google Cloud Gemini API Integration Caller using Dedicated Chatbot Service
 async function callGoogleCloudGeminiAPI(
   userText: string,
   locationName: string,
   weatherContext?: CurrentWeatherData,
   langCode: string = 'en'
 ): Promise<string | null> {
-  const apiKey = localStorage.getItem('VITE_GEMINI_API_KEY') || (import.meta as any).env?.VITE_GEMINI_API_KEY || (window as any).GEMINI_API_KEY;
-  const languageName = LANGUAGE_NAME_MAP[langCode] || 'English';
-
-  if (apiKey) {
-    try {
-      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
-      const promptText = `You are WeatherGPT, an advanced AI meteorological intelligence assistant powered by Google Cloud AI.
-Answer the user's question directly, accurately, and concisely.
-CRITICAL MANDATE: You MUST write your ENTIRE response natively in the script and words of ${languageName} (language code: "${langCode}"). Do NOT answer in English unless the language code is 'en'.
-User Question: "${userText}"
-Location Context: ${locationName}
-${weatherContext ? `Live Telemetry Context: ${weatherContext.tempC}°C, Humidity ${weatherContext.humidity}%, Condition ${weatherContext.conditionText}` : ''}`;
-
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [
-            {
-              parts: [{ text: promptText }]
-            }
-          ]
-        })
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-        if (text) return text;
-      }
-    } catch (err) {
-      console.warn('Direct Google Cloud Gemini API call failed:', err);
-    }
-  }
-
-  // Fallback call to backend FastAPI endpoint (/api/ai/chat) which also integrates Google Cloud Gemini
-  try {
-    const backendRes = await fetch('http://localhost:8000/api/ai/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        query: userText,
-        location: locationName,
-        weather_context: weatherContext,
-        lang_code: langCode,
-      })
-    });
-    if (backendRes.ok) {
-      const data = await backendRes.json();
-      if (data && data.text) {
-        return data.text;
-      }
-    }
-  } catch (err) {
-    // Backend offline or unreachable
-  }
-
-  return null;
+  const result = await analyzeChatbotQuestion(userText, locationName, weatherContext, langCode);
+  return result?.text || null;
 }
 
 // Science & Meteorological General Knowledge Engine - Fully Multilingual
