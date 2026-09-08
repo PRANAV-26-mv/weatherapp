@@ -22,32 +22,32 @@ export const LANGUAGE_NAME_MAP: Record<string, string> = {
 export function getLocalizedWelcomeMessage(locationName: string, langCode: string = 'en'): string {
   switch (langCode) {
     case 'hi':
-      return `नमस्ते! मैं **वेदर-जीपीटी (WeatherGPT)** हूँ, आपका एआई मौसम सहायक। आप मुझसे मौसम से जुड़ा कोई भी सवाल पूछ सकते हैं (जैसे *"मानसून कैसे बनता है?"*, *"दिल्ली में बारिश"*), या **${locationName}** के लिए फोटो अपलोड कर सकते हैं।`;
+      return `नमस्ते! मैं वेदर-जीपीटी (WeatherGPT) हूँ, आपका एआई मौसम सहायक। आप मुझसे मौसम से जुड़ा कोई भी सवाल पूछ सकते हैं (जैसे *"मानसून कैसे बनता है?"*, *"दिल्ली में बारिश"*), या ${locationName} के लिए फोटो अपलोड कर सकते हैं।`;
     case 'ta':
-      return `வணக்கம்! நான் **வெதர்ஜிபிடி (WeatherGPT)** செயற்கை நுண்ணறிவு வானிலை உதவியாளர். வானிலை குறித்த கேள்விகளைக் கேட்கலாம் (எ.கா. *"பருவமழை என்றால் என்ன?"*, *"சென்னையில் மழை"*), அல்லது **${locationName}** நகரின் மேகப் படத்தை பகுப்பாய்வு செய்ய பதிவேற்றலாம்.`;
+      return `வணக்கம்! நான் வெதர்ஜிபிடி (WeatherGPT) செயற்கை நுண்ணறிவு வானிலை உதவியாளர். வானிலை குறித்த கேள்விகளைக் கேட்கலாம் (எ.கா. *"பருவமழை என்றால் என்ன?"*, *"சென்னையில் மழை"*), அல்லது ${locationName} நகரின் மேகப் படத்தை பகுப்பாய்வு செய்ய பதிவேற்றலாம்.`;
     case 'te':
-      return `నమస్కారం! నేను **WeatherGPT** AI వాతావరణ సహాయకుడిని. వాతావరణ విషయాలు అడగండి (ఉదా. *"రుతుపవనాలు ఎలా వస్తాయి?"*, *"హైదరాబాద్ వాతావరణం"*), లేదా **${locationName}** కోసం ఫోటో అప్‌లోడ్ చేయండి.`;
+      return `నమస్కారం! నేను WeatherGPT AI వాతావరణ సహాయకుడిని. వాతావరణ విషయాలు అడగండి (ఉదా. *"రుతుపవనాలు ఎలా వస్తాయి?"*, *"హైదరాబాద్ వాతావరణం"*), లేదా ${locationName} కోసం ఫోటో అప్‌లోడ్ చేయండి.`;
     case 'kn':
-      return `ನಮಸ್ಕಾರ! ನಾನು **WeatherGPT** AI ಹವಾಮಾನ ಸಹಾಯಕ. ಹವಾಮಾನ ಪ್ರಶ್ನೆಗಳನ್ನು ಕೇಳಿ (ಉದಾ. *"ಮಳೆಗಾಲ ಹೇಗೆ ಪ್ರಾರಂಭವಾಗುತ್ತದೆ?"*, *"ಬೆಂಗಳೂರು ಹವಾಮಾನ"*), ಅಥವಾ **${locationName}** ಚಿತ್ರ ವಿಶ್ಲೇಷಿಸಿ.`;
+      return `ನಮಸ್ಕಾರ! ನಾನು WeatherGPT AI ಹವಾಮಾನ ಸಹಾಯಕ. ಹವಾಮಾನ ಪ್ರಶ್ನೆಗಳನ್ನು ಕೇಳಿ (ಉದಾ. *"ಮಳೆಗಾಲ ಹೇಗೆ ಪ್ರಾರಂಭವಾಗುತ್ತದೆ?"*, *"ಬೆಂಗಳೂರು ಹವಾಮಾನ"*), ಅಥವಾ ${locationName} ಚಿತ್ರ ವಿಶ್ಲೇಷಿಸಿ.`;
     case 'ml':
-      return `നമസ്കാരം! ഞാൻ **WeatherGPT** AI കാലാവസ്ഥാ സഹായിയാണ്. കാലാവസ്ഥാ ചോദ്യങ്ങൾ ചോദിക്കാം (ഉദാ. *"കാലവർഷം എങ്ങനെ ഉണ്ടാകുന്നു?"*, *"കൊച്ചിയിലെ കാലാവസ്ഥ"*), അല്ലെങ്കിൽ **${locationName}** ചിത്രങ്ങൾ വിശകലനം ചെയ്യാം.`;
+      return `നമസ്കാരം! ഞാൻ WeatherGPT AI കാലാവസ്ഥാ സഹായിയാണ്. കാലാവസ്ഥാ ചോദ്യങ്ങൾ ചോദിക്കാം (ഉദാ. *"കാലവർഷം എങ്ങനെ ഉണ്ടാകുന്നു?"*, *"കൊച്ചിയിലെ കാലാവസ്ഥ"*), അല്ലെങ്കിൽ ${locationName} ചിത്രങ്ങൾ വിശകലനം ചെയ്യാം.`;
     case 'mr':
-      return `नमस्कार! मी **WeatherGPT** एआय हवामान सहाय्यक आहे. हवामानाचे प्रश्न विचारा (उदा. *"मान्सून कसा येतो?"*, *"मुंबईत पाऊस"*), किंवा **${locationName}** साठी फोटो अपलोड करा.`;
+      return `नमस्कार! मी WeatherGPT एआय हवामान सहाय्यक आहे. हवामानाचे प्रश्न विचारा (उदा. *"मान्सून कसा येतो?"*, *"मुंबईत पाऊस"*), किंवा ${locationName} साठी फोटो अपलोड करा.`;
     case 'bn':
-      return `নমস্কার! আমি **WeatherGPT** এআই আবহাওয়া সহকারী। যেকোনো আবহাওয়া প্রশ্ন জিজ্ঞাসা করুন (যেমন *"মৌসুমি বায়ু কীভাবে কাজ করে?"*, *"কলকাতায় বৃষ্টি"*), অথবা **${locationName}** এর জন্য ছবি আপলোড করুন।`;
+      return `নমস্কার! আমি WeatherGPT এআই আবহাওয়া সহকারী। যেকোনো আবহাওয়া প্রশ্ন জিজ্ঞাসা করুন (যেমন *"মৌসুমি বায়ু কীভাবে কাজ করে?"*, *"কলকাতায় বৃষ্টি"*), অথবা ${locationName} এর জন্য ছবি আপলোড করুন।`;
     case 'gu':
-      return `નમસ્તે! હું **WeatherGPT** એઆઈ હવામાન સહાયક છું. હવામાનના પ્રશ્નો પૂછો (જેમ કે *"ચોમાસું કેવી રીતે આવે છે?"*, *"અમદાવાદમાં વરસાદ"*), અથવા **${locationName}** માટે ફોટો અપલોડ કરો.`;
+      return `નમસ્તે! હું WeatherGPT એઆઈ હવામાન સહાયક છું. હવામાનના પ્રશ્નો પૂછો (જેમ કે *"ચોમાસું કેવી રીતે આવે છે?"*, *"અમદાવાદમાં વરસાદ"*), અથવા ${locationName} માટે ફોટો અપલોડ કરો.`;
     case 'pa':
-      return `ਸਤਿ ਸ਼੍ਰੀ ਅਕਾਲ! ਮੈਂ **WeatherGPT** ਏਆਈ ਮੌਸਮ ਸਹਾਇਕ ਹਾਂ। ਮੌਸਮ ਦੇ ਸਵਾਲ ਪੁੱਛੋ (ਜਿਵੇਂ *"ਮਾਨਸੂਨ ਕਿਵੇਂ ਆਉਂਦਾ ਹੈ?"*, *"ਲੁਧਿਆਣੇ ਵਿੱਚ ਬਾਰਿਸ਼"*), ਜਾਂ **${locationName}** ਲਈ ਤਸਵੀਰ ਅੱਪਲੋਡ ਕਰੋ।`;
+      return `ਸਤਿ ਸ਼੍ਰੀ ਅਕਾਲ! ਮੈਂ WeatherGPT ਏਆਈ ਮੌਸਮ ਸਹਾਇਕ ਹਾਂ। ਮੌਸਮ ਦੇ ਸਵਾਲ ਪੁੱਛੋ (ਜਿਵੇਂ *"ਮਾਨਸੂਨ ਕਿਵੇਂ ਆਉਂਦਾ ਹੈ?"*, *"ਲੁਧਿਆਣੇ ਵਿੱਚ ਬਾਰਿਸ਼"*), ਜਾਂ ${locationName} ਲਈ ਤਸਵੀਰ ਅੱਪਲੋਡ ਕਰੋ।`;
     case 'or':
-      return `ନମସ୍କାର! ମୁଁ **WeatherGPT** AI ପାଣିପାଗ ସହାୟକ। ପାଣିପାଗ ପ୍ରଶ୍ନ ପଚାରନ୍ତୁ (ଯେପରି *"ମୌସୁମୀ ପବନ କିପରି ଆସେ?"*, *"ଭୁବନେଶ୍ୱର ପାଣିପାଗ"*), କିମ୍ବା **${locationName}** ପାଇଁ ଫଟୋ ଅପଲୋଡ୍ କରନ୍ତୁ।`;
+      return `ନମସ୍କାର! ମୁଁ WeatherGPT AI ପାଣିପାଗ ସହାୟକ। ପାଣିପାଗ ପ୍ରଶ୍ନ ପଚାରନ୍ତୁ (ଯେପରି *"ମୌସୁମୀ ପବନ କିପରି ଆସେ?"*, *"ଭୁବନେଶ୍ୱର ପାଣିପାଗ"*), କିମ୍ବା ${locationName} ପାଇଁ ଫଟୋ ଅପଲୋଡ୍ କରନ୍ତୁ।`;
     case 'as':
-      return `নমস্কাৰ! মই **WeatherGPT** AI বতৰ সহায়ক। বতৰৰ প্ৰশ্ন সোধক (যেনে *"মৌচুমী বতাহ কেনেকৈ আহে?"*, *"গুৱাহাটীত বৰষুণ"*), অথবা **${locationName}** ৰ বাবে ছবি আপলোড কৰক।`;
+      return `নমস্কাৰ! মই WeatherGPT AI বতৰ সহায়ক। বতৰৰ প্ৰশ্ন সোধক (যেনে *"মৌচুমী বতাহ কেনেকৈ আহে?"*, *"গুৱাহাটীত বৰষুণ"*), অথবা ${locationName} ৰ বাবে ছবি আপলোড কৰক।`;
     case 'ur':
-      return `سلام! میں **WeatherGPT** ای آئی موسمی اسسٹنٹ ہوں۔ موسم کے سوالات پوچھیں (جیسے *"مونسون کیسے آتا ہے؟"*, *"کراچی میں بارش"*), یا **${locationName}** کے لیے تصویر اپ لوڈ کریں۔`;
+      return `سلام! میں WeatherGPT ای آئی موسمی اسسٹنٹ ہوں۔ موسم کے سوالات پوچھیں (جیسے *"مونسون کیسے آتا ہے؟"*, *"کراچی میں بارش"*), یا ${locationName} کے لیے تصویر اپ لوڈ کریں۔`;
     case 'en':
     default:
-      return `Hello! I am **WeatherGPT**, your AI meteorological assistant powered by **Google Cloud AI**. Ask me any general science question (e.g., *"What causes monsoons?"*, *"Why is the sky blue?"*), check weather for **any city** (e.g., *"Weather in Tokyo"*, *"Rain in Delhi"*), or upload a photo for AI vision analysis in **${locationName}**.`;
+      return `Hello! I am WeatherGPT, your AI meteorological assistant powered by Google Cloud AI. Ask me any general science question (e.g., *"What causes monsoons?"*, *"Why is the sky blue?"*), check weather for **any city** (e.g., *"Weather in Tokyo"*, *"Rain in Delhi"*), or upload a photo for AI vision analysis in ${locationName}.`;
   }
 }
 
@@ -523,7 +523,7 @@ export async function processUserChatMessage(
     return {
       id: `msg-${Date.now()}`,
       sender: 'assistant',
-      text: reportText,
+      text: stripMarkdownAsterisks(reportText),
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       imageAnalysis: visionReport,
       sources: ['Google Cloud Gemini 1.5 Flash Vision AI', 'WMO Meteorological Standards'],
@@ -546,7 +546,7 @@ export async function processUserChatMessage(
       return {
         id: `msg-${Date.now()}`,
         sender: 'assistant',
-        text: geminiResult,
+        text: stripMarkdownAsterisks(geminiResult),
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         sources: ['Google Cloud Gemini 1.5 Flash AI Engine', 'WMO Meteorological Knowledge Base'],
         toolCalled: 'google_cloud_gemini_api(general_qa)',
@@ -559,7 +559,7 @@ export async function processUserChatMessage(
       return {
         id: `msg-${Date.now()}`,
         sender: 'assistant',
-        text: scienceAnswer,
+        text: stripMarkdownAsterisks(scienceAnswer),
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         sources: ['Google Cloud Meteorological Knowledge Engine', 'WMO Standards'],
         toolCalled: 'meteorological_science_engine(query)',
