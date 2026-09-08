@@ -408,6 +408,15 @@ async def ai_chat_handler(payload: Dict, db: Session = Depends(get_db)):
     except Exception as db_err:
         print(f"Error persisting chat record to database: {db_err}")
 
+    return {
+        "text": ai_text,
+        "tool_called": tool_called,
+        "sources": sources_used,
+        "language_code": lang_code,
+        "status": "success"
+    }
+
+
 @app.get("/api/tts/speak")
 async def tts_proxy_endpoint(text: str, lang: str = "en"):
     """Proxy endpoint streaming native audio for Tamil, Hindi, Telugu, Kannada, Malayalam, Marathi, Bengali, Gujarati, Punjabi, Odia, Assamese, Urdu, etc."""

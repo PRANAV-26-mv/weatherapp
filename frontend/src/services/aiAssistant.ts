@@ -324,7 +324,7 @@ ${weatherContext ? `Live Telemetry Context: ${weatherContext.tempC}°C, Humidity
     });
     if (backendRes.ok) {
       const data = await backendRes.json();
-      if (data.text && !data.text.startsWith('WeatherGPT Grounded Intelligence for')) {
+      if (data && data.text) {
         return data.text;
       }
     }
