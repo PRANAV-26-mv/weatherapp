@@ -7,6 +7,7 @@ import { LANGUAGE_NAME_MAP } from './aiAssistant';
  */
 
 const LOCAL_STORAGE_KEY = 'VITE_CHATBOT_GEMINI_API_KEY';
+const BACKEND_BASE = (import.meta.env.VITE_BACKEND_URL || '').replace(/\/$/, '') || 'http://localhost:8000';
 
 export function stripMarkdownAsterisks(text: string): string {
   if (!text) return '';
@@ -79,7 +80,7 @@ export async function analyzeChatbotQuestion(
   // 1. Primary: Query Backend FastAPI Chatbot Endpoint (/api/ai/chatbot)
   // This ensures user-trained corrections & rules from the database are ALWAYS applied first!
   try {
-    const backendRes = await fetch('http://localhost:8000/api/ai/chatbot', {
+    const backendRes = await fetch(`${BACKEND_BASE}/api/ai/chatbot`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -183,7 +184,7 @@ export async function trainChatbotRule(
   languageCode: string = 'en'
 ): Promise<{ success: boolean; message: string; rule?: TrainedRule }> {
   try {
-    const res = await fetch('http://localhost:8000/api/ai/train', {
+    const res = await fetch(`${BACKEND_BASE}/api/ai/train`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -206,7 +207,7 @@ export async function trainChatbotRule(
 
 export async function fetchTrainedRules(): Promise<TrainedRule[]> {
   try {
-    const res = await fetch('http://localhost:8000/api/ai/trained-rules');
+    const res = await fetch(`${BACKEND_BASE}/api/ai/trained-rules`);
     if (res.ok) {
       const data = await res.json();
       return data.rules || [];
@@ -219,7 +220,7 @@ export async function fetchTrainedRules(): Promise<TrainedRule[]> {
 
 export async function deleteTrainedRule(ruleId: number): Promise<boolean> {
   try {
-    const res = await fetch(`http://localhost:8000/api/ai/trained-rules/${ruleId}`, {
+    const res = await fetch(`${BACKEND_BASE}/api/ai/trained-rules/${ruleId}`, {
       method: 'DELETE'
     });
     return res.ok;

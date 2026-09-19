@@ -71,6 +71,14 @@ class ConnectionManager:
 
 manager = ConnectionManager()
 
+@app.get("/")
+def root():
+    return {
+        "message": "WeatherGPT Intelligence API is running",
+        "docs": "/docs",
+        "health": "/health"
+    }
+
 @app.get("/health")
 def health_check():
     return {

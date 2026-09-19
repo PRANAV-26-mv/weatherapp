@@ -215,8 +215,11 @@ export async function speakInLanguage(
   const truncatedText = cleanText.length > 280 ? cleanText.slice(0, 280) : cleanText;
   const encodedQuery = encodeURIComponent(truncatedText);
 
-  // Try relative proxy URL first (via Vite proxy), then absolute backend port 8000
+  const backendBase = (import.meta.env.VITE_BACKEND_URL || '').replace(/\/$/, '');
+
+  // Try relative proxy URL first (via Vite proxy), configured backend URL, then localhost:8000
   const candidateUrls = [
+    ...(backendBase ? [`${backendBase}/api/tts/speak?text=${encodedQuery}&lang=${langCode}`] : []),
     `/api/tts/speak?text=${encodedQuery}&lang=${langCode}`,
     `http://localhost:8000/api/tts/speak?text=${encodedQuery}&lang=${langCode}`,
   ];
