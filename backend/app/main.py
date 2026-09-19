@@ -14,7 +14,7 @@ from app.init_db import init_db
 from app.models import (
     UserProfile, Location, CurrentWeather, ForecastData,
     DisasterAlert, AffectedArea, NotificationHistory,
-    VoiceQuery, ClimateHistory, ChatHistory
+    VoiceQuery, ClimateHistory, ChatHistory, ChatbotTrainingRule
 )
 from app.chatbot_service import process_chatbot_query, get_chatbot_api_key
 
@@ -257,13 +257,15 @@ async def dedicated_chatbot_endpoint(payload: Dict, db: Session = Depends(get_db
     weather_context = payload.get("weather_context", {})
     lang_code = payload.get("lang_code", "en")
     api_key_override = payload.get("api_key")
+    recent_history = payload.get("recent_history")
 
     res = await process_chatbot_query(
         query=query,
         location=location,
         weather_context=weather_context,
         lang_code=lang_code,
-        api_key_override=api_key_override
+        api_key_override=api_key_override,
+        recent_history=recent_history
     )
 
     if res.get("text"):
@@ -273,7 +275,7 @@ async def dedicated_chatbot_endpoint(payload: Dict, db: Session = Depends(get_db
                 bot_response=res.get("text"),
                 language_code=lang_code,
                 tool_called=res.get("tool_called", "google_cloud_chatbot_service"),
-                sources_used=res.get("sources", "Google Cloud API")
+                sources_used=res.get("sources", "India Meteorological Department (IMD), Mausam Portal, NDMA")
             )
             db.add(chat_record)
             db.commit()
@@ -284,165 +286,43 @@ async def dedicated_chatbot_endpoint(payload: Dict, db: Session = Depends(get_db
 
 @app.post("/api/ai/chat")
 async def ai_chat_handler(payload: Dict, db: Session = Depends(get_db)):
+    """General AI chat handler unified with meteorological intelligence and trained corrections."""
     query = payload.get("query", "")
     location = payload.get("location", "")
     weather_context = payload.get("weather_context", {})
     lang_code = payload.get("lang_code", "en")
     api_key = payload.get("api_key") or GEMINI_API_KEY
+    recent_history = payload.get("recent_history")
 
-    ai_text = None
-    tool_called = "google_cloud_ai_weather_engine"
-    sources_used = "Google Cloud AI Proxy, Open-Meteo Global High-Res Forecast"
+    res = await process_chatbot_query(
+        query=query,
+        location=location,
+        weather_context=weather_context,
+        lang_code=lang_code,
+        api_key_override=api_key,
+        recent_history=recent_history
+    )
 
-    # 1. Try Google Cloud Gemini API if key is available
-    if api_key:
+    ai_text = res.get("text", "")
+    tool_called = res.get("tool_called", "meteorological_ai_engine")
+    sources_used = res.get("sources", "India Meteorological Department (IMD), Mausam Portal, NDMA, NCMRWF")
+
+    if ai_text:
         try:
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
-            system_prompt = (
-                "You are WeatherGPT, an advanced AI meteorological intelligence system powered by Google Cloud AI. "
-                "Provide a direct, accurate, professional, user-friendly, and detailed answer to the user's weather or science question. "
-                "CRITICAL FORMATTING REQUIREMENT FOR RAIN / FORECAST QUESTIONS: "
-                "If the user asks whether it will rain today, tomorrow, or on a specific day (e.g. 'will it rain tomorrow?', 'rain tomorrow or not?', 'நாளை மழை பெய்யுமா?'), "
-                "you MUST start your response on the VERY FIRST LINE with a clear, bold YES or NO answer in the user's requested language! "
-                "Examples for Line 1: "
-                "Tamil: 'ஆம் 🌧️ — நாளை மழை பெய்ய வாய்ப்புள்ளது.' (YES) or 'இல்லை ☀️ — நாளை மழை பெய்ய வாய்ப்பில்லை.' (NO). "
-                "Hindi: 'हाँ 🌧️ — कल बारिश होने की संभावना है।' (YES) or 'नहीं ☀️ — कल बारिश की संभावना नहीं है।' (NO). "
-                "Telugu: 'అవును 🌧️ — రేపు వర్షం పడే అవకాశం ఉంది.' (YES) or 'లేదు ☀️ — రేపు వర్షం పడే అవకాశం లేదు.' (NO). "
-                "English: 'YES 🌧️ — Rain is expected tomorrow.' or 'NO ☀️ — No rain expected tomorrow.' "
-                "Follow this immediate YES/NO verdict with rain chance %, expected precipitation, temperature, and friendly advice. "
-                f"CRITICAL LANGUAGE REQUIREMENT: You MUST write your response natively in language code '{lang_code}' (e.g. Hindi, Tamil, Telugu, Kannada, Malayalam, Marathi, Bengali, English, etc.). "
-                "Do NOT use generic filler phrases like 'Grounded response for...'."
+            chat_record = ChatHistory(
+                user_query=query,
+                bot_response=ai_text,
+                language_code=lang_code,
+                tool_called=tool_called,
+                sources_used=sources_used
             )
-            prompt_text = f"{system_prompt}\n\nUser Question: {query}\nLocation Requested: {location}\nLive Weather Context: {json.dumps(weather_context)}"
-            
-            async with httpx.AsyncClient() as client:
-                res = await client.post(
-                    url,
-                    json={"contents": [{"parts": [{"text": prompt_text}]}]},
-                    timeout=10.0
-                )
-                if res.status_code == 200:
-                    data = res.json()
-                    ai_text = data["candidates"][0]["content"]["parts"][0]["text"]
-                    tool_called = "google_cloud_gemini_api(generate_content)"
-                    sources_used = "Google Cloud Gemini 1.5 Flash AI, WMO Global Network"
-        except Exception as e:
-            print(f"Google Cloud Gemini API call error: {e}")
-
-    # 2. Dynamic Weather Synthesis for requested location if no API key set
-    if not ai_text:
-        target_loc_name = location if location else "your location"
-        temp_c = weather_context.get("tempC", 28)
-        condition = weather_context.get("conditionText", "Partly Cloudy ⛅")
-        humidity = weather_context.get("humidity", 65)
-        wind_speed = weather_context.get("windSpeedKmh", 12)
-        pressure = weather_context.get("pressureHpa", 1012)
-        rain_prob = weather_context.get("rainProbabilityPct", 20)
-
-        if lang_code == 'ta':
-            ai_text = (
-                f"🌤️ **{target_loc_name} நகரத்தின் வானிலை விவரங்கள்**\n\n"
-                f"• **வெப்பநிலை**: {temp_c}°C\n"
-                f"• **வானிலை நிலை**: {condition}\n"
-                f"• **ஈரப்பதம்**: {humidity}%\n"
-                f"• **காற்றின் வேகம்**: மணிக்கு {wind_speed} கி.மீ\n"
-                f"• **அழுத்தம்**: {pressure} hPa\n"
-                f"• **மழை வாய்ப்பு**: {rain_prob}%\n\n"
-                f"**சுருக்கம்**: {target_loc_name} நகரில் வானிலை {condition} ஆகவும், ஈரப்பதம் {humidity}% ஆகவும் உள்ளது."
-            )
-        elif lang_code == 'hi':
-            ai_text = (
-                f"🌤️ **{target_loc_name} का लाइव मौसम विश्लेषण**\n\n"
-                f"• **वर्तमान तापमान**: {temp_c}°C\n"
-                f"• **मौसम स्थिति**: {condition}\n"
-                f"• **सापेक्ष आर्द्रता**: {humidity}%\n"
-                f"• **हवा की गति**: {wind_speed} किमी/घंटा\n"
-                f"• **वायुमंडलीय दबाव**: {pressure} hPa\n"
-                f"• **बारिश की संभावना**: {rain_prob}%\n\n"
-                f"**सारांश**: {target_loc_name} में वर्तमान मौसम {condition} है और आर्द्रता {humidity}% है।"
-            )
-        elif lang_code == 'te':
-            ai_text = (
-                f"🌤️ **{target_loc_name} ప్రత్యక్ష వాతావరణ విశ్లేషణ**\n\n"
-                f"• **ప్రస్తుత ఉష్ణోగ్రత**: {temp_c}°C\n"
-                f"• **వాతావరణ పరిస్థితి**: {condition}\n"
-                f"• **తేమ**: {humidity}%\n"
-                f"• **గాలి వేగం**: గంటకు {wind_speed} కి.మీ\n"
-                f"• **పీడనం**: {pressure} hPa\n"
-                f"• **వర్షం అవకాశం**: {rain_prob}%\n\n"
-                f"**సారాంశం**: {target_loc_name} లో వాతావరణం ప్రస్తుతం {condition} గా ఉంది."
-            )
-        elif lang_code == 'kn':
-            ai_text = (
-                f"🌤️ **{target_loc_name} ನೇರ ಹವಾಮಾನ ವಿಶ್ಲೇಷಣೆ**\n\n"
-                f"• **ಪ್ರಸ್ತುತ ತಾಪಮಾನ**: {temp_c}°C\n"
-                f"• **ಹವಾಮಾನ ಸ್ಥಿತಿ**: {condition}\n"
-                f"• **ಆರ್ದ್ರತೆ**: {humidity}%\n"
-                f"• **ಗಾಳಿಯ ವೇಗ**: ಗಂಟೆಗೆ {wind_speed} ಕಿ.ಮೀ\n"
-                f"• **ಒತ್ತಡ**: {pressure} hPa\n"
-                f"• **ಮಳೆಯ ಸಾಧ್ಯತೆ**: {rain_prob}%\n\n"
-                f"**ಸಾರಾಂಶ**: {target_loc_name} ನಲ್ಲಿ ಪ್ರಸ್ತುತ ಹವಾಮಾನ {condition} ಆಗಿದೆ."
-            )
-        elif lang_code == 'ml':
-            ai_text = (
-                f"🌤️ **{target_loc_name} തത്സമയ കാലാവസ്ഥാ വിശകലനം**\n\n"
-                f"• **ഇപ്പോഴത്തെ താപനില**: {temp_c}°C\n"
-                f"• **കാലാവസ്ഥാ അവസ്ഥ**: {condition}\n"
-                f"• **ആർദ്രത**: {humidity}%\n"
-                f"• **കാറ്റിന്റെ വേഗത**: മണിക്കൂറിൽ {wind_speed} കി.മീ\n"
-                f"• **മർദ്ദം**: {pressure} hPa\n"
-                f"• **മഴ സാധ്യത**: {rain_prob}%\n\n"
-                f"**ചുരുക്കം**: {target_loc_name} സ്ഥലത്ത് കാലാവസ്ഥ {condition} ആയി തുടരുന്നു."
-            )
-        elif lang_code == 'mr':
-            ai_text = (
-                f"🌤️ **{target_loc_name} प्रत्यक्ष हवामान विश्लेषण**\n\n"
-                f"• **सध्याचे तापमान**: {temp_c}°C\n"
-                f"• **हवामान स्थिती**: {condition}\n"
-                f"• **आर्द्रता**: {humidity}%\n"
-                f"• **वाऱ्याचा वेग**: {wind_speed} किमी/तास\n"
-                f"• **दाब**: {pressure} hPa\n"
-                f"• **पावसाची शक्यता**: {rain_prob}%\n\n"
-                f"**सारांश**: {target_loc_name} मधील हवामान {condition} आहे."
-            )
-        elif lang_code == 'bn':
-            ai_text = (
-                f"🌤️ **{target_loc_name} লাইভ আবহাওয়া বিশ্লেষণ**\n\n"
-                f"• **বর্তমান তাপমাত্রা**: {temp_c}°C\n"
-                f"• **আবহাওয়ার অবস্থা**: {condition}\n"
-                f"• **আর্দ্রতা**: {humidity}%\n"
-                f"• **বাতাসের গতি**: প্রতি ঘণ্টায় {wind_speed} কিমি\n"
-                f"• **চাপ**: {pressure} hPa\n"
-                f"• **বৃষ্টির সম্ভাবনা**: {rain_prob}%\n\n"
-                f"**সারসংক্ষেপ**: {target_loc_name} এ আবহাওয়া বর্তমানে {condition}।"
-            )
-        else:
-            ai_text = (
-                f"🌤️ **Google Cloud AI Weather Analysis for {target_loc_name}**\n\n"
-                f"• **Current Temperature**: {temp_c}°C\n"
-                f"• **Atmospheric Condition**: {condition}\n"
-                f"• **Relative Humidity**: {humidity}%\n"
-                f"• **Wind Speed & Direction**: {wind_speed} km/h\n"
-                f"• **Barometric Pressure**: {pressure} hPa\n"
-                f"• **Rain Probability**: {rain_prob}%\n\n"
-                f"**Summary**: Conditions in {target_loc_name} are currently {condition.lower()} with comfortable humidity level of {humidity}%. Rain risk remains low to moderate ({rain_prob}%)."
-            )
-
-    # 3. 💬 Persist Chat Record to PostgreSQL chat_history Table
-    try:
-        chat_record = ChatHistory(
-            user_query=query,
-            bot_response=ai_text,
-            language_code=lang_code,
-            tool_called=tool_called,
-            sources_used=sources_used
-        )
-        db.add(chat_record)
-        db.commit()
-    except Exception as db_err:
-        print(f"Error persisting chat record to database: {db_err}")
+            db.add(chat_record)
+            db.commit()
+        except Exception as db_err:
+            print(f"Error persisting chatbot record: {db_err}")
 
     return {
+        "success": True,
         "text": ai_text,
         "tool_called": tool_called,
         "sources": sources_used,
@@ -450,6 +330,95 @@ async def ai_chat_handler(payload: Dict, db: Session = Depends(get_db)):
         "status": "success"
     }
 
+@app.post("/api/ai/train")
+async def train_chatbot_rule(payload: Dict, db: Session = Depends(get_db)):
+    """Train or fine-tune chatbot with custom answers for specific questions or mistakes."""
+    query = payload.get("query_pattern") or payload.get("query") or ""
+    answer = payload.get("corrected_answer") or payload.get("answer") or ""
+    intent = payload.get("target_intent", "custom_training")
+    lang_code = payload.get("language_code", "en")
+
+    if not query.strip() or not answer.strip():
+        raise HTTPException(status_code=400, detail="Both query_pattern and corrected_answer are required.")
+
+    # Check if a rule for this pattern already exists
+    existing = db.query(ChatbotTrainingRule).filter(
+        ChatbotTrainingRule.query_pattern == query.strip().lower()
+    ).first()
+
+    if existing:
+        existing.corrected_answer = answer.strip()
+        existing.target_intent = intent
+        existing.language_code = lang_code
+        existing.is_active = True
+        db.commit()
+        db.refresh(existing)
+        return {
+            "success": True,
+            "message": "Existing training rule successfully updated with new correction.",
+            "rule": {
+                "id": existing.id,
+                "query_pattern": existing.query_pattern,
+                "corrected_answer": existing.corrected_answer,
+                "target_intent": existing.target_intent,
+                "language_code": existing.language_code
+            }
+        }
+    else:
+        new_rule = ChatbotTrainingRule(
+            query_pattern=query.strip().lower(),
+            corrected_answer=answer.strip(),
+            target_intent=intent,
+            language_code=lang_code,
+            is_active=True
+        )
+        db.add(new_rule)
+        db.commit()
+        db.refresh(new_rule)
+        return {
+            "success": True,
+            "message": "New training rule registered and active in WeatherGPT brain.",
+            "rule": {
+                "id": new_rule.id,
+                "query_pattern": new_rule.query_pattern,
+                "corrected_answer": new_rule.corrected_answer,
+                "target_intent": new_rule.target_intent,
+                "language_code": new_rule.language_code
+            }
+        }
+
+@app.get("/api/ai/trained-rules")
+async def get_trained_chatbot_rules(db: Session = Depends(get_db)):
+    """Fetch all active user-trained chatbot rules."""
+    rules = db.query(ChatbotTrainingRule).filter(ChatbotTrainingRule.is_active == True).order_by(ChatbotTrainingRule.id.desc()).all()
+    return {
+        "success": True,
+        "count": len(rules),
+        "rules": [
+            {
+                "id": r.id,
+                "query_pattern": r.query_pattern,
+                "corrected_answer": r.corrected_answer,
+                "target_intent": r.target_intent,
+                "language_code": r.language_code,
+                "created_at": r.created_at.isoformat() if r.created_at else None
+            }
+            for r in rules
+        ]
+    }
+
+@app.delete("/api/ai/trained-rules/{rule_id}")
+async def delete_trained_chatbot_rule(rule_id: int, db: Session = Depends(get_db)):
+    """Delete or deactivate a trained chatbot rule."""
+    rule = db.query(ChatbotTrainingRule).filter(ChatbotTrainingRule.id == rule_id).first()
+    if not rule:
+        raise HTTPException(status_code=404, detail="Training rule not found.")
+    db.delete(rule)
+    db.commit()
+    return {"success": True, "message": f"Training rule #{rule_id} deleted successfully."}
+
+
+_tts_audio_cache: dict[str, bytes] = {}
 
 @app.get("/api/tts/speak")
 async def tts_proxy_endpoint(text: str, lang: str = "en"):
@@ -457,19 +426,110 @@ async def tts_proxy_endpoint(text: str, lang: str = "en"):
     try:
         import urllib.parse
         clean_text = text.strip()[:300]
+        cache_key = f"{lang}:{clean_text}"
+        
+        # Check in-memory cache
+        if cache_key in _tts_audio_cache:
+            from fastapi.responses import Response
+            return Response(
+                content=_tts_audio_cache[cache_key],
+                media_type="audio/mpeg",
+                headers={
+                    "Cache-Control": "public, max-age=86400",
+                    "Accept-Ranges": "bytes",
+                    "X-TTS-Cache": "HIT"
+                }
+            )
+
         encoded_text = urllib.parse.quote(clean_text)
         url = f"https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl={lang}&q={encoded_text}"
         headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "Accept": "audio/mpeg, audio/*;q=0.9",
         }
         async with httpx.AsyncClient() as client:
             res = await client.get(url, headers=headers, timeout=10.0)
-            if res.status_code == 200:
+            if res.status_code == 200 and len(res.content) > 100:
+                # Save to cache (limit cache size to 200 items)
+                if len(_tts_audio_cache) > 200:
+                    _tts_audio_cache.clear()
+                _tts_audio_cache[cache_key] = res.content
+
                 from fastapi.responses import Response
-                return Response(content=res.content, media_type="audio/mpeg")
+                return Response(
+                    content=res.content,
+                    media_type="audio/mpeg",
+                    headers={
+                        "Cache-Control": "public, max-age=86400",
+                        "Accept-Ranges": "bytes",
+                        "X-TTS-Cache": "MISS"
+                    }
+                )
     except Exception as e:
         print(f"TTS Proxy endpoint exception: {e}")
-    raise HTTPException(status_code=500, detail="TTS Audio stream generation failed")
+_reverse_geocode_cache: dict[str, dict] = {}
+
+@app.get("/api/weather/reverse-geocode")
+async def reverse_geocode_endpoint(lat: float, lon: float):
+    """Reverse geocode latitude and longitude into an authentic city/town/village place name."""
+    cache_key = f"{round(lat, 3)}:{round(lon, 3)}"
+    if cache_key in _reverse_geocode_cache:
+        return _reverse_geocode_cache[cache_key]
+
+    try:
+        url = f"https://nominatim.openstreetmap.org/reverse?format=json&lat={lat}&lon={lon}"
+        headers = {
+            "User-Agent": "WeatherGPT/1.0 (Weather Intelligence Platform; contact: support@weathergpt.local)",
+            "Accept-Language": "en"
+        }
+        async with httpx.AsyncClient() as client:
+            res = await client.get(url, headers=headers, timeout=8.0)
+            if res.status_code == 200:
+                data = res.json()
+                addr = data.get("address", {})
+                raw_place = (
+                    addr.get("city")
+                    or addr.get("town")
+                    or addr.get("village")
+                    or addr.get("suburb")
+                    or addr.get("neighbourhood")
+                    or addr.get("county")
+                    or addr.get("state_district")
+                    or addr.get("state")
+                    or "Detected Location"
+                )
+                
+                # Clean up administrative suffixes
+                cleaned_place = raw_place
+                for suffix in [" Corporation", " Municipal Corporation", " Municipality", " District", " Taluk", " Mandal"]:
+                    if cleaned_place.endswith(suffix):
+                        cleaned_place = cleaned_place[:-len(suffix)].strip()
+
+                result = {
+                    "name": cleaned_place,
+                    "country": addr.get("country", "India"),
+                    "state": addr.get("state", ""),
+                    "lat": lat,
+                    "lon": lon,
+                    "display_name": data.get("display_name", cleaned_place)
+                }
+                
+                if len(_reverse_geocode_cache) > 500:
+                    _reverse_geocode_cache.clear()
+                _reverse_geocode_cache[cache_key] = result
+                return result
+    except Exception as e:
+        print(f"Reverse geocode exception: {e}")
+
+    # Fallback to coordinate label if reverse lookup fails
+    return {
+        "name": f"Location ({round(lat, 2)}°N, {round(lon, 2)}°E)",
+        "country": "India",
+        "state": "",
+        "lat": lat,
+        "lon": lon
+    }
+
 
 @app.websocket("/ws/alerts")
 async def websocket_alerts_endpoint(websocket: WebSocket):

@@ -199,3 +199,16 @@ class ChatHistory(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     user = relationship("UserProfile", back_populates="chat_messages")
+
+
+# 11. 🎓 Chatbot Training Rules & Learned Corrections Table
+class ChatbotTrainingRule(Base):
+    __tablename__ = "chatbot_training_rules"
+
+    id = Column(Integer, primary_key=True, index=True)
+    query_pattern = Column(String(255), index=True, nullable=False) # Trigger phrase or exact question
+    target_intent = Column(String(100), default="custom_qa") # e.g. laundry, farming, swimming, custom_qa
+    corrected_answer = Column(Text, nullable=False) # The trained ground-truth answer
+    language_code = Column(String(10), default="en")
+    is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime, default=datetime.utcnow)

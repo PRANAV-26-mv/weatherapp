@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import type { CurrentWeatherData, HourlyForecastItem, DailyForecastItem } from './types';
-import { getCurrentWeather, getHourlyForecast, getDailyForecast, INITIAL_DISASTER_ALERTS } from './services/weatherApi';
+import { getCurrentWeather, getHourlyForecast, getDailyForecast, INITIAL_DISASTER_ALERTS, reverseGeocodeLocation } from './services/weatherApi';
 import { translate, getLocalizedWeatherSpeechText } from './services/i18n';
-import { Navbar } from './components/UI/Navbar';
+import { Sidebar } from './components/UI/Sidebar';
 import { Footer } from './components/UI/Footer';
 import { WeatherCard } from './components/Weather/WeatherCard';
 import { ForecastCard } from './components/Weather/ForecastCard';
@@ -51,12 +51,28 @@ export function App() {
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
   };
 
+  // Left Sidebar Collapsed State (Desktop)
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(() => {
+    return localStorage.getItem('weathergpt_sidebar_collapsed') === 'true';
+  });
+
+  const toggleSidebarCollapse = () => {
+    setIsSidebarCollapsed((prev) => {
+      const next = !prev;
+      localStorage.setItem('weathergpt_sidebar_collapsed', String(next));
+      return next;
+    });
+  };
+
   // Permanent Location State
   const [permanentLocation, setPermanentLocation] = useState<{ name: string; lat: number; lon: number } | null>(() => {
     const saved = localStorage.getItem('weathergpt_permanent_location');
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        if (parsed.name && parsed.name !== 'Your Current Mobile Location' && parsed.name !== 'Current Location') {
+          return parsed;
+        }
       } catch (e) {}
     }
     return null;
@@ -68,7 +84,9 @@ export function App() {
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        if (parsed.name) return parsed.name;
+        if (parsed.name && parsed.name !== 'Your Current Mobile Location' && parsed.name !== 'Current Location') {
+          return parsed.name;
+        }
       } catch (e) {}
     }
     return 'Sathyamangalam';
@@ -96,6 +114,28 @@ export function App() {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [currentTab]);
+
+  // Auto-migrate any previously stored generic "Your Current Mobile Location" or "Current Location" to real place name
+  useEffect(() => {
+    async function checkAndMigrateLocationName() {
+      const saved = localStorage.getItem('weathergpt_permanent_location');
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (parsed.name === 'Your Current Mobile Location' || parsed.name === 'Current Location') {
+            const resolved = await reverseGeocodeLocation(parsed.lat || coords.lat, parsed.lon || coords.lon);
+            if (resolved && resolved.name && resolved.name !== 'Detected Location') {
+              setLocationName(resolved.name);
+              const updatedPerm = { name: resolved.name, lat: parsed.lat || coords.lat, lon: parsed.lon || coords.lon };
+              setPermanentLocation(updatedPerm);
+              localStorage.setItem('weathergpt_permanent_location', JSON.stringify(updatedPerm));
+            }
+          }
+        } catch (_) {}
+      }
+    }
+    checkAndMigrateLocationName();
+  }, [coords.lat, coords.lon]);
 
   // Load weather whenever location changes
   useEffect(() => {
@@ -141,15 +181,27 @@ export function App() {
       return;
     }
 
-    setGeoNotice('📡 Requesting Phone GPS Location Permission...');
+    setGeoNotice('📡 Requesting GPS & detecting exact place name...');
     navigator.geolocation.getCurrentPosition(
-      (position) => {
+      async (position) => {
         const lat = position.coords.latitude;
         const lon = position.coords.longitude;
-        const locName = 'Your Current Mobile Location';
-        handleSelectLocation(locName, lat, lon, true);
-        setGeoNotice(`📍 Phone GPS Acquired (${lat.toFixed(3)}°N, ${lon.toFixed(3)}°E)! Saved as permanent location.`);
-        setTimeout(() => setGeoNotice(null), 4000);
+        setGeoNotice(`📡 GPS Acquired (${lat.toFixed(3)}°N, ${lon.toFixed(3)}°E)... Identifying town/city...`);
+
+        try {
+          const resolved = await reverseGeocodeLocation(lat, lon);
+          const placeName = resolved.name || 'Detected Location';
+          handleSelectLocation(placeName, lat, lon, true);
+          const stateText = resolved.state ? `, ${resolved.state}` : '';
+          setGeoNotice(`📍 Location Identified: ${placeName}${stateText}! Saved as your permanent location.`);
+          setTimeout(() => setGeoNotice(null), 4500);
+        } catch (err) {
+          console.warn('Reverse geocode error:', err);
+          const fallbackName = 'Detected Location';
+          handleSelectLocation(fallbackName, lat, lon, true);
+          setGeoNotice(`📍 Location Detected (${lat.toFixed(3)}°N, ${lon.toFixed(3)}°E)!`);
+          setTimeout(() => setGeoNotice(null), 4000);
+        }
       },
       (error) => {
         console.warn('Geolocation permission error:', error);
@@ -173,8 +225,8 @@ export function App() {
         }}
       />
 
-      {/* Navigation Header */}
-      <Navbar
+      {/* Responsive Left Navigation Sidebar */}
+      <Sidebar
         currentTab={currentTab}
         onSelectTab={setCurrentTab}
         currentLang={currentLang}
@@ -190,25 +242,22 @@ export function App() {
         activeAlertCount={INITIAL_DISASTER_ALERTS.length}
         theme={theme}
         onToggleTheme={toggleTheme}
+        isCollapsed={isSidebarCollapsed}
+        onToggleCollapse={toggleSidebarCollapse}
       />
 
-      {/* Interactive User Guide & Help Modal */}
-      <UserGuideModal
-        isOpen={isGuideModalOpen}
-        onClose={() => setIsGuideModalOpen(false)}
-        onOpenLanguageModal={() => setIsLangModalOpen(true)}
-      />
+      {/* Right-Hand Content Area (Offset on Desktop by Sidebar width) */}
+      <div className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${isSidebarCollapsed ? 'lg:pl-20' : 'lg:pl-64'}`}>
+        {/* Geolocation Feedback Banner */}
+        {geoNotice && (
+          <div className="bg-saffron text-black text-xs font-bold py-2.5 px-4 text-center flex items-center justify-center gap-2 shadow-lg animate-bounce sticky top-0 z-30">
+            <Navigation className="w-4 h-4 animate-spin" />
+            <span>{geoNotice}</span>
+          </div>
+        )}
 
-      {/* Geolocation Feedback Banner */}
-      {geoNotice && (
-        <div className="bg-saffron text-black text-xs font-bold py-2.5 px-4 text-center flex items-center justify-center gap-2 shadow-lg animate-bounce sticky top-14 z-40">
-          <Navigation className="w-4 h-4 animate-spin" />
-          <span>{geoNotice}</span>
-        </div>
-      )}
-
-      {/* Main Page Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 md:px-8 py-6">
+        {/* Main Page Container */}
+        <main className="flex-1 max-w-7xl w-full mx-auto px-4 md:px-8 py-6">
         {isLoading || !currentWeather ? (
           <div className="flex flex-col items-center justify-center py-24 space-y-4 text-center">
             <div className="w-16 h-16 rounded-full border-4 border-saffron border-t-transparent animate-spin" />
@@ -415,6 +464,17 @@ export function App() {
         )}
       </main>
 
+      {/* Footer */}
+      <Footer />
+      </div>
+
+      {/* Interactive User Guide & Help Modal */}
+      <UserGuideModal
+        isOpen={isGuideModalOpen}
+        onClose={() => setIsGuideModalOpen(false)}
+        onOpenLanguageModal={() => setIsLangModalOpen(true)}
+      />
+
       {/* Dedicated Mobile Touch Bottom Navigation Bar */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 glass-panel border-t border-white/10 z-50 flex items-center justify-around py-2 px-1">
         <button
@@ -424,7 +484,7 @@ export function App() {
           }`}
         >
           <Home className="w-5 h-5" />
-          <span>Home</span>
+          <span>{translate('nav_home', currentLang)}</span>
         </button>
 
         <button
@@ -442,7 +502,7 @@ export function App() {
           }`}
         >
           <MessageSquare className="w-5 h-5" />
-          <span>AI Chat</span>
+          <span>{translate('nav_chat', currentLang)}</span>
         </button>
 
         <button
@@ -452,7 +512,7 @@ export function App() {
           }`}
         >
           <Map className="w-5 h-5" />
-          <span>Map</span>
+          <span>{translate('nav_map', currentLang)}</span>
         </button>
 
         <button
@@ -462,7 +522,7 @@ export function App() {
           }`}
         >
           <Bell className="w-5 h-5" />
-          <span>Alerts</span>
+          <span>{translate('nav_alerts', currentLang)}</span>
         </button>
       </div>
 
@@ -475,9 +535,6 @@ export function App() {
           weatherSpeechText={getLocalizedWeatherSpeechText(currentWeather, currentLang)}
         />
       )}
-
-      {/* Footer */}
-      <Footer />
     </div>
   );
 }

@@ -172,17 +172,13 @@ html.light .text-gray-400 {
   box-shadow: 0 6px 24px rgba(255, 153, 51, 0.5);
 }
 
-/* High Contrast Emergency Alert Cards */
+/* Refined, Low-Intensity Emergency Alert Cards */
 .emergency-alert-banner {
-  background: linear-gradient(135deg, rgba(220, 38, 38, 0.95) 0%, rgba(153, 27, 27, 0.95) 100%);
-  border: 2px solid #EF4444;
-  box-shadow: 0 0 30px rgba(239, 68, 68, 0.4);
-  animation: alertPulse 2s infinite ease-in-out;
-}
-
-@keyframes alertPulse {
-  0%, 100% { box-shadow: 0 0 20px rgba(239, 68, 68, 0.4); }
-  50% { box-shadow: 0 0 35px rgba(239, 68, 68, 0.8); }
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.12) 0%, rgba(185, 28, 28, 0.08) 100%);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 /* Leaflet Map Theme Adjustments */

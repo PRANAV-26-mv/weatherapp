@@ -30,3 +30,6 @@ Thumbs.db
 *.db
 *.sqlite
 *.sqlite3
+
+# Scratch / temporary scripts
+scratch/

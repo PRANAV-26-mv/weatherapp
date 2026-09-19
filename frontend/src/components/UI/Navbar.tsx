@@ -337,7 +337,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <span>Core Generative LLM & NLU Engine:</span>
                 </div>
                 <div className="text-gray-200 pl-6">
-                  <strong>Google Cloud Gemini 1.5 Flash</strong> (Generative Intent Parsing, Entity Extraction & Tool Calling)
+                  <strong>WeatherGPT AI</strong> (Generative Intent Parsing, Entity Extraction & Tool Calling)
                 </div>
               </div>
 
@@ -347,7 +347,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <span>Multimodal Vision NLP:</span>
                 </div>
                 <div className="text-gray-200 pl-6">
-                  <strong>Google Cloud Gemini 1.5 Flash Vision</strong> (Base64 Multimodal Cloud & Radar Feature Extraction)
+                  <strong>WeatherGPT Vision AI</strong> (Base64 Multimodal Cloud & Radar Feature Extraction)
                 </div>
               </div>
 

@@ -48,14 +48,16 @@ export const Footer: React.FC = () => {
         <div>
           <h4 className="font-bold text-white uppercase text-[11px] tracking-wider mb-3 flex items-center gap-1.5">
             <Globe className="w-3.5 h-3.5 text-saffron" />
-            <span>Verified Data Sources</span>
+            <span>Verified Official Data Sources</span>
           </h4>
           <ul className="space-y-1.5 text-xs text-gray-300">
-            <li>• India Meteorological Department (IMD)</li>
+            <li>• India Meteorological Department (IMD - Mausam Portal)</li>
+            <li>• National Disaster Management Authority (NDMA - Sachet)</li>
+            <li>• National Centre for Medium Range Weather Forecasting (NCMRWF)</li>
+            <li>• INCOIS Indian Ocean Information Services</li>
+            <li>• MOSDAC / ISRO Satellite Meteorological Network</li>
+            <li>• Central Pollution Control Board (CPCB - SAMEER)</li>
             <li>• Open-Meteo High Resolution Weather API</li>
-            <li>• National Disaster Management Authority (NDMA)</li>
-            <li>• INCOIS Indian Tsunami Early Warning Centre</li>
-            <li>• Copernicus Atmosphere & Climate Change Service</li>
           </ul>
         </div>
 

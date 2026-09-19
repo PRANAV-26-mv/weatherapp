@@ -150,6 +150,100 @@ export async function searchLocation(query: string): Promise<Array<{ name: strin
   ];
 }
 
+/**
+ * Reverse geocodes latitude and longitude into an authentic town/city/village place name.
+ * 1. Tries backend reverse-geocode endpoint (/api/weather/reverse-geocode)
+ * 2. Tries direct OpenStreetMap Nominatim
+ * 3. Falls back to nearest town in LOCAL_LOCATION_MAP
+ */
+export async function reverseGeocodeLocation(
+  lat: number,
+  lon: number
+): Promise<{ name: string; country: string; state?: string }> {
+  // 1. Backend proxy endpoint
+  try {
+    const res = await fetch(`/api/weather/reverse-geocode?lat=${lat}&lon=${lon}`);
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.name && !data.name.includes('(')) {
+        return {
+          name: data.name,
+          country: data.country || 'India',
+          state: data.state || '',
+        };
+      }
+    }
+  } catch (err) {
+    console.warn('Backend reverse-geocode fetch failed, trying direct:', err);
+  }
+
+  // 2. Direct Nominatim lookup
+  try {
+    const directRes = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&accept-language=en`,
+      { headers: { Accept: 'application/json' } }
+    );
+    if (directRes.ok) {
+      const data = await directRes.json();
+      const addr = data.address || {};
+      const rawPlace =
+        addr.city ||
+        addr.town ||
+        addr.village ||
+        addr.suburb ||
+        addr.neighbourhood ||
+        addr.county ||
+        addr.state_district;
+      if (rawPlace) {
+        let cleaned = rawPlace;
+        for (const suffix of [
+          ' Corporation',
+          ' Municipal Corporation',
+          ' Municipality',
+          ' District',
+          ' Taluk',
+          ' Mandal',
+        ]) {
+          if (cleaned.endsWith(suffix)) cleaned = cleaned.slice(0, -suffix.length).trim();
+        }
+        return {
+          name: cleaned,
+          country: addr.country || 'India',
+          state: addr.state || '',
+        };
+      }
+    }
+  } catch (err) {
+    console.warn('Direct Nominatim fetch failed, finding closest local location:', err);
+  }
+
+  // 3. Find closest known location in LOCAL_LOCATION_MAP by distance
+  let closestLoc: { name: string; country: string } | null = null;
+  let minDistance = Infinity;
+
+  for (const loc of Object.values(LOCAL_LOCATION_MAP)) {
+    const dLat = loc.lat - lat;
+    const dLon = loc.lon - lon;
+    const distSq = dLat * dLat + dLon * dLon;
+    if (distSq < minDistance) {
+      minDistance = distSq;
+      closestLoc = loc;
+    }
+  }
+
+  if (closestLoc && minDistance < 1.0) {
+    return {
+      name: closestLoc.name,
+      country: closestLoc.country,
+    };
+  }
+
+  return {
+    name: 'Detected Location',
+    country: 'India',
+  };
+}
+
 export async function getCurrentWeather(lat: number = 19.076, lon: number = 72.8777, locationName: string = 'Mumbai'): Promise<CurrentWeatherData> {
   try {
     const url = `${OPEN_METEO_BASE}?latitude=${lat}&longitude=${lon}&current_weather=true&hourly=temperature_2m,relative_humidity_2m,surface_pressure,cloud_cover,visibility,wind_speed_10m,wind_direction_10m,uv_index&daily=sunrise,sunset&timezone=auto`;

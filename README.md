@@ -1,6 +1,6 @@
 # 🌤️ WeatherGPT - AI Meteorological Intelligence Platform
 
-An advanced AI-powered weather intelligence platform powered by **Google Cloud AI Gemini 1.5 Flash (NLU & Multimodal Vision)**, live **Open-Meteo & IMD telemetry**, **13 Indian languages speech engine**, **disaster warning geofencing**, and **permanent location persistence**.
+An advanced AI-powered weather intelligence platform powered by **WeatherGPT AI Engine (NLU & Multimodal Vision)**, live **Open-Meteo & IMD telemetry**, **13 Indian languages speech engine**, **disaster warning geofencing**, and **permanent location persistence**.
 
 ---
 
@@ -73,7 +73,7 @@ Runs at: `http://localhost:8000/`
 ---
 
 ## ✨ Features
-- 🧠 **Google Cloud Gemini 1.5 Flash**: Direct Generative NLU for weather Q&A.
+- 🧠 **WeatherGPT AI Engine**: Direct Generative NLU for weather Q&A.
 - 📷 **Multimodal Weather Vision AI**: Upload or snap sky/cloud/radar photos for AI risk analysis.
 - 🎙️ **Multilingual Speech Engine**: Initial language modal + WebSpeech STT/TTS in 13 Indian languages.
 - 🏠 **Permanent Location Persistence**: Auto-saves selected home town (e.g. Sathyamangalam) across reloads.

@@ -64,7 +64,7 @@ export const LeafletWeatherMap: React.FC<LeafletWeatherMapProps> = ({
             }`}
           >
             <Globe className="w-3.5 h-3.5" />
-            <span>Google Satellite View 🛰️</span>
+            <span>IMD / High-Res Satellite View 🛰️</span>
           </button>
 
           <button
