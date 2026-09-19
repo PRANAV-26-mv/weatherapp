@@ -112,10 +112,8 @@ export async function analyzeChatbotQuestion(
     const candidateModels = [
       'gemini-flash-lite-latest',
       'gemini-3.5-flash-lite',
-      'gemini-flash-latest',
-      'gemini-3.7-flash',
       'gemini-3-flash-preview',
-      'gemini-2.5-flash'
+      'gemini-3.6-flash'
     ];
     
     const promptText = `You are WeatherGPT, an advanced meteorological, agricultural, and atmospheric intelligence partner citing official portals including the India Meteorological Department (IMD), Mausam Portal, and NDMA.

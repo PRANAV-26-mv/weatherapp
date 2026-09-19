@@ -932,11 +932,8 @@ async def process_chatbot_query(
         candidate_models = [
             "gemini-flash-lite-latest",
             "gemini-3.5-flash-lite",
-            "gemini-flash-latest",
-            "gemini-3.7-flash",
             "gemini-3-flash-preview",
-            "gemini-2.5-flash",
-            "gemini-1.5-flash"
+            "gemini-3.6-flash"
         ]
         system_prompt = (
             "You are WeatherGPT, a dedicated meteorological assistant citing official weather authorities including the India Meteorological Department (IMD), Mausam Portal, NCMRWF, and NDMA. "
@@ -959,7 +956,7 @@ async def process_chatbot_query(
                     res = await client.post(
                         url,
                         json={"contents": [{"parts": [{"text": prompt_text}]}]},
-                        timeout=6.0
+                        timeout=12.0
                     )
                     if res.status_code == 200:
                         data = res.json()
@@ -975,9 +972,9 @@ async def process_chatbot_query(
                                 "language_code": lang_code
                             }
                     else:
-                        print(f"⚠️ Gemini API ({model_name}) returned HTTP {res.status_code}: {res.text[:180]}")
+                        print(f"[Gemini API] ({model_name}) returned HTTP {res.status_code}")
             except Exception as err:
-                print(f"Exception calling Google Cloud API ({model_name}): {err}")
+                print(f"[Gemini API] Exception calling ({model_name}): {err}")
 
     # 2. Grounded Scientific & Curated Intelligence
     fallback_text = generate_fallback_analysis(query, effective_location, weather_context, lang_code)

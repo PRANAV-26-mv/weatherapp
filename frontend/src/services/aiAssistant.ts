@@ -1330,31 +1330,6 @@ export async function processUserChatMessage(
   const { weather: targetWeather, isCustomLocation } = await detectTargetLocation(userText, currentWeather, conversationHistory);
   const recentHistorySummary = buildRecentHistorySummary(conversationHistory);
 
-  // 🌟 Check User-Trained Rules & Corrections first (Priority 0: Immediate Ground Truth)
-  try {
-    const aiChatbotResult = await analyzeChatbotQuestion(
-      userText,
-      targetWeather.locationName,
-      targetWeather,
-      langCode,
-      undefined,
-      recentHistorySummary
-    );
-
-    if (aiChatbotResult && aiChatbotResult.toolCalled && aiChatbotResult.toolCalled.includes('Trained AI Knowledge Rule')) {
-      return {
-        id: `msg-${Date.now()}`,
-        sender: 'assistant',
-        text: stripMarkdownAsterisks(aiChatbotResult.text),
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        sources: aiChatbotResult.sources,
-        toolCalled: aiChatbotResult.toolCalled,
-      };
-    }
-  } catch (err) {
-    console.warn('Trained rule pre-check failed:', err);
-  }
-
   // Scenario 1: Image attachment present (Multimodal Vision)
   if (attachedImageUrl) {
     const visionReport = await analyzeImageWithGoogleGemini(attachedImageUrl, targetWeather, queryLower);
@@ -1374,6 +1349,33 @@ export async function processUserChatMessage(
       sources: ['India Meteorological Department (IMD)', 'ISRO MOSDAC Satellite', 'Mausam Radar Network'],
       toolCalled: 'WeatherGPT Vision AI Analysis',
     };
+  }
+
+  // 🌟 Primary Intelligent AI Analysis via Gemini & Weather Intelligence Engine
+  try {
+    const aiChatbotResult = await analyzeChatbotQuestion(
+      userText,
+      targetWeather.locationName,
+      targetWeather,
+      langCode,
+      undefined,
+      recentHistorySummary
+    );
+
+    if (aiChatbotResult && aiChatbotResult.text && aiChatbotResult.text.trim().length > 15) {
+      return {
+        id: `msg-${Date.now()}`,
+        sender: 'assistant',
+        text: stripMarkdownAsterisks(aiChatbotResult.text),
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        sources: aiChatbotResult.sources && aiChatbotResult.sources.length > 0
+          ? aiChatbotResult.sources
+          : ['India Meteorological Department (IMD)', 'Mausam Portal', 'NDMA'],
+        toolCalled: aiChatbotResult.toolCalled || 'WeatherGPT AI Engine',
+      };
+    }
+  } catch (err) {
+    console.warn('AI Chatbot analysis failed, falling back to local heuristic engine:', err);
   }
 
   // Scenario 2A: User Introduction ("i am pranav", "my name is pranav", "call me pranav")
