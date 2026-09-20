@@ -37,7 +37,7 @@ export function App() {
   });
   const [isGuideModalOpen, setIsGuideModalOpen] = useState<boolean>(false);
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
-    return (localStorage.getItem('weathergpt_theme') as 'dark' | 'light') || 'dark';
+    return (localStorage.getItem('weathergpt_theme') as 'dark' | 'light') || 'light';
   });
 
   // Sync Light/Dark theme class to root html element
@@ -213,7 +213,7 @@ export function App() {
   };
 
   return (
-    <div className={`min-h-screen flex flex-col ${theme === 'light' ? 'bg-[#F8FAFC] text-slate-900' : 'bg-[#080B11] text-gray-100'} selection:bg-saffron selection:text-black pb-16 md:pb-0 transition-colors duration-300`}>
+    <div className={`min-h-screen flex flex-col ${theme === 'light' ? 'bg-[#F8FAFC] text-slate-900' : 'bg-[#080B11] text-gray-100'} selection:bg-saffron selection:text-black pb-28 md:pb-8 transition-colors duration-300`}>
       {/* Initial Language Prompt Modal ("Ask before starting") */}
       <LanguageWelcomeModal
         isOpen={isLangModalOpen}
@@ -271,27 +271,27 @@ export function App() {
             {currentTab === 'home' && (
               <div className="space-y-4">
                 {/* Hero Section */}
-                <section className="relative glass-card p-4 sm:p-5 md:p-6 overflow-hidden border border-white/10">
+                <section className="relative glass-card p-3.5 sm:p-5 md:p-6 overflow-hidden">
                   <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-br from-saffron/20 via-indiagreen/10 to-transparent blur-3xl pointer-events-none" />
 
-                  <div className="max-w-3xl space-y-3 relative z-10">
+                  <div className="max-w-3xl space-y-2 sm:space-y-3 relative z-10">
                     <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full glass-pill border border-saffron/30 text-saffron text-[10px] sm:text-[11px] font-bold">
                       <Sparkles className="w-3 h-3" />
                       <span>WeatherGPT AI Intelligence Platform</span>
                     </div>
 
-                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white tracking-tight leading-tight font-heading">
+                    <h1 className="text-xl sm:text-3xl md:text-4xl font-extrabold tracking-tight leading-snug font-heading">
                       {translate('hero_headline', currentLang)}
                     </h1>
 
-                    <p className="text-xs sm:text-sm text-gray-300 leading-relaxed font-normal">
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-gray-300 leading-relaxed font-normal">
                       {translate('hero_supporting', currentLang)}
                     </p>
 
-                    <div className="flex flex-wrap items-center gap-2.5 pt-0.5">
+                    <div className="flex flex-wrap items-center gap-2 pt-0.5">
                       <button
                         onClick={handleDetectCurrentLocation}
-                        className="saffron-gradient-btn px-4 py-2 rounded-xl text-xs font-extrabold flex items-center gap-1.5 shadow-md shadow-saffron/25"
+                        className="saffron-gradient-btn px-3.5 py-2 rounded-xl text-xs font-extrabold flex items-center gap-1.5 shadow-md shadow-saffron/25"
                       >
                         <Navigation className="w-3.5 h-3.5 animate-pulse" />
                         <span>Detect Phone Live Location 📍</span>
@@ -299,7 +299,7 @@ export function App() {
 
                       <button
                         onClick={() => setCurrentTab('chat')}
-                        className="px-4 py-2 rounded-xl glass-pill text-xs font-extrabold text-white hover:border-saffron/60 transition-all flex items-center gap-1.5"
+                        className="px-3.5 py-2 rounded-xl glass-pill text-xs font-extrabold hover:border-saffron/60 transition-all flex items-center gap-1.5"
                       >
                         <MessageSquare className="w-3.5 h-3.5 text-saffron" />
                         <span>{translate('btn_ask_ai', currentLang)}</span>
@@ -476,55 +476,71 @@ export function App() {
       />
 
       {/* Dedicated Mobile Touch Bottom Navigation Bar */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 glass-panel border-t border-white/10 z-50 flex items-center justify-around py-2 px-1">
+      <nav
+        aria-label="Mobile Bottom Navigation"
+        className={`md:hidden fixed bottom-0 left-0 right-0 z-40 px-2 py-1.5 backdrop-blur-xl border-t transition-colors duration-200 ${
+          theme === 'light'
+            ? 'bg-white/95 border-slate-200/90 shadow-[0_-4px_20px_rgba(0,0,0,0.06)]'
+            : 'bg-[#0B0F19]/95 border-white/10 shadow-[0_-4px_20px_rgba(0,0,0,0.4)]'
+        } flex items-center justify-around`}
+      >
         <button
           onClick={() => setCurrentTab('home')}
-          className={`flex flex-col items-center gap-0.5 text-[10px] font-semibold ${
-            currentTab === 'home' ? 'text-saffron' : 'text-gray-400'
+          className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all min-h-[48px] min-w-[56px] text-[10px] font-semibold ${
+            currentTab === 'home'
+              ? 'text-saffron font-bold bg-saffron/15 shadow-sm'
+              : theme === 'light' ? 'text-slate-500 hover:text-slate-900' : 'text-gray-400 hover:text-white'
           }`}
         >
-          <Home className="w-5 h-5" />
+          <Home className="w-5 h-5 mb-0.5" />
           <span>{translate('nav_home', currentLang)}</span>
         </button>
 
         <button
           onClick={handleDetectCurrentLocation}
-          className="flex flex-col items-center gap-0.5 text-[10px] font-extrabold text-saffron bg-saffron/20 px-3 py-1 rounded-xl border border-saffron/40 animate-pulse"
+          className="flex flex-col items-center justify-center py-1 px-3 rounded-xl transition-all min-h-[48px] text-[10px] font-extrabold text-saffron bg-saffron/15 border border-saffron/40 shadow-sm"
+          title="Detect Current GPS Location"
         >
-          <Navigation className="w-5 h-5 text-saffron" />
+          <Navigation className="w-5 h-5 mb-0.5 text-saffron animate-pulse" />
           <span>📍 GPS</span>
         </button>
 
         <button
           onClick={() => setCurrentTab('chat')}
-          className={`flex flex-col items-center gap-0.5 text-[10px] font-semibold ${
-            currentTab === 'chat' ? 'text-saffron' : 'text-gray-400'
+          className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all min-h-[48px] min-w-[56px] text-[10px] font-semibold ${
+            currentTab === 'chat'
+              ? 'text-saffron font-bold bg-saffron/15 shadow-sm'
+              : theme === 'light' ? 'text-slate-500 hover:text-slate-900' : 'text-gray-400 hover:text-white'
           }`}
         >
-          <MessageSquare className="w-5 h-5" />
+          <MessageSquare className="w-5 h-5 mb-0.5" />
           <span>{translate('nav_chat', currentLang)}</span>
         </button>
 
         <button
           onClick={() => setCurrentTab('map')}
-          className={`flex flex-col items-center gap-0.5 text-[10px] font-semibold ${
-            currentTab === 'map' ? 'text-saffron' : 'text-gray-400'
+          className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all min-h-[48px] min-w-[56px] text-[10px] font-semibold ${
+            currentTab === 'map'
+              ? 'text-saffron font-bold bg-saffron/15 shadow-sm'
+              : theme === 'light' ? 'text-slate-500 hover:text-slate-900' : 'text-gray-400 hover:text-white'
           }`}
         >
-          <Map className="w-5 h-5" />
+          <Map className="w-5 h-5 mb-0.5" />
           <span>{translate('nav_map', currentLang)}</span>
         </button>
 
         <button
           onClick={() => setCurrentTab('alerts')}
-          className={`flex flex-col items-center gap-0.5 text-[10px] font-semibold ${
-            currentTab === 'alerts' || currentTab === 'disaster' ? 'text-saffron' : 'text-gray-400'
+          className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all min-h-[48px] min-w-[56px] text-[10px] font-semibold ${
+            currentTab === 'alerts' || currentTab === 'disaster'
+              ? 'text-saffron font-bold bg-saffron/15 shadow-sm'
+              : theme === 'light' ? 'text-slate-500 hover:text-slate-900' : 'text-gray-400 hover:text-white'
           }`}
         >
-          <Bell className="w-5 h-5" />
+          <Bell className="w-5 h-5 mb-0.5" />
           <span>{translate('nav_alerts', currentLang)}</span>
         </button>
-      </div>
+      </nav>
 
       {/* Global Easy Floating Accessibility Widget */}
       {currentWeather && (

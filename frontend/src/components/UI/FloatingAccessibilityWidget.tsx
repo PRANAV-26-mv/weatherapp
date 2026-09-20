@@ -54,20 +54,20 @@ export const FloatingAccessibilityWidget: React.FC<FloatingAccessibilityWidgetPr
   };
 
   return (
-    <div className="fixed bottom-5 right-5 z-50 flex flex-col items-end gap-3 print:hidden">
+    <div className="fixed bottom-20 right-3.5 md:bottom-6 md:right-6 z-40 flex flex-col items-end gap-2.5 print:hidden">
       
       {/* Expanded Quick Easy Action Menu */}
       {isOpen && (
-        <div className="bg-slate-950/95 border border-saffron/40 p-3 sm:p-3.5 rounded-2xl shadow-2xl backdrop-blur-xl w-64 text-white animate-in slide-in-from-bottom-5 duration-200">
+        <div className="glass-panel border border-saffron/40 p-3 sm:p-3.5 rounded-2xl shadow-2xl w-64 animate-in slide-in-from-bottom-5 duration-200">
           
-          <div className="flex items-center justify-between border-b border-white/10 pb-2 mb-2.5">
+          <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 pb-2 mb-2.5">
             <div className="flex items-center gap-1.5">
               <Sparkles className="w-3.5 h-3.5 text-saffron" />
-              <span className="text-[11px] font-bold font-outfit text-white">Easy Access & Accessibility</span>
+              <span className="text-[11px] font-bold font-outfit">Easy Access & Accessibility</span>
             </div>
             <button 
               onClick={() => setIsOpen(false)}
-              className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-white/10"
+              className="p-1 rounded-lg text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10"
             >
               <X className="w-3.5 h-3.5" />
             </button>
@@ -77,8 +77,8 @@ export const FloatingAccessibilityWidget: React.FC<FloatingAccessibilityWidgetPr
             
             {/* 1. Text Size Controller for Easy Reading */}
             <div>
-              <label className="text-[11px] font-semibold text-slate-300 flex items-center gap-1.5 mb-1.5">
-                <Type className="w-3.5 h-3.5 text-cyan-400" />
+              <label className="text-[11px] font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5 mb-1.5">
+                <Type className="w-3.5 h-3.5 text-cyan-500 dark:text-cyan-400" />
                 <span>Reading Text Size (Large Fonts)</span>
               </label>
               <div className="grid grid-cols-3 gap-1.5">
@@ -86,8 +86,8 @@ export const FloatingAccessibilityWidget: React.FC<FloatingAccessibilityWidgetPr
                   onClick={() => setFontSize('normal')}
                   className={`py-1.5 text-xs font-semibold rounded-lg border transition-all ${
                     fontSize === 'normal'
-                      ? 'bg-saffron text-black border-saffron font-bold'
-                      : 'bg-white/5 border-white/10 text-slate-300 hover:bg-white/10'
+                      ? 'bg-saffron text-black border-saffron font-bold shadow-sm'
+                      : 'bg-slate-100 dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10'
                   }`}
                 >
                   Normal
@@ -96,8 +96,8 @@ export const FloatingAccessibilityWidget: React.FC<FloatingAccessibilityWidgetPr
                   onClick={() => setFontSize('large')}
                   className={`py-1.5 text-xs font-semibold rounded-lg border transition-all ${
                     fontSize === 'large'
-                      ? 'bg-saffron text-black border-saffron font-bold'
-                      : 'bg-white/5 border-white/10 text-slate-300 hover:bg-white/10'
+                      ? 'bg-saffron text-black border-saffron font-bold shadow-sm'
+                      : 'bg-slate-100 dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10'
                   }`}
                 >
                   Large (A+)
@@ -106,8 +106,8 @@ export const FloatingAccessibilityWidget: React.FC<FloatingAccessibilityWidgetPr
                   onClick={() => setFontSize('xlarge')}
                   className={`py-1.5 text-xs font-semibold rounded-lg border transition-all ${
                     fontSize === 'xlarge'
-                      ? 'bg-saffron text-black border-saffron font-bold'
-                      : 'bg-white/5 border-white/10 text-slate-300 hover:bg-white/10'
+                      ? 'bg-saffron text-black border-saffron font-bold shadow-sm'
+                      : 'bg-slate-100 dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10'
                   }`}
                 >
                   Extra (A++)
@@ -117,51 +117,51 @@ export const FloatingAccessibilityWidget: React.FC<FloatingAccessibilityWidgetPr
 
             {/* 2. Outdoor High Contrast Mode for Sun Visibility */}
             <div>
-              <label className="text-[11px] font-semibold text-slate-300 flex items-center justify-between mb-1">
+              <label className="text-[11px] font-semibold text-slate-700 dark:text-slate-300 flex items-center justify-between mb-1">
                 <span className="flex items-center gap-1.5">
-                  <Eye className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>Outdoor Outdoor High Contrast</span>
+                  <Eye className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" />
+                  <span>Outdoor High Contrast</span>
                 </span>
-                <span className="text-[10px] text-slate-400">{highContrast ? 'ON' : 'OFF'}</span>
+                <span className="text-[10px] text-slate-500 dark:text-slate-400">{highContrast ? 'ON' : 'OFF'}</span>
               </label>
               <button
                 onClick={() => setHighContrast(!highContrast)}
                 className={`w-full py-2 text-xs font-semibold rounded-xl border flex items-center justify-center gap-2 transition-all ${
                   highContrast
-                    ? 'bg-emerald-500 text-black border-emerald-400 font-bold'
-                    : 'bg-white/5 border-white/10 text-slate-200 hover:bg-white/10'
+                    ? 'bg-emerald-600 text-white border-emerald-500 shadow-md font-bold'
+                    : 'bg-slate-100 dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10'
                 }`}
               >
-                {highContrast ? '👁️ High Contrast Active' : '☀ Enable High Contrast'}
+                <span>{highContrast ? '☀️ Sunlight High Contrast Active' : 'Toggle Outdoor High Contrast'}</span>
               </button>
             </div>
 
-            {/* 3. Speak Out Weather Audio Summary */}
+            {/* 3. Audio Voice Readout */}
             <div>
               <button
                 onClick={handleSpeakSummary}
                 className={`w-full py-2 text-xs font-bold rounded-xl border flex items-center justify-center gap-2 transition-all ${
                   isSpeaking
-                    ? 'bg-red-500 text-white border-red-400 animate-pulse'
-                    : 'bg-gradient-to-r from-amber-500 to-saffron text-black border-amber-400 hover:opacity-95'
+                    ? 'bg-red-500 text-white border-red-400 animate-pulse shadow-md'
+                    : 'bg-saffron/20 border-saffron/40 text-saffron hover:bg-saffron hover:text-black'
                 }`}
               >
-                <Volume2 className="w-4 h-4" />
+                <Volume2 className={`w-3.5 h-3.5 ${isSpeaking ? 'animate-bounce' : ''}`} />
                 <span>{isSpeaking ? '⏹ Stop Audio Speech' : '🔊 Listen to Weather Voice'}</span>
               </button>
             </div>
 
             {/* 4. Quick Language & User Guide Links */}
-            <div className="grid grid-cols-2 gap-2 pt-1 border-t border-white/10">
+            <div className="grid grid-cols-2 gap-2 pt-1 border-t border-slate-200 dark:border-white/10">
               {onOpenLanguageModal && (
                 <button
                   onClick={() => {
                     setIsOpen(false);
                     onOpenLanguageModal();
                   }}
-                  className="py-1.5 px-2 rounded-lg bg-white/5 hover:bg-white/15 text-[11px] font-medium text-slate-200 flex items-center justify-center gap-1"
+                  className="py-1.5 px-2 rounded-lg bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/15 text-[11px] font-medium text-slate-700 dark:text-slate-200 flex items-center justify-center gap-1 border border-slate-200 dark:border-white/10"
                 >
-                  <Globe className="w-3.5 h-3.5 text-cyan-400" />
+                  <Globe className="w-3.5 h-3.5 text-cyan-500 dark:text-cyan-400" />
                   <span>Language</span>
                 </button>
               )}
@@ -171,7 +171,7 @@ export const FloatingAccessibilityWidget: React.FC<FloatingAccessibilityWidgetPr
                     setIsOpen(false);
                     onOpenGuideModal();
                   }}
-                  className="py-1.5 px-2 rounded-lg bg-white/5 hover:bg-white/15 text-[11px] font-medium text-slate-200 flex items-center justify-center gap-1"
+                  className="py-1.5 px-2 rounded-lg bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/15 text-[11px] font-medium text-slate-700 dark:text-slate-200 flex items-center justify-center gap-1 border border-slate-200 dark:border-white/10"
                 >
                   <HelpCircle className="w-3.5 h-3.5 text-saffron" />
                   <span>Help Guide</span>
@@ -193,8 +193,9 @@ export const FloatingAccessibilityWidget: React.FC<FloatingAccessibilityWidgetPr
         {/* Floating Open Easy Accessibility Menu Button */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="p-3.5 rounded-full bg-gradient-to-r from-slate-900 to-indigo-950 border border-saffron/40 text-saffron hover:text-white hover:bg-saffron shadow-2xl transition-all flex items-center justify-center group"
+          className="p-3 rounded-full bg-white dark:bg-slate-900 border border-saffron/40 text-saffron hover:text-black hover:bg-saffron shadow-xl transition-all flex items-center justify-center group"
           title="Easy Access & Accessibility Settings"
+          aria-label="Open Accessibility Menu"
         >
           {isOpen ? <ChevronUp className="w-5 h-5" /> : <Sparkles className="w-5 h-5 group-hover:rotate-12 transition-transform" />}
         </button>

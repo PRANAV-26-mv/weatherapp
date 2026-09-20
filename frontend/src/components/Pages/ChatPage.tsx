@@ -494,7 +494,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({ currentWeather, langCode = '
           placeholder={`${translate('btn_ask_ai', langCode)} (${langCode.toUpperCase()})...`}
           value={inputQuery}
           onChange={(e) => setInputQuery(e.target.value)}
-          className="flex-1 bg-transparent text-sm text-white placeholder-gray-400 focus:outline-none px-2"
+          className="flex-1 bg-transparent text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-400 focus:outline-none px-2"
         />
 
         <button

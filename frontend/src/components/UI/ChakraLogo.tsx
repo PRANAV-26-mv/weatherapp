@@ -3,14 +3,21 @@ import React from 'react';
 interface ChakraLogoProps {
   size?: 'sm' | 'md' | 'lg';
   animated?: boolean;
+  showText?: boolean;
+  showSubtitle?: boolean;
 }
 
-export const ChakraLogo: React.FC<ChakraLogoProps> = ({ size = 'md', animated = true }) => {
-  const dimension = size === 'sm' ? 32 : size === 'lg' ? 56 : 42;
+export const ChakraLogo: React.FC<ChakraLogoProps> = ({
+  size = 'md',
+  animated = true,
+  showText = true,
+  showSubtitle = true
+}) => {
+  const dimension = size === 'sm' ? 28 : size === 'lg' ? 52 : 38;
 
   return (
     <div className="relative flex items-center gap-2 group cursor-pointer">
-      <div className="relative flex items-center justify-center">
+      <div className="relative flex items-center justify-center shrink-0">
         {/* Outer Glow */}
         <div className="absolute inset-0 rounded-full bg-gradient-to-r from-saffron via-white to-indiagreen opacity-40 blur-md group-hover:opacity-75 transition-opacity" />
 
@@ -57,14 +64,18 @@ export const ChakraLogo: React.FC<ChakraLogoProps> = ({ size = 'md', animated = 
         </svg>
       </div>
 
-      <div className="flex flex-col">
-        <span className="font-heading font-extrabold tracking-tight text-xl text-white flex items-center gap-1">
-          WEATHER<span className="text-saffron">GPT</span>
-        </span>
-        <span className="text-[9px] font-semibold tracking-wider text-gray-400 uppercase -mt-1">
-          AI Weather Intelligence
-        </span>
-      </div>
+      {showText && (
+        <div className="flex flex-col min-w-0">
+          <span className="font-heading font-extrabold tracking-tight text-base sm:text-lg text-slate-900 dark:text-white flex items-center gap-0.5 leading-none">
+            WEATHER<span className="text-saffron">GPT</span>
+          </span>
+          {showSubtitle && (
+            <span className="text-[8px] sm:text-[9px] font-semibold tracking-wider text-slate-500 dark:text-gray-400 uppercase mt-0.5 truncate">
+              AI Weather Intelligence
+            </span>
+          )}
+        </div>
+      )}
     </div>
   );
 };

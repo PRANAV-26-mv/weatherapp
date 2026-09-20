@@ -74,8 +74,8 @@ export const LanguageWelcomeModal: React.FC<LanguageWelcomeModalProps> = ({
   const selectedLangObj = SUPPORTED_LANGUAGES.find((l) => l.code === selected) || SUPPORTED_LANGUAGES[0];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-lg p-3 sm:p-4 animate-in fade-in duration-300">
-      <div className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto bg-slate-950/95 border border-white/10 rounded-2xl shadow-2xl p-4 sm:p-5 text-white">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md p-3 sm:p-4 animate-in fade-in duration-300">
+      <div className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto glass-panel border border-slate-200 dark:border-white/10 rounded-2xl shadow-2xl p-4 sm:p-5 text-slate-900 dark:text-white">
         
         {/* Close Button */}
         <button
@@ -83,7 +83,7 @@ export const LanguageWelcomeModal: React.FC<LanguageWelcomeModalProps> = ({
             stopVoiceSpeech();
             onClose();
           }}
-          className="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+          className="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
           title="Close Modal"
           aria-label="Close"
         >
@@ -92,14 +92,14 @@ export const LanguageWelcomeModal: React.FC<LanguageWelcomeModalProps> = ({
 
         {/* Header Badge & Title */}
         <div className="text-center max-w-xl mx-auto mb-4">
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-sky-500/10 text-sky-400 border border-sky-500/20 text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-2">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20 text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-2">
             <Sparkles className="w-3 h-3" />
             <span>Select Operating Language</span>
           </div>
-          <h2 className="text-xl md:text-2xl font-extrabold font-outfit text-white tracking-tight mb-1.5">
+          <h2 className="text-xl md:text-2xl font-extrabold font-outfit text-slate-900 dark:text-white tracking-tight mb-1.5">
             Choose Your Preferred Language
           </h2>
-          <p className="text-xs text-slate-300">
+          <p className="text-xs text-slate-600 dark:text-slate-300">
             WeatherGPT website interface, AI assistance, and voice output will speak natively in your language.
           </p>
         </div>
@@ -119,16 +119,16 @@ export const LanguageWelcomeModal: React.FC<LanguageWelcomeModalProps> = ({
                 }}
                 className={`cursor-pointer relative p-2.5 sm:p-3 rounded-xl border transition-all duration-200 flex flex-col justify-between ${
                   isSelected
-                    ? 'bg-sky-500/[0.09] border-sky-400/50 shadow-sm shadow-sky-500/10 ring-1 ring-sky-400/30 scale-[1.01]'
-                    : 'bg-slate-900/40 border-white/5 hover:border-sky-500/30 hover:bg-slate-800/30'
+                    ? 'bg-sky-500/15 border-sky-500 shadow-sm ring-1 ring-sky-400/50 scale-[1.01]'
+                    : 'bg-slate-100/90 dark:bg-slate-900/40 border-slate-200/80 dark:border-white/5 hover:border-sky-500/40 hover:bg-slate-200/60 dark:hover:bg-slate-800/30'
                 } ${isSpeakingThis ? 'ring-2 ring-amber-400 shadow-md shadow-amber-500/20' : ''}`}
               >
                 {isSelected && (
-                  <CheckCircle2 className="w-3.5 h-3.5 text-sky-400 absolute top-2 right-2" />
+                  <CheckCircle2 className="w-3.5 h-3.5 text-sky-500 dark:text-sky-400 absolute top-2 right-2" />
                 )}
 
                 <div>
-                  <div className={`text-sm sm:text-base font-bold mb-0.5 flex items-center justify-between ${isSelected ? 'text-sky-100' : 'text-white'}`}>
+                  <div className={`text-sm sm:text-base font-bold mb-0.5 flex items-center justify-between ${isSelected ? 'text-sky-700 dark:text-sky-100' : 'text-slate-900 dark:text-white'}`}>
                     <span>{lang.nativeName}</span>
                     {isSpeakingThis && (
                       <span className="flex items-center gap-0.5 ml-1">
@@ -138,11 +138,11 @@ export const LanguageWelcomeModal: React.FC<LanguageWelcomeModalProps> = ({
                       </span>
                     )}
                   </div>
-                  <div className="text-[11px] text-slate-400 font-medium">{lang.name}</div>
+                  <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">{lang.name}</div>
                 </div>
 
-                <div className="mt-2 pt-1.5 border-t border-white/5 flex items-center justify-between">
-                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-white/5 text-slate-400 font-mono border border-white/5">
+                <div className="mt-2 pt-1.5 border-t border-slate-200 dark:border-white/5 flex items-center justify-between">
+                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-slate-200/80 dark:bg-white/5 text-slate-600 dark:text-slate-400 font-mono border border-slate-200 dark:border-white/5">
                     {lang.script}
                   </span>
                   <button
@@ -152,8 +152,8 @@ export const LanguageWelcomeModal: React.FC<LanguageWelcomeModalProps> = ({
                       isSpeakingThis
                         ? 'bg-amber-400 text-black font-bold animate-pulse'
                         : isSelected
-                        ? 'bg-sky-500/20 text-sky-300 hover:bg-sky-500 hover:text-black'
-                        : 'bg-white/5 text-slate-400 hover:text-sky-300 hover:bg-white/10'
+                        ? 'bg-sky-500/20 text-sky-600 dark:text-sky-300 hover:bg-sky-500 hover:text-black'
+                        : 'bg-slate-200/60 dark:bg-white/5 text-slate-500 dark:text-slate-400 hover:text-sky-500 hover:bg-slate-200 dark:hover:bg-white/10'
                     }`}
                     title={isSpeakingThis ? 'Stop voice sample' : `Listen to Voice Sample in ${lang.name}`}
                   >

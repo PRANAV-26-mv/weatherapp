@@ -71,10 +71,10 @@ export const CameraModal: React.FC<CameraModalProps> = ({ isOpen, onClose, onCap
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
       <div className="glass-panel w-full max-w-lg rounded-2xl border border-saffron/40 overflow-hidden shadow-2xl space-y-4 p-6 relative">
         {/* Modal Header */}
-        <div className="flex items-center justify-between border-b border-white/10 pb-3">
+        <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 pb-3">
           <div className="flex items-center gap-2">
             <Camera className="w-5 h-5 text-saffron" />
-            <h3 className="text-lg font-bold text-white font-heading">
+            <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white font-heading">
               Snap Weather / Cloud Photo
             </h3>
           </div>
@@ -83,7 +83,7 @@ export const CameraModal: React.FC<CameraModalProps> = ({ isOpen, onClose, onCap
               stopCamera();
               onClose();
             }}
-            className="p-1.5 rounded-full text-gray-400 hover:text-white hover:bg-white/10"
+            className="p-1.5 rounded-full text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
