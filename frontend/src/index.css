@@ -255,3 +255,12 @@ html:not(.dark) ::-webkit-scrollbar-thumb, html.light ::-webkit-scrollbar-thumb 
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 153, 51, 0.5);
 }
+
+/* Hide scrollbars cleanly on touch/horizontal carousels */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

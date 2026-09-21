@@ -2,9 +2,13 @@ import React from 'react';
 import { ShieldCheck, PhoneCall, Globe, Heart } from 'lucide-react';
 import { ChakraLogo } from './ChakraLogo';
 
-export const Footer: React.FC = () => {
+interface FooterProps {
+  className?: string;
+}
+
+export const Footer: React.FC<FooterProps> = ({ className = '' }) => {
   return (
-    <footer className="mt-10 border-t border-slate-200 dark:border-white/10 glass-panel py-6 px-4 md:px-8 text-xs text-slate-600 dark:text-gray-400">
+    <footer className={`mt-10 border-t border-slate-200 dark:border-white/10 glass-panel py-6 px-4 md:px-8 text-xs text-slate-600 dark:text-gray-400 ${className}`}>
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-6 mb-5">
         {/* Brand & Vision */}
         <div className="space-y-3">

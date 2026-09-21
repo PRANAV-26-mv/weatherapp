@@ -205,22 +205,22 @@ export const ChatPage: React.FC<ChatPageProps> = ({ currentWeather, langCode = '
   return (
     <div className="max-w-5xl mx-auto space-y-4">
       {/* Page Header */}
-      <div className="glass-card p-3.5 sm:p-4.5 flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-2.5">
-          <div className="p-2 rounded-xl bg-saffron/20 text-saffron border border-saffron/40">
+      <div className="glass-card p-3 sm:p-4.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div className="p-2 rounded-xl bg-saffron/20 text-saffron border border-saffron/40 shrink-0">
             <Bot className="w-5 h-5" />
           </div>
-          <div>
-            <h2 className="text-lg sm:text-xl font-extrabold text-white font-heading">
+          <div className="min-w-0">
+            <h2 className="text-base sm:text-lg md:text-xl font-extrabold text-slate-900 dark:text-white font-heading truncate">
               {translate('btn_ask_ai', langCode)} (WeatherGPT AI)
             </h2>
-            <p className="text-[11px] text-gray-400">
+            <p className="text-[11px] text-slate-600 dark:text-gray-400 truncate">
               NLP Engine: <strong className="text-saffron">WeatherGPT AI</strong> • Speech STT/TTS ({langCode.toUpperCase()})
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
           {/* 🎓 AI Trainer Studio Button */}
           <button
             onClick={() => {
@@ -232,13 +232,13 @@ export const ChatPage: React.FC<ChatPageProps> = ({ currentWeather, langCode = '
               setTrainerTab('train');
               setIsTrainerOpen(true);
             }}
-            className="px-2.5 py-1 rounded-full bg-gradient-to-r from-amber-500/20 to-saffron/20 hover:from-amber-500/30 hover:to-saffron/30 border border-amber-500/40 text-amber-300 text-[11px] font-bold flex items-center gap-1.5 transition-all shadow-sm"
+            className="px-2.5 py-1 rounded-full bg-gradient-to-r from-amber-500/20 to-saffron/20 hover:from-amber-500/30 hover:to-saffron/30 border border-amber-500/40 text-amber-700 dark:text-amber-300 text-[11px] font-bold flex items-center gap-1.5 transition-all shadow-xs cursor-pointer"
             title="Chatbot Trainer Studio: Teach questions and correct mistakes"
           >
-            <GraduationCap className="w-3.5 h-3.5 text-amber-400" />
+            <GraduationCap className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
             <span>AI Trainer</span>
             {trainedRules.length > 0 && (
-              <span className="px-1.5 py-0.2 rounded-full bg-amber-400/20 text-amber-300 text-[9px] font-mono border border-amber-400/30">
+              <span className="px-1.5 py-0.2 rounded-full bg-amber-400/20 text-amber-700 dark:text-amber-300 text-[9px] font-mono border border-amber-400/30">
                 {trainedRules.length}
               </span>
             )}
@@ -247,7 +247,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({ currentWeather, langCode = '
           {messages.length > 0 && (
             <button
               onClick={() => setMessages([])}
-              className="px-2.5 py-1 rounded-full bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-300 text-[11px] font-bold flex items-center gap-1.5 transition-all"
+              className="px-2.5 py-1 rounded-full bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-700 dark:text-red-300 text-[11px] font-bold flex items-center gap-1.5 transition-all cursor-pointer"
               title="Clear conversation"
             >
               <Trash2 className="w-3.5 h-3.5" />
@@ -257,22 +257,22 @@ export const ChatPage: React.FC<ChatPageProps> = ({ currentWeather, langCode = '
 
           <button
             onClick={() => setIsKeyModalOpen(true)}
-            className="px-2.5 py-1 rounded-full bg-saffron/10 hover:bg-saffron/20 border border-saffron/30 text-saffron text-[11px] font-bold flex items-center gap-1.5 transition-all"
+            className="px-2.5 py-1 rounded-full bg-saffron/10 hover:bg-saffron/20 border border-saffron/30 text-amber-800 dark:text-saffron text-[11px] font-bold flex items-center gap-1.5 transition-all cursor-pointer"
             title="Configure Official Meteorological Gateway Key"
           >
             <Key className="w-3.5 h-3.5" />
-            <span>{apiKeyInput ? 'IMD / Weather Gateway (Connected)' : 'Configure Weather Gateway'}</span>
+            <span>{apiKeyInput ? 'Gateway Connected' : 'Configure Key'}</span>
           </button>
         </div>
       </div>
 
       {/* Quick Prompts */}
-      <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-none">
+      <div className="flex gap-2 overflow-x-auto pb-1.5 pt-0.5 no-scrollbar">
         {quickPrompts.map((prompt, idx) => (
           <button
             key={idx}
             onClick={() => handleSendMessage(prompt)}
-            className="px-3 py-1.5 rounded-full glass-pill text-xs text-slate-700 dark:text-gray-300 hover:text-slate-900 dark:hover:text-white hover:border-saffron/60 transition-all shrink-0"
+            className="px-3 py-1.5 rounded-full glass-pill text-xs text-slate-700 dark:text-gray-300 hover:text-slate-900 dark:hover:text-white hover:border-saffron/60 transition-all shrink-0 whitespace-nowrap cursor-pointer shadow-xs"
           >
             💬 {prompt}
           </button>
@@ -280,7 +280,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({ currentWeather, langCode = '
       </div>
 
       {/* Chat Thread */}
-      <div className="space-y-6 min-h-[420px]">
+      <div className="space-y-4 sm:space-y-6 min-h-[420px] pb-24 md:pb-16">
         {messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center space-y-3">
             <div className="w-12 h-12 rounded-2xl bg-saffron/10 border border-saffron/20 text-saffron flex items-center justify-center shadow-lg">
@@ -295,19 +295,19 @@ export const ChatPage: React.FC<ChatPageProps> = ({ currentWeather, langCode = '
           messages.map((msg, idx) => (
             <div
               key={msg.id}
-              className={`flex gap-3 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+              className={`flex gap-2 sm:gap-3 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
             >
             {msg.sender === 'assistant' && (
-              <div className="w-8 h-8 rounded-full bg-saffron/20 border border-saffron/40 text-saffron flex items-center justify-center shrink-0">
-                <Bot className="w-4 h-4" />
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-saffron/20 border border-saffron/40 text-saffron flex items-center justify-center shrink-0 mt-0.5">
+                <Bot className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </div>
             )}
 
-            <div className={`max-w-3xl space-y-4 ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}>
+            <div className={`max-w-[86%] sm:max-w-xl md:max-w-2xl lg:max-w-3xl space-y-3 ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}>
               <div
-                className={`p-4 rounded-2xl text-sm leading-relaxed ${
+                className={`p-3 sm:p-4 rounded-2xl text-xs sm:text-sm leading-relaxed ${
                   msg.sender === 'user'
-                    ? 'bg-saffron text-black font-semibold rounded-tr-none shadow-lg'
+                    ? 'bg-saffron text-black font-semibold rounded-tr-none shadow-md'
                     : 'glass-card border-slate-200 dark:border-white/10 text-slate-900 dark:text-gray-100 rounded-tl-none shadow-sm'
                 }`}
               >
@@ -417,19 +417,19 @@ export const ChatPage: React.FC<ChatPageProps> = ({ currentWeather, langCode = '
             </div>
 
             {msg.sender === 'user' && (
-              <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center shrink-0">
-                <User className="w-4 h-4" />
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-blue-600 text-white flex items-center justify-center shrink-0 mt-0.5">
+                <User className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </div>
             )}
           </div>
         )))}
 
         {isProcessing && (
-          <div className="flex gap-3 items-center">
-            <div className="w-8 h-8 rounded-full bg-saffron/20 text-saffron flex items-center justify-center animate-spin">
-              <Bot className="w-4 h-4" />
+          <div className="flex gap-2.5 items-center">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-saffron/20 text-saffron flex items-center justify-center animate-spin shrink-0">
+              <Bot className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </div>
-            <div className="glass-card p-3 rounded-2xl text-xs text-saffron animate-pulse">
+            <div className="glass-card p-2.5 sm:p-3 rounded-2xl text-xs text-saffron animate-pulse">
               Analyzing query & weather vision telemetry in {langCode.toUpperCase()}...
             </div>
           </div>
@@ -442,70 +442,72 @@ export const ChatPage: React.FC<ChatPageProps> = ({ currentWeather, langCode = '
         <div className="glass-panel p-2 rounded-xl border border-saffron/50 flex items-center justify-between w-fit gap-3">
           <div className="flex items-center gap-2">
             <img src={attachedImage} alt="Attachment" className="w-10 h-10 object-cover rounded-lg" />
-            <span className="text-xs text-gray-200 font-bold">Image Attached for Vision Analysis</span>
+            <span className="text-xs text-slate-800 dark:text-gray-200 font-bold">Image Attached for Vision Analysis</span>
           </div>
           <button
             onClick={() => setAttachedImage(null)}
-            className="p-1 rounded-full text-gray-400 hover:text-red-400 hover:bg-white/10"
+            className="p-1 rounded-full text-slate-400 hover:text-red-500 hover:bg-slate-100 dark:hover:bg-white/10"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
       )}
 
-      {/* Chat Input Toolbar */}
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleSendMessage();
-        }}
-        className="glass-panel p-2.5 rounded-2xl border border-slate-200 dark:border-white/15 flex items-center gap-1.5 md:gap-2 sticky bottom-16 md:bottom-4 z-40 shadow-2xl backdrop-blur-xl"
-      >
-        {/* Voice Input (Speech-to-Text in Selected Language) */}
-        <VoiceButton
-          onSpeechResult={(transcript) => {
-            setInputQuery(transcript);
-            handleSendMessage(transcript);
+      {/* Chat Input Toolbar - Docked above mobile bottom navigation bar */}
+      <div className="sticky bottom-16 md:bottom-4 z-30 pt-1 pb-1">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSendMessage();
           }}
-          langCode={langCode}
-        />
-
-        {/* Live Camera Snap Button */}
-        <button
-          type="button"
-          onClick={() => setIsCameraOpen(true)}
-          className="p-2 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-saffron/20 text-slate-700 dark:text-gray-300 hover:text-saffron border border-slate-200 dark:border-white/10 transition-colors cursor-pointer"
-          title="Snap Live Sky Photo via Camera"
+          className="glass-panel p-1.5 sm:p-2.5 rounded-2xl border border-slate-200/90 dark:border-white/15 flex items-center gap-1 sm:gap-2 shadow-2xl backdrop-blur-xl bg-white/95 dark:bg-[#0B0F19]/95"
         >
-          <Camera className="w-4 h-4" />
-        </button>
+          {/* Voice Input (Speech-to-Text in Selected Language) */}
+          <VoiceButton
+            onSpeechResult={(transcript) => {
+              setInputQuery(transcript);
+              handleSendMessage(transcript);
+            }}
+            langCode={langCode}
+          />
 
-        {/* File Image Attachment Button */}
-        <label
-          className="p-2 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-saffron/20 text-slate-700 dark:text-gray-300 hover:text-saffron border border-slate-200 dark:border-white/10 transition-colors cursor-pointer"
-          title="Attach Sky or Radar Photo File"
-        >
-          <Paperclip className="w-4 h-4" />
-          <input type="file" accept="image/*" onChange={handleFileUpload} className="hidden" />
-        </label>
+          {/* Live Camera Snap Button */}
+          <button
+            type="button"
+            onClick={() => setIsCameraOpen(true)}
+            className="p-2 sm:p-2.5 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-saffron/20 text-slate-700 dark:text-gray-300 hover:text-saffron border border-slate-200 dark:border-white/10 transition-colors cursor-pointer shrink-0"
+            title="Snap Live Sky Photo via Camera"
+          >
+            <Camera className="w-4 h-4" />
+          </button>
 
-        <input
-          type="text"
-          placeholder={`${translate('btn_ask_ai', langCode)} (${langCode.toUpperCase()})...`}
-          value={inputQuery}
-          onChange={(e) => setInputQuery(e.target.value)}
-          className="flex-1 bg-transparent text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-400 focus:outline-none px-2"
-        />
+          {/* File Image Attachment Button */}
+          <label
+            className="p-2 sm:p-2.5 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-saffron/20 text-slate-700 dark:text-gray-300 hover:text-saffron border border-slate-200 dark:border-white/10 transition-colors cursor-pointer shrink-0"
+            title="Attach Sky or Radar Photo File"
+          >
+            <Paperclip className="w-4 h-4" />
+            <input type="file" accept="image/*" onChange={handleFileUpload} className="hidden" />
+          </label>
 
-        <button
-          type="submit"
-          disabled={(!inputQuery.trim() && !attachedImage) || isProcessing}
-          className="saffron-gradient-btn px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 disabled:opacity-50"
-        >
-          <span>Send</span>
-          <Send className="w-3.5 h-3.5" />
-        </button>
-      </form>
+          <input
+            type="text"
+            placeholder={`${translate('btn_ask_ai', langCode)}...`}
+            value={inputQuery}
+            onChange={(e) => setInputQuery(e.target.value)}
+            className="flex-1 min-w-0 bg-transparent text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-400 focus:outline-none px-1.5 sm:px-2 py-1"
+          />
+
+          <button
+            type="submit"
+            disabled={(!inputQuery.trim() && !attachedImage) || isProcessing}
+            className="saffron-gradient-btn px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 disabled:opacity-40 shrink-0 cursor-pointer shadow-sm"
+          >
+            <span className="hidden sm:inline">Send</span>
+            <Send className="w-3.5 h-3.5" />
+          </button>
+        </form>
+      </div>
 
       {/* Live Webcam/Phone Camera Modal */}
       <CameraModal
@@ -595,33 +597,33 @@ export const ChatPage: React.FC<ChatPageProps> = ({ currentWeather, langCode = '
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-fade-in">
           <div className="glass-panel p-5 sm:p-6 rounded-3xl border border-amber-500/40 max-w-2xl w-full space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto">
             {/* Header */}
-            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 pb-3">
               <div className="flex items-center gap-2.5">
-                <div className="p-2 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                <div className="p-2 rounded-xl bg-amber-500/20 text-amber-500 border border-amber-500/30">
                   <GraduationCap className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-base sm:text-lg font-extrabold text-white font-heading flex items-center gap-2">
+                  <h3 className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white font-heading flex items-center gap-2">
                     <span>Chatbot Trainer Studio</span>
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-300 font-mono border border-amber-400/30">
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-700 dark:text-amber-300 font-mono border border-amber-400/30">
                       Ground Truth AI
                     </span>
                   </h3>
-                  <p className="text-[11px] text-gray-400">
+                  <p className="text-[11px] text-slate-600 dark:text-gray-400">
                     Train WeatherGPT with custom questions or correct mistaken answers in real-time.
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => setIsTrainerOpen(false)}
-                className="p-1.5 rounded-full text-gray-400 hover:text-white hover:bg-white/10 transition-colors"
+                className="p-1.5 rounded-full text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {/* Navigation Tabs */}
-            <div className="flex gap-2 border-b border-white/10 pb-2">
+            <div className="flex gap-2 border-b border-slate-200 dark:border-white/10 pb-2">
               <button
                 type="button"
                 onClick={() => {

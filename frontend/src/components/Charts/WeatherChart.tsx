@@ -28,9 +28,9 @@ export const WeatherChart: React.FC<WeatherChartProps> = ({ hourly }) => {
   }));
 
   return (
-    <div className="glass-card p-4 sm:p-6 relative">
+    <div className="glass-card p-3.5 sm:p-6 relative">
       {/* Header & Controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-3.5 sm:mb-6">
         <div className="flex items-center gap-2">
           <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-saffron" />
           <h3 className="text-base sm:text-lg md:text-xl font-bold text-slate-900 dark:text-white font-heading">
@@ -41,7 +41,7 @@ export const WeatherChart: React.FC<WeatherChartProps> = ({ hourly }) => {
         <div className="grid grid-cols-3 sm:flex p-1 bg-slate-100 dark:bg-white/5 rounded-xl border border-slate-200 dark:border-white/10 text-xs w-full sm:w-auto">
           <button
             onClick={() => setMetric('temp')}
-            className={`py-1.5 px-2.5 sm:px-3 rounded-lg font-semibold flex items-center justify-center gap-1.5 transition-all text-center ${
+            className={`py-1.5 px-1.5 sm:px-3 rounded-lg font-semibold flex items-center justify-center gap-1 sm:gap-1.5 transition-all text-center cursor-pointer ${
               metric === 'temp' ? 'bg-saffron text-black font-bold shadow-sm' : 'text-slate-600 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
@@ -52,7 +52,7 @@ export const WeatherChart: React.FC<WeatherChartProps> = ({ hourly }) => {
 
           <button
             onClick={() => setMetric('rain')}
-            className={`py-1.5 px-2.5 sm:px-3 rounded-lg font-semibold flex items-center justify-center gap-1.5 transition-all text-center ${
+            className={`py-1.5 px-1.5 sm:px-3 rounded-lg font-semibold flex items-center justify-center gap-1 sm:gap-1.5 transition-all text-center cursor-pointer ${
               metric === 'rain' ? 'bg-saffron text-black font-bold shadow-sm' : 'text-slate-600 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
@@ -63,7 +63,7 @@ export const WeatherChart: React.FC<WeatherChartProps> = ({ hourly }) => {
 
           <button
             onClick={() => setMetric('wind')}
-            className={`py-1.5 px-2.5 sm:px-3 rounded-lg font-semibold flex items-center justify-center gap-1.5 transition-all text-center ${
+            className={`py-1.5 px-1.5 sm:px-3 rounded-lg font-semibold flex items-center justify-center gap-1 sm:gap-1.5 transition-all text-center cursor-pointer ${
               metric === 'wind' ? 'bg-saffron text-black font-bold shadow-sm' : 'text-slate-600 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
@@ -78,7 +78,7 @@ export const WeatherChart: React.FC<WeatherChartProps> = ({ hourly }) => {
       <div className="h-56 sm:h-64 w-full">
         <ResponsiveContainer width="100%" height="100%">
           {metric === 'temp' ? (
-            <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -15, bottom: 0 }}>
+            <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -5, bottom: 0 }}>
               <defs>
                 <linearGradient id="tempGradient" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#FF9933" stopOpacity={0.8} />
@@ -99,7 +99,7 @@ export const WeatherChart: React.FC<WeatherChartProps> = ({ hourly }) => {
               <Area type="monotone" dataKey="temp" stroke="#FF9933" strokeWidth={2.5} fillOpacity={1} fill="url(#tempGradient)" />
             </AreaChart>
           ) : metric === 'rain' ? (
-            <BarChart data={chartData} margin={{ top: 10, right: 10, left: -15, bottom: 0 }}>
+            <BarChart data={chartData} margin={{ top: 10, right: 10, left: -5, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(148, 163, 184, 0.2)" />
               <XAxis dataKey="time" stroke="#64748B" tick={{ fontSize: 10 }} />
               <YAxis stroke="#64748B" tick={{ fontSize: 10 }} domain={[0, 100]} />
@@ -114,7 +114,7 @@ export const WeatherChart: React.FC<WeatherChartProps> = ({ hourly }) => {
               <Bar dataKey="rainProb" fill="#3B82F6" radius={[6, 6, 0, 0]} />
             </BarChart>
           ) : (
-            <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -15, bottom: 0 }}>
+            <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -5, bottom: 0 }}>
               <defs>
                 <linearGradient id="windGradient" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#10B981" stopOpacity={0.8} />

@@ -465,7 +465,7 @@ export function App() {
       </main>
 
       {/* Footer */}
-      <Footer />
+      <Footer className={currentTab === 'chat' ? 'hidden md:block' : ''} />
       </div>
 
       {/* Interactive User Guide & Help Modal */}
@@ -542,8 +542,8 @@ export function App() {
         </button>
       </nav>
 
-      {/* Global Easy Floating Accessibility Widget */}
-      {currentWeather && (
+      {/* Global Easy Floating Accessibility Widget (Hidden on Chat Tab to prevent overlapping the Chat Send button) */}
+      {currentWeather && currentTab !== 'chat' && (
         <FloatingAccessibilityWidget
           currentLang={currentLang}
           onOpenLanguageModal={() => setIsLangModalOpen(true)}
