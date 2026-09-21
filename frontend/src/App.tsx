@@ -280,7 +280,7 @@ export function App() {
                       <span>WeatherGPT AI Intelligence Platform</span>
                     </div>
 
-                    <h1 className="text-xl sm:text-3xl md:text-4xl font-extrabold tracking-tight leading-snug font-heading">
+                    <h1 className="text-xl sm:text-3xl md:text-4xl font-extrabold tracking-tight leading-snug font-heading text-slate-900 dark:text-white">
                       {translate('hero_headline', currentLang)}
                     </h1>
 
