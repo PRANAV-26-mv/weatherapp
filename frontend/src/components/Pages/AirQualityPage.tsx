@@ -38,16 +38,16 @@ export const AirQualityPage: React.FC<AirQualityPageProps> = ({ currentWeather }
             <Wind className="w-7 h-7" />
           </div>
           <div>
-            <h2 className="text-2xl font-extrabold text-white font-heading">
+            <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white font-heading">
               Air Quality & Atmospheric Pollution
             </h2>
-            <p className="text-xs text-gray-400">
+            <p className="text-xs text-slate-600 dark:text-gray-400">
               Live Air Quality Index (AQI) Telemetry for {currentWeather.locationName}
             </p>
           </div>
         </div>
 
-        <div className="px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-300 text-xs font-bold border border-cyan-500/30">
+        <div className="px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-700 dark:text-cyan-300 text-xs font-bold border border-cyan-500/30">
           CPCB & Copernicus Sensor Stream
         </div>
       </div>
@@ -59,12 +59,12 @@ export const AirQualityPage: React.FC<AirQualityPageProps> = ({ currentWeather }
             className="w-36 h-36 rounded-full flex flex-col items-center justify-center border-8 shadow-2xl transition-all"
             style={{ borderColor: getAqiColor(aqiData.aqi) }}
           >
-            <span className="text-4xl font-extrabold text-white font-heading">{aqiData.aqi}</span>
-            <span className="text-[10px] uppercase font-bold text-gray-400">US AQI</span>
+            <span className="text-4xl font-extrabold text-slate-900 dark:text-white font-heading">{aqiData.aqi}</span>
+            <span className="text-[10px] uppercase font-bold text-slate-500 dark:text-gray-400">US AQI</span>
           </div>
 
           <div
-            className="mt-4 px-4 py-1 rounded-full text-xs font-extrabold text-black uppercase"
+            className="mt-4 px-4 py-1 rounded-full text-xs font-extrabold text-black uppercase shadow-xs"
             style={{ backgroundColor: getAqiColor(aqiData.aqi) }}
           >
             {aqiData.statusText}
@@ -72,34 +72,34 @@ export const AirQualityPage: React.FC<AirQualityPageProps> = ({ currentWeather }
         </div>
 
         <div className="md:col-span-2 glass-card p-6 flex flex-col justify-between space-y-4">
-          <div className="flex items-center gap-2 text-saffron font-bold text-sm">
-            <HeartPulse className="w-5 h-5 text-saffron" />
+          <div className="flex items-center gap-2 text-amber-700 dark:text-saffron font-bold text-sm">
+            <HeartPulse className="w-5 h-5 text-amber-600 dark:text-saffron" />
             <span>Health Advisory & Precautions</span>
           </div>
 
-          <p className="text-sm text-gray-200 leading-relaxed font-medium">
+          <p className="text-sm text-slate-700 dark:text-gray-200 leading-relaxed font-medium">
             {aqiData.healthAdvice}
           </p>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2 text-xs">
-            <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-center">
-              <span className="text-gray-400 block text-[10px]">PM2.5</span>
-              <strong className="text-white text-base">{aqiData.pm25} µg/m³</strong>
+            <div className="p-3 rounded-xl bg-slate-100/80 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-center">
+              <span className="text-slate-500 dark:text-gray-400 block text-[10px]">PM2.5</span>
+              <strong className="text-slate-900 dark:text-white text-base">{aqiData.pm25} µg/m³</strong>
             </div>
 
-            <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-center">
-              <span className="text-gray-400 block text-[10px]">PM10</span>
-              <strong className="text-white text-base">{aqiData.pm10} µg/m³</strong>
+            <div className="p-3 rounded-xl bg-slate-100/80 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-center">
+              <span className="text-slate-500 dark:text-gray-400 block text-[10px]">PM10</span>
+              <strong className="text-slate-900 dark:text-white text-base">{aqiData.pm10} µg/m³</strong>
             </div>
 
-            <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-center">
-              <span className="text-gray-400 block text-[10px]">Ozone (O₃)</span>
-              <strong className="text-white text-base">{aqiData.ozone} µg/m³</strong>
+            <div className="p-3 rounded-xl bg-slate-100/80 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-center">
+              <span className="text-slate-500 dark:text-gray-400 block text-[10px]">Ozone (O₃)</span>
+              <strong className="text-slate-900 dark:text-white text-base">{aqiData.ozone} µg/m³</strong>
             </div>
 
-            <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-center">
-              <span className="text-gray-400 block text-[10px]">NO₂</span>
-              <strong className="text-white text-base">{aqiData.no2} µg/m³</strong>
+            <div className="p-3 rounded-xl bg-slate-100/80 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-center">
+              <span className="text-slate-500 dark:text-gray-400 block text-[10px]">NO₂</span>
+              <strong className="text-slate-900 dark:text-white text-base">{aqiData.no2} µg/m³</strong>
             </div>
           </div>
         </div>

@@ -85,10 +85,10 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ currentWeather }) 
           <Camera className="w-6 h-6" />
         </div>
         <div>
-          <h3 className="text-2xl font-extrabold text-white font-heading">
+          <h3 className="text-2xl font-extrabold text-slate-900 dark:text-white font-heading">
             WeatherGPT Vision Analysis
           </h3>
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-slate-600 dark:text-gray-400">
             Upload satellite imagery, radar captures, or cloud photos for AI meteorological analysis
           </p>
         </div>
@@ -96,12 +96,12 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ currentWeather }) 
 
       {/* Upload Zone & Sample Picker */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <div className="border-2 border-dashed border-white/20 hover:border-saffron/60 rounded-2xl p-6 flex flex-col items-center justify-center text-center transition-all bg-white/5 group relative">
+        <div className="border-2 border-dashed border-slate-300 dark:border-white/20 hover:border-saffron/60 rounded-2xl p-6 flex flex-col items-center justify-center text-center transition-all bg-slate-50 dark:bg-white/5 group relative">
           <Upload className="w-8 h-8 text-saffron mb-2 group-hover:scale-110 transition-transform" />
-          <span className="text-sm font-bold text-white mb-1">
+          <span className="text-sm font-bold text-slate-900 dark:text-white mb-1">
             Drag & Drop Weather Image
           </span>
-          <span className="text-xs text-gray-400 mb-4">
+          <span className="text-xs text-slate-600 dark:text-gray-400 mb-4">
             Supports Satellite IR, Doppler Radar, or Cloud Photographs (JPG/PNG)
           </span>
           <label className="saffron-gradient-btn px-4 py-2 rounded-xl text-xs font-bold cursor-pointer">
@@ -112,19 +112,19 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ currentWeather }) 
 
         {/* Sample Image Presets */}
         <div className="space-y-2">
-          <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider block mb-1">
+          <span className="text-xs font-semibold text-slate-600 dark:text-gray-400 uppercase tracking-wider block mb-1">
             Or Test With Sample Meteorological Imagery:
           </span>
           {sampleImages.map((sample, idx) => (
             <button
               key={idx}
               onClick={() => handleSelectSample(sample)}
-              className="w-full p-2.5 rounded-xl bg-white/5 hover:bg-saffron/15 border border-white/10 flex items-center justify-between transition-all group text-left"
+              className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-white/5 hover:bg-saffron/15 border border-slate-200 dark:border-white/10 flex items-center justify-between transition-all group text-left"
             >
-              <span className="text-xs font-medium text-gray-200 group-hover:text-saffron">
+              <span className="text-xs font-medium text-slate-700 dark:text-gray-200 group-hover:text-amber-700 dark:group-hover:text-saffron">
                 {sample.name}
               </span>
-              <span className="text-[10px] text-saffron border border-saffron/30 px-2 py-0.5 rounded-full font-bold">
+              <span className="text-[10px] text-amber-800 dark:text-saffron border border-saffron/30 px-2 py-0.5 rounded-full font-bold">
                 Analyze
               </span>
             </button>
@@ -134,31 +134,31 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ currentWeather }) 
 
       {/* Loading Spinner */}
       {isAnalyzing && (
-        <div className="p-8 rounded-2xl bg-white/5 border border-saffron/30 flex flex-col items-center justify-center text-center animate-pulse">
+        <div className="p-8 rounded-2xl bg-slate-50 dark:bg-white/5 border border-saffron/30 flex flex-col items-center justify-center text-center animate-pulse">
           <RefreshCw className="w-8 h-8 text-saffron animate-spin mb-3" />
-          <span className="text-sm font-bold text-white">Running WeatherGPT Vision Engine...</span>
-          <span className="text-xs text-gray-400 mt-1">Extracting cloud morphology, convective updrafts, and radar reflectivity</span>
+          <span className="text-sm font-bold text-slate-900 dark:text-white">Running WeatherGPT Vision Engine...</span>
+          <span className="text-xs text-slate-600 dark:text-gray-400 mt-1">Extracting cloud morphology, convective updrafts, and radar reflectivity</span>
         </div>
       )}
 
       {/* Result Display */}
       {result && !isAnalyzing && (
         <div className="glass-panel p-6 rounded-2xl border border-saffron/30 space-y-6">
-          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-4">
+          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 dark:border-white/10 pb-4">
             <div className="flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-saffron" />
-              <h4 className="text-lg font-bold text-white font-heading">
+              <h4 className="text-lg font-bold text-slate-900 dark:text-white font-heading">
                 AI Vision Diagnostic Report
               </h4>
             </div>
-            <div className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold border border-emerald-500/40">
+            <div className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-xs font-bold border border-emerald-500/40">
               Confidence Score: {result.confidenceScore}%
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Image Preview */}
-            <div className="rounded-xl overflow-hidden border border-white/10 h-48 relative">
+            <div className="rounded-xl overflow-hidden border border-slate-200 dark:border-white/10 h-48 relative">
               <img src={result.imageUrl} alt="Weather Analysis Target" className="w-full h-full object-cover" />
               <div className="absolute bottom-2 left-2 px-2 py-1 rounded bg-black/70 text-[10px] text-white font-mono">
                 Source Image Target
@@ -168,15 +168,15 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ currentWeather }) 
             {/* Findings Breakdown */}
             <div className="md:col-span-2 space-y-3 text-xs">
               <div>
-                <span className="text-gray-400 block font-medium">Detected Cloud Classification:</span>
-                <strong className="text-saffron text-sm font-bold">{result.cloudType}</strong>
+                <span className="text-slate-600 dark:text-gray-400 block font-medium">Detected Cloud Classification:</span>
+                <strong className="text-amber-800 dark:text-saffron text-sm font-bold">{result.cloudType}</strong>
               </div>
 
               <div>
-                <span className="text-gray-400 block font-medium">Precipitation & Storm Indicators:</span>
+                <span className="text-slate-600 dark:text-gray-400 block font-medium">Precipitation & Storm Indicators:</span>
                 <ul className="mt-1 space-y-1">
                   {result.stormIndicators.map((ind, i) => (
-                    <li key={i} className="flex items-center gap-1.5 text-gray-200">
+                    <li key={i} className="flex items-center gap-1.5 text-slate-700 dark:text-gray-200">
                       <CheckCircle2 className="w-3.5 h-3.5 text-saffron shrink-0" />
                       <span>{ind}</span>
                     </li>
@@ -185,11 +185,11 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ currentWeather }) 
               </div>
 
               {/* Detailed Explanation of What is Happening */}
-              <div className="p-3.5 rounded-xl bg-white/5 border border-white/10 space-y-1">
-                <span className="text-saffron block font-bold text-[11px] flex items-center gap-1">
+              <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 space-y-1">
+                <span className="text-amber-800 dark:text-saffron block font-bold text-[11px] flex items-center gap-1">
                   🔍 What Is Happening in This Image:
                 </span>
-                <p className="text-gray-200 leading-relaxed">
+                <p className="text-slate-700 dark:text-gray-200 leading-relaxed">
                   {result.detailedAnalysis || result.weatherPatternSummary}
                 </p>
               </div>
@@ -197,13 +197,13 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ currentWeather }) 
               {/* Recommended Safety Precautions */}
               {result.safetyPrecautions && result.safetyPrecautions.length > 0 && (
                 <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 space-y-1.5">
-                  <span className="text-amber-400 block font-bold text-[11px] flex items-center gap-1">
+                  <span className="text-amber-700 dark:text-amber-400 block font-bold text-[11px] flex items-center gap-1">
                     🚨 Recommended Safety Precautions:
                   </span>
-                  <ul className="space-y-1 text-gray-200">
+                  <ul className="space-y-1 text-slate-700 dark:text-gray-200">
                     {result.safetyPrecautions.map((prec, pIdx) => (
                       <li key={pIdx} className="flex items-start gap-1.5">
-                        <span className="text-amber-400 font-bold">•</span>
+                        <span className="text-amber-600 dark:text-amber-400 font-bold">•</span>
                         <span>{prec}</span>
                       </li>
                     ))}
@@ -214,20 +214,20 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ currentWeather }) 
           </div>
 
           {/* Image vs Live Weather Sensor Comparison */}
-          <div className="p-4 rounded-xl bg-saffron/10 border border-saffron/30 text-xs space-y-2">
-            <div className="flex items-center justify-between font-bold text-saffron">
+          <div className="p-4 rounded-xl bg-amber-50 dark:bg-saffron/10 border border-amber-200 dark:border-saffron/30 text-xs space-y-2">
+            <div className="flex items-center justify-between font-bold text-amber-800 dark:text-saffron">
               <span>Image Photo Observation vs. Live Open-Meteo Sensor:</span>
               <span className="px-2 py-0.5 rounded bg-saffron text-black text-[10px]">
                 {result.liveComparison.agreementRating}
               </span>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-gray-200 mt-2">
-              <div className="p-2 rounded bg-black/40 border border-white/5">
-                <span className="text-gray-400 block text-[10px]">Inferred From Photo:</span>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-slate-700 dark:text-gray-200 mt-2">
+              <div className="p-2 rounded bg-white dark:bg-black/40 border border-slate-200 dark:border-white/5">
+                <span className="text-slate-500 dark:text-gray-400 block text-[10px]">Inferred From Photo:</span>
                 <div>{result.liveComparison.observedInPhoto}</div>
               </div>
-              <div className="p-2 rounded bg-black/40 border border-white/5">
-                <span className="text-gray-400 block text-[10px]">Live Sensor Data ({currentWeather.locationName}):</span>
+              <div className="p-2 rounded bg-white dark:bg-black/40 border border-slate-200 dark:border-white/5">
+                <span className="text-slate-500 dark:text-gray-400 block text-[10px]">Live Sensor Data ({currentWeather.locationName}):</span>
                 <div>{result.liveComparison.actualLiveSensor}</div>
               </div>
             </div>

@@ -166,24 +166,24 @@ export const LanguageWelcomeModal: React.FC<LanguageWelcomeModalProps> = ({
         </div>
 
         {/* Bottom Sample Preview & Launch Button */}
-        <div className="p-3.5 sm:p-4 rounded-xl bg-slate-900/60 border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
+        <div className="p-3.5 sm:p-4 rounded-xl bg-slate-100/90 dark:bg-slate-900/60 border border-slate-200 dark:border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
           <div className="flex items-center gap-3 text-left">
             <button
               onClick={() => handleTestVoice(selected)}
               className={`p-2.5 rounded-full border font-bold shrink-0 transition-transform ${
                 speakingLangCode === selected
                   ? 'bg-amber-400 text-black border-amber-400 animate-pulse scale-110'
-                  : 'bg-sky-500/15 hover:bg-sky-500/25 text-sky-400 border-sky-500/30 hover:scale-105'
+                  : 'bg-sky-500/15 hover:bg-sky-500/25 text-sky-600 dark:text-sky-400 border-sky-500/30 hover:scale-105'
               }`}
               title={speakingLangCode === selected ? "Stop voice sample" : "Test Voice Sample"}
             >
               {speakingLangCode === selected ? <Square className="w-4 h-4 fill-black" /> : <Volume2 className="w-4 h-4" />}
             </button>
             <div>
-              <div className="text-xs font-bold text-sky-400">
+              <div className="text-xs font-bold text-sky-700 dark:text-sky-400">
                 Selected: {selectedLangObj.nativeName} ({selectedLangObj.name})
               </div>
-              <div className="text-[11px] text-slate-300 italic line-clamp-1">
+              <div className="text-[11px] text-slate-600 dark:text-slate-300 italic line-clamp-1">
                 "{VOICE_GREETINGS[selected]}"
               </div>
             </div>

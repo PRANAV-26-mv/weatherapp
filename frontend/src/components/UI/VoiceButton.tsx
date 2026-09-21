@@ -85,7 +85,7 @@ export const VoiceButton: React.FC<VoiceButtonProps> = ({
         className={`p-1.5 rounded-lg transition-all flex items-center gap-1 text-xs font-semibold ${
           isSpeaking
             ? 'bg-saffron text-black animate-pulse shadow-lg shadow-saffron/40'
-            : 'bg-white/5 hover:bg-saffron/20 text-gray-300 hover:text-saffron border border-white/10'
+            : 'bg-slate-100 dark:bg-white/5 hover:bg-saffron/20 text-slate-700 dark:text-gray-300 hover:text-amber-700 dark:hover:text-saffron border border-slate-200 dark:border-white/10'
         }`}
         title={`Read Aloud in ${langCode.toUpperCase()} (TTS)`}
       >

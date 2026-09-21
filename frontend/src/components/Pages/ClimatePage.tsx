@@ -27,20 +27,20 @@ export const ClimatePage: React.FC<ClimatePageProps> = ({ currentWeather }) => {
     <div className="max-w-7xl mx-auto space-y-6">
       <div className="glass-card p-6 flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="p-3 rounded-2xl bg-saffron/20 text-saffron border border-saffron/40">
+          <div className="p-3 rounded-2xl bg-saffron/20 text-amber-700 dark:text-saffron border border-saffron/40">
             <TrendingUp className="w-7 h-7" />
           </div>
           <div>
-            <h2 className="text-2xl font-extrabold text-white font-heading">
+            <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white font-heading">
               Climate Intelligence & Historical Anomalies
             </h2>
-            <p className="text-xs text-gray-400">
+            <p className="text-xs text-slate-600 dark:text-gray-400">
               10-Year Decadal Temperature & Precipitation Trends for {currentWeather.locationName}
             </p>
           </div>
         </div>
 
-        <div className="px-3 py-1 rounded-full bg-saffron/10 text-saffron text-xs font-bold border border-saffron/30 flex items-center gap-1">
+        <div className="px-3 py-1 rounded-full bg-saffron/10 text-amber-700 dark:text-saffron text-xs font-bold border border-saffron/30 flex items-center gap-1">
           <ShieldCheck className="w-3.5 h-3.5" />
           <span>ERA5 Climate Archive Integrated</span>
         </div>
@@ -48,44 +48,44 @@ export const ClimatePage: React.FC<ClimatePageProps> = ({ currentWeather }) => {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="glass-card p-5 space-y-2 border-l-4 border-l-saffron">
-          <div className="flex items-center gap-2 text-xs text-gray-400">
-            <Thermometer className="w-4 h-4 text-saffron" />
+          <div className="flex items-center gap-2 text-xs text-slate-600 dark:text-gray-400">
+            <Thermometer className="w-4 h-4 text-amber-600 dark:text-saffron" />
             <span>Mean Decadal Temp Anomaly</span>
           </div>
-          <div className="text-3xl font-extrabold text-white font-heading">+1.45°C</div>
-          <p className="text-[11px] text-gray-400">Compared to 1991-2020 climatological baseline.</p>
+          <div className="text-3xl font-extrabold text-slate-900 dark:text-white font-heading">+1.45°C</div>
+          <p className="text-[11px] text-slate-600 dark:text-gray-400">Compared to 1991-2020 climatological baseline.</p>
         </div>
 
         <div className="glass-card p-5 space-y-2 border-l-4 border-l-blue-500">
-          <div className="flex items-center gap-2 text-xs text-gray-400">
-            <CloudRain className="w-4 h-4 text-blue-400" />
+          <div className="flex items-center gap-2 text-xs text-slate-600 dark:text-gray-400">
+            <CloudRain className="w-4 h-4 text-blue-500 dark:text-blue-400" />
             <span>Monsoon Precipitation Anomaly</span>
           </div>
-          <div className="text-3xl font-extrabold text-white font-heading">+12.8%</div>
-          <p className="text-[11px] text-gray-400">Increased frequency of high-intensity short-duration rain events.</p>
+          <div className="text-3xl font-extrabold text-slate-900 dark:text-white font-heading">+12.8%</div>
+          <p className="text-[11px] text-slate-600 dark:text-gray-400">Increased frequency of high-intensity short-duration rain events.</p>
         </div>
 
         <div className="glass-card p-5 space-y-2 border-l-4 border-l-emerald-500">
-          <div className="flex items-center gap-2 text-xs text-gray-400">
-            <TrendingUp className="w-4 h-4 text-emerald-400" />
+          <div className="flex items-center gap-2 text-xs text-slate-600 dark:text-gray-400">
+            <TrendingUp className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
             <span>Extreme Weather Frequency</span>
           </div>
-          <div className="text-3xl font-extrabold text-white font-heading">3.2x</div>
-          <p className="text-[11px] text-gray-400">Heatwave & heavy precipitation days per annum.</p>
+          <div className="text-3xl font-extrabold text-slate-900 dark:text-white font-heading">3.2x</div>
+          <p className="text-[11px] text-slate-600 dark:text-gray-400">Heatwave & heavy precipitation days per annum.</p>
         </div>
       </div>
 
       {/* 10-Year Decadal Line Chart */}
       <div className="glass-card p-6">
-        <h3 className="text-lg font-bold text-white mb-4 font-heading">
+        <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4 font-heading">
           Decadal Temperature Trend (2016 vs 2026)
         </h3>
         <div className="h-72 w-full">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={historicalData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-              <XAxis dataKey="month" stroke="#9CA3AF" tick={{ fontSize: 11 }} />
-              <YAxis stroke="#9CA3AF" tick={{ fontSize: 11 }} domain={[15, 42]} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.2)" />
+              <XAxis dataKey="month" stroke="#64748B" tick={{ fontSize: 11 }} />
+              <YAxis stroke="#64748B" tick={{ fontSize: 11 }} domain={[15, 42]} />
               <Tooltip
                 contentStyle={{
                   backgroundColor: 'rgba(15, 23, 42, 0.95)',
@@ -94,7 +94,7 @@ export const ClimatePage: React.FC<ClimatePageProps> = ({ currentWeather }) => {
                   color: '#FFF',
                 }}
               />
-              <Line type="monotone" dataKey="temp2016" name="2016 Baseline (°C)" stroke="#9CA3AF" strokeWidth={2} strokeDasharray="5 5" />
+              <Line type="monotone" dataKey="temp2016" name="2016 Baseline (°C)" stroke="#94A3B8" strokeWidth={2} strokeDasharray="5 5" />
               <Line type="monotone" dataKey="temp2026" name="2026 Current (°C)" stroke="#FF9933" strokeWidth={3} />
             </LineChart>
           </ResponsiveContainer>
@@ -103,13 +103,13 @@ export const ClimatePage: React.FC<ClimatePageProps> = ({ currentWeather }) => {
 
       {/* Monthly Decadal Climatology Table */}
       <div className="glass-card p-6 space-y-4">
-        <h3 className="text-lg font-bold text-white font-heading">
+        <h3 className="text-lg font-bold text-slate-900 dark:text-white font-heading">
           Monthly Decadal Climatological Comparison (2016 vs 2026)
         </h3>
         <div className="overflow-x-auto scrollbar-thin">
           <table className="w-full text-left text-xs min-w-[600px] border-collapse">
             <thead>
-              <tr className="border-b border-white/10 text-gray-400 uppercase text-[10px] tracking-wider bg-white/5">
+              <tr className="border-b border-slate-200 dark:border-white/10 text-slate-600 dark:text-gray-400 uppercase text-[10px] tracking-wider bg-slate-100/80 dark:bg-white/5">
                 <th className="py-3 px-4 w-2/12 rounded-tl-xl">Month</th>
                 <th className="py-3 px-4 w-3/12">2016 Mean Temp (°C)</th>
                 <th className="py-3 px-4 w-3/12">2026 Mean Temp (°C)</th>
@@ -117,16 +117,16 @@ export const ClimatePage: React.FC<ClimatePageProps> = ({ currentWeather }) => {
                 <th className="py-3 px-4 w-2/12 rounded-tr-xl">Monsoon Rain (mm)</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-slate-200 dark:divide-white/5">
               {historicalData.map((row, i) => {
                 const diff = (row.temp2026 - row.temp2016).toFixed(1);
                 return (
-                  <tr key={i} className="hover:bg-white/5 transition-colors">
-                    <td className="py-3 px-4 font-bold text-white">{row.month}</td>
-                    <td className="py-3 px-4 font-mono text-gray-400">{row.temp2016}°C</td>
-                    <td className="py-3 px-4 font-mono text-saffron font-bold">{row.temp2026}°C</td>
-                    <td className="py-3 px-4 font-mono text-red-400 font-bold">+{diff}°C</td>
-                    <td className="py-3 px-4 font-mono text-blue-300">{row.rain2026} mm</td>
+                  <tr key={i} className="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
+                    <td className="py-3 px-4 font-bold text-slate-900 dark:text-white">{row.month}</td>
+                    <td className="py-3 px-4 font-mono text-slate-600 dark:text-gray-400">{row.temp2016}°C</td>
+                    <td className="py-3 px-4 font-mono text-amber-600 dark:text-saffron font-bold">{row.temp2026}°C</td>
+                    <td className="py-3 px-4 font-mono text-red-600 dark:text-red-400 font-bold">+{diff}°C</td>
+                    <td className="py-3 px-4 font-mono text-blue-600 dark:text-blue-300 font-medium">{row.rain2026} mm</td>
                   </tr>
                 );
               })}

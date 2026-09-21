@@ -28,19 +28,19 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
             setIsOpen(!isOpen);
           }
         }}
-        className="glass-pill px-2.5 py-1.5 text-xs font-semibold text-gray-200 hover:text-white hover:border-saffron/50 flex items-center gap-1.5 transition-all"
+        className="glass-pill px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-gray-200 hover:text-slate-900 dark:hover:text-white hover:border-saffron/50 flex items-center gap-1.5 transition-all"
         title="Change Language & Voice / भाषा और आवाज बदलें"
       >
         <Globe className="w-3.5 h-3.5 text-saffron" />
         <span>{activeLang.nativeName}</span>
-        <ChevronDown className="w-3 h-3 text-gray-400" />
+        <ChevronDown className="w-3 h-3 text-slate-400 dark:text-gray-400" />
       </button>
 
       {isOpen && !onOpenLanguageModal && (
-        <div className="absolute right-0 mt-2 w-52 py-2 glass-panel rounded-2xl shadow-2xl z-50 border border-white/10 max-h-80 overflow-y-auto">
-          <div className="px-3 py-1 text-[10px] uppercase font-bold tracking-wider text-sky-400 border-b border-white/10 mb-1 flex items-center justify-between">
+        <div className="absolute right-0 mt-2 w-52 py-2 glass-panel rounded-2xl shadow-2xl z-50 border border-slate-200 dark:border-white/10 max-h-80 overflow-y-auto">
+          <div className="px-3 py-1 text-[10px] uppercase font-bold tracking-wider text-sky-600 dark:text-sky-400 border-b border-slate-200 dark:border-white/10 mb-1 flex items-center justify-between">
             <span>Select Language ({SUPPORTED_LANGUAGES.length})</span>
-            <Sparkles className="w-3 h-3 text-sky-400" />
+            <Sparkles className="w-3 h-3 text-sky-500" />
           </div>
           {SUPPORTED_LANGUAGES.map((lang: IndianLanguage) => (
             <button
@@ -52,11 +52,11 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
                 speakLanguageGreeting(lang.code);
               }}
               className={`w-full text-left px-3 py-1.5 text-xs flex items-center justify-between hover:bg-sky-500/10 transition-colors ${
-                currentLang === lang.code ? 'text-sky-400 font-bold bg-sky-500/10' : 'text-gray-300'
+                currentLang === lang.code ? 'text-sky-600 dark:text-sky-400 font-bold bg-sky-500/10' : 'text-slate-700 dark:text-gray-300'
               }`}
             >
               <span>{lang.nativeName}</span>
-              <span className="text-[10px] text-gray-500">{lang.name}</span>
+              <span className="text-[10px] text-slate-500 dark:text-gray-500">{lang.name}</span>
             </button>
           ))}
         </div>

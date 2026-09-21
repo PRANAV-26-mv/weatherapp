@@ -331,7 +331,7 @@ export function App() {
                 {/* Interactive GIS Weather & Emergency Map */}
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-xl font-bold text-white font-heading flex items-center gap-2">
+                    <h3 className="text-xl font-bold text-slate-900 dark:text-white font-heading flex items-center gap-2">
                       <Map className="w-5 h-5 text-saffron" />
                       <span>Interactive GIS Weather Map</span>
                     </h3>
@@ -354,8 +354,8 @@ export function App() {
                     <div className="p-2.5 rounded-xl bg-saffron/20 text-saffron w-fit">
                       <Camera className="w-5 h-5" />
                     </div>
-                    <h4 className="font-bold text-white group-hover:text-saffron transition-colors">Weather Vision AI</h4>
-                    <p className="text-xs text-gray-400">Analyze satellite photos, cloud formations, and radar maps.</p>
+                    <h4 className="font-bold text-slate-900 dark:text-white group-hover:text-saffron transition-colors">Weather Vision AI</h4>
+                    <p className="text-xs text-slate-600 dark:text-gray-400">Analyze satellite photos, cloud formations, and radar maps.</p>
                   </div>
 
                   <div
@@ -365,19 +365,19 @@ export function App() {
                     <div className="p-2.5 rounded-xl bg-indiagreen/20 text-indiagreen w-fit">
                       <Sprout className="w-5 h-5" />
                     </div>
-                    <h4 className="font-bold text-white group-hover:text-indiagreen transition-colors">Farm Weather Advisor</h4>
-                    <p className="text-xs text-gray-400">Crop-specific irrigation, pest risk, and harvest advice.</p>
+                    <h4 className="font-bold text-slate-900 dark:text-white group-hover:text-indiagreen transition-colors">Farm Weather Advisor</h4>
+                    <p className="text-xs text-slate-600 dark:text-gray-400">Crop-specific irrigation, pest risk, and harvest advice.</p>
                   </div>
 
                   <div
                     onClick={() => setCurrentTab('aqi')}
                     className="glass-card p-5 cursor-pointer hover:border-cyan-500/50 transition-all group space-y-2"
                   >
-                    <div className="p-2.5 rounded-xl bg-cyan-500/20 text-cyan-400 w-fit">
+                    <div className="p-2.5 rounded-xl bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 w-fit">
                       <Wind className="w-5 h-5" />
                     </div>
-                    <h4 className="font-bold text-white group-hover:text-cyan-400 transition-colors">Air Quality Index</h4>
-                    <p className="text-xs text-gray-400">Live AQI meter, PM2.5, PM10, and health advisories.</p>
+                    <h4 className="font-bold text-slate-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">Air Quality Index</h4>
+                    <p className="text-xs text-slate-600 dark:text-gray-400">Live AQI meter, PM2.5, PM10, and health advisories.</p>
                   </div>
 
                   <div
@@ -387,8 +387,8 @@ export function App() {
                     <div className="p-2.5 rounded-xl bg-red-500/20 text-red-500 w-fit">
                       <ShieldAlert className="w-5 h-5" />
                     </div>
-                    <h4 className="font-bold text-white group-hover:text-red-500 transition-colors">Disaster Intelligence</h4>
-                    <p className="text-xs text-gray-400">Verified IMD warnings, geofencing, and emergency broadcasts.</p>
+                    <h4 className="font-bold text-slate-900 dark:text-white group-hover:text-red-500 transition-colors">Disaster Intelligence</h4>
+                    <p className="text-xs text-slate-600 dark:text-gray-400">Verified IMD warnings, geofencing, and emergency broadcasts.</p>
                   </div>
                 </div>
               </div>
@@ -408,7 +408,7 @@ export function App() {
             {/* ROUTE 4: MAP */}
             {currentTab === 'map' && (
               <div className="space-y-4">
-                <h2 className="text-2xl font-extrabold text-white font-heading flex items-center gap-2">
+                <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white font-heading flex items-center gap-2">
                   <Map className="w-6 h-6 text-saffron" />
                   <span>Weather & Emergency GIS Map</span>
                 </h2>

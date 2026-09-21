@@ -272,7 +272,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({ currentWeather, langCode = '
           <button
             key={idx}
             onClick={() => handleSendMessage(prompt)}
-            className="px-3 py-1.5 rounded-full glass-pill text-xs text-gray-300 hover:text-white hover:border-saffron/60 transition-all shrink-0"
+            className="px-3 py-1.5 rounded-full glass-pill text-xs text-slate-700 dark:text-gray-300 hover:text-slate-900 dark:hover:text-white hover:border-saffron/60 transition-all shrink-0"
           >
             💬 {prompt}
           </button>
@@ -286,8 +286,8 @@ export const ChatPage: React.FC<ChatPageProps> = ({ currentWeather, langCode = '
             <div className="w-12 h-12 rounded-2xl bg-saffron/10 border border-saffron/20 text-saffron flex items-center justify-center shadow-lg">
               <Bot className="w-6 h-6" />
             </div>
-            <h3 className="text-base font-bold text-white font-heading">AI Weather Assistant</h3>
-            <p className="text-xs text-gray-400 max-w-sm">
+            <h3 className="text-base font-bold text-slate-900 dark:text-white font-heading">AI Weather Assistant</h3>
+            <p className="text-xs text-slate-600 dark:text-gray-400 max-w-sm">
               Type your question below or click any suggestion prompt above to start.
             </p>
           </div>
@@ -308,16 +308,16 @@ export const ChatPage: React.FC<ChatPageProps> = ({ currentWeather, langCode = '
                 className={`p-4 rounded-2xl text-sm leading-relaxed ${
                   msg.sender === 'user'
                     ? 'bg-saffron text-black font-semibold rounded-tr-none shadow-lg'
-                    : 'glass-card border-white/10 text-gray-100 rounded-tl-none'
+                    : 'glass-card border-slate-200 dark:border-white/10 text-slate-900 dark:text-gray-100 rounded-tl-none shadow-sm'
                 }`}
               >
                 <div className="whitespace-pre-line">{msg.text}</div>
 
                 {/* Tool Badge & Actions for Assistant Responses */}
                 {msg.sender === 'assistant' && (
-                  <div className="mt-3 pt-2 border-t border-white/10 flex items-center justify-between gap-2 flex-wrap">
+                  <div className="mt-3 pt-2 border-t border-slate-200 dark:border-white/10 flex items-center justify-between gap-2 flex-wrap">
                     {msg.toolCalled ? (
-                      <span className="text-[11px] text-saffron/90 font-medium flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-saffron/10 border border-saffron/20">
+                      <span className="text-[11px] text-amber-700 dark:text-saffron/90 font-medium flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-saffron/10 border border-saffron/20">
                         <span className="w-1.5 h-1.5 rounded-full bg-saffron animate-pulse" />
                         <span>{msg.toolCalled.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}</span>
                       </span>
@@ -334,27 +334,27 @@ export const ChatPage: React.FC<ChatPageProps> = ({ currentWeather, langCode = '
                       {/* 🎓 Teach / Correct Mistake button */}
                       <button
                         onClick={() => handleOpenCorrection(idx, msg)}
-                        className="px-2 py-1 rounded-md text-amber-300 hover:text-amber-100 bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 transition-colors flex items-center gap-1 text-[11px] font-semibold"
+                        className="px-2 py-1 rounded-md text-amber-700 dark:text-amber-300 hover:text-amber-900 dark:hover:text-amber-100 bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 transition-colors flex items-center gap-1 text-[11px] font-semibold cursor-pointer"
                         title="Teach chatbot or correct a mistake in this answer"
                       >
-                        <GraduationCap className="w-3.5 h-3.5 text-amber-400" />
+                        <GraduationCap className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
                         <span className="text-[10px]">Teach / Fix Mistake</span>
                       </button>
 
                       <button
                         onClick={() => handleCopyText(msg.id, msg.text)}
-                        className="p-1 rounded-md text-gray-400 hover:text-white hover:bg-white/10 transition-colors flex items-center gap-1 text-[11px]"
+                        className="p-1 rounded-md text-slate-500 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition-colors flex items-center gap-1 text-[11px] cursor-pointer"
                         title="Copy response"
                       >
                         {copiedId === msg.id ? (
                           <>
-                            <Check className="w-3.5 h-3.5 text-emerald-400" />
-                            <span className="text-[10px] text-emerald-400">Copied</span>
+                            <Check className="w-3.5 h-3.5 text-emerald-500" />
+                            <span className="text-[10px] text-emerald-600 dark:text-emerald-400">Copied</span>
                           </>
                         ) : (
                           <>
                             <Copy className="w-3.5 h-3.5" />
-                            <span className="text-[10px] text-gray-400">Copy</span>
+                            <span className="text-[10px] text-slate-500 dark:text-gray-400">Copy</span>
                           </>
                         )}
                       </button>
@@ -373,24 +373,24 @@ export const ChatPage: React.FC<ChatPageProps> = ({ currentWeather, langCode = '
                   <div className="h-44 rounded-xl overflow-hidden border border-white/10">
                     <img src={msg.imageAnalysis.imageUrl} alt="Sky target" className="w-full h-full object-cover" />
                   </div>
-                  <div className="p-3 rounded-xl bg-white/5 space-y-2">
-                    <div className="text-white font-bold text-sm">{msg.imageAnalysis.cloudType}</div>
-                    <div className="text-gray-300">Precipitation Likelihood: <strong className="text-saffron">{msg.imageAnalysis.precipitationLikelihoodPct}%</strong></div>
+                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 space-y-2">
+                    <div className="text-slate-900 dark:text-white font-bold text-sm">{msg.imageAnalysis.cloudType}</div>
+                    <div className="text-slate-700 dark:text-gray-300">Precipitation Likelihood: <strong className="text-amber-800 dark:text-saffron">{msg.imageAnalysis.precipitationLikelihoodPct}%</strong></div>
                     
                     {msg.imageAnalysis.detailedAnalysis && (
-                      <div className="pt-2 border-t border-white/10 text-gray-200">
-                        <span className="text-saffron font-bold block text-[11px]">🔍 What Is Happening:</span>
+                      <div className="pt-2 border-t border-slate-200 dark:border-white/10 text-slate-700 dark:text-gray-200">
+                        <span className="text-amber-800 dark:text-saffron font-bold block text-[11px]">🔍 What Is Happening:</span>
                         <p className="mt-0.5 leading-relaxed">{msg.imageAnalysis.detailedAnalysis}</p>
                       </div>
                     )}
 
                     {msg.imageAnalysis.safetyPrecautions && msg.imageAnalysis.safetyPrecautions.length > 0 && (
-                      <div className="pt-2 border-t border-white/10">
-                        <span className="text-amber-400 font-bold block text-[11px]">🚨 Recommended Safety Precautions:</span>
-                        <ul className="mt-1 space-y-1 text-gray-200">
+                      <div className="pt-2 border-t border-slate-200 dark:border-white/10">
+                        <span className="text-amber-700 dark:text-amber-400 font-bold block text-[11px]">🚨 Recommended Safety Precautions:</span>
+                        <ul className="mt-1 space-y-1 text-slate-700 dark:text-gray-200">
                           {msg.imageAnalysis.safetyPrecautions.map((p, pI) => (
                             <li key={pI} className="flex items-start gap-1">
-                              <span className="text-amber-400 font-bold">•</span>
+                              <span className="text-amber-600 dark:text-amber-400 font-bold">•</span>
                               <span>{p}</span>
                             </li>
                           ))}
@@ -398,7 +398,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({ currentWeather, langCode = '
                       </div>
                     )}
 
-                    <div className="text-[11px] text-emerald-400 font-semibold pt-1">Sensor Alignment: {msg.imageAnalysis.liveComparison.agreementRating}</div>
+                    <div className="text-[11px] text-emerald-700 dark:text-emerald-400 font-semibold pt-1">Sensor Alignment: {msg.imageAnalysis.liveComparison.agreementRating}</div>
                   </div>
                 </div>
               )}
@@ -459,7 +459,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({ currentWeather, langCode = '
           e.preventDefault();
           handleSendMessage();
         }}
-        className="glass-panel p-2.5 rounded-2xl border border-white/15 flex items-center gap-1.5 md:gap-2 sticky bottom-16 md:bottom-4 z-40 shadow-2xl backdrop-blur-xl"
+        className="glass-panel p-2.5 rounded-2xl border border-slate-200 dark:border-white/15 flex items-center gap-1.5 md:gap-2 sticky bottom-16 md:bottom-4 z-40 shadow-2xl backdrop-blur-xl"
       >
         {/* Voice Input (Speech-to-Text in Selected Language) */}
         <VoiceButton
@@ -474,7 +474,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({ currentWeather, langCode = '
         <button
           type="button"
           onClick={() => setIsCameraOpen(true)}
-          className="p-2 rounded-xl bg-white/5 hover:bg-saffron/20 text-gray-300 hover:text-saffron border border-white/10 transition-colors"
+          className="p-2 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-saffron/20 text-slate-700 dark:text-gray-300 hover:text-saffron border border-slate-200 dark:border-white/10 transition-colors cursor-pointer"
           title="Snap Live Sky Photo via Camera"
         >
           <Camera className="w-4 h-4" />
@@ -482,7 +482,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({ currentWeather, langCode = '
 
         {/* File Image Attachment Button */}
         <label
-          className="p-2 rounded-xl bg-white/5 hover:bg-saffron/20 text-gray-300 hover:text-saffron border border-white/10 transition-colors cursor-pointer"
+          className="p-2 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-saffron/20 text-slate-700 dark:text-gray-300 hover:text-saffron border border-slate-200 dark:border-white/10 transition-colors cursor-pointer"
           title="Attach Sky or Radar Photo File"
         >
           <Paperclip className="w-4 h-4" />
@@ -528,18 +528,18 @@ export const ChatPage: React.FC<ChatPageProps> = ({ currentWeather, langCode = '
               </div>
               <button
                 onClick={() => setIsKeyModalOpen(false)}
-                className="p-1 rounded-full text-gray-400 hover:text-white hover:bg-white/10"
+                className="p-1 rounded-full text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <p className="text-xs text-gray-300 leading-relaxed">
+            <p className="text-xs text-slate-600 dark:text-gray-300 leading-relaxed">
               Enter or paste your meteorological gateway API key below to connect direct real-time forecasting and atmospheric intelligence.
             </p>
 
             <div className="space-y-2">
-              <label className="text-[11px] text-gray-400 uppercase font-mono tracking-wider">Meteorological Gateway API Key:</label>
+              <label className="text-[11px] text-slate-600 dark:text-gray-400 uppercase font-mono tracking-wider">Meteorological Gateway API Key:</label>
               <input
                 type="password"
                 placeholder="Paste API Key..."
@@ -664,11 +664,11 @@ export const ChatPage: React.FC<ChatPageProps> = ({ currentWeather, langCode = '
                       <AlertCircle className="w-3.5 h-3.5" />
                       <span>Mistake Correction Mode:</span>
                     </div>
-                    <p className="text-gray-300">
-                      You are fixing the bot's response to: <em className="text-white">"{activeCorrectionContext.userQuery}"</em>
+                    <p className="text-slate-700 dark:text-gray-300">
+                      You are fixing the bot's response to: <em className="text-slate-900 dark:text-white">"{activeCorrectionContext.userQuery}"</em>
                     </p>
                     {activeCorrectionContext.originalAnswer && (
-                      <p className="text-[11px] text-gray-400 line-clamp-2">
+                      <p className="text-[11px] text-slate-500 dark:text-gray-400 line-clamp-2">
                         Original Bot Output: {activeCorrectionContext.originalAnswer}
                       </p>
                     )}
@@ -676,7 +676,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({ currentWeather, langCode = '
                 )}
 
                 <div>
-                  <label className="block text-[11px] font-semibold text-gray-300 uppercase tracking-wider mb-1">
+                  <label className="block text-[11px] font-semibold text-slate-700 dark:text-gray-300 uppercase tracking-wider mb-1">
                     Question Pattern / Trigger Phrase:
                   </label>
                   <input
@@ -685,15 +685,15 @@ export const ChatPage: React.FC<ChatPageProps> = ({ currentWeather, langCode = '
                     placeholder="e.g. Can I plant tomato saplings today in Sathyamangalam?"
                     value={trainQuery}
                     onChange={(e) => setTrainQuery(e.target.value)}
-                    className="w-full bg-black/40 border border-white/20 focus:border-amber-400 rounded-xl px-3 py-2.5 text-xs text-white placeholder-gray-500 focus:outline-none"
+                    className="w-full bg-slate-50 dark:bg-black/40 border border-slate-300 dark:border-white/20 focus:border-amber-400 rounded-xl px-3 py-2.5 text-xs text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none"
                   />
-                  <span className="text-[10px] text-gray-400 mt-0.5 block">
+                  <span className="text-[10px] text-slate-500 dark:text-gray-400 mt-0.5 block">
                     Whenever a user asks this question (or a similar phrase), WeatherGPT will prioritize your corrected answer.
                   </span>
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-semibold text-gray-300 uppercase tracking-wider mb-1">
+                  <label className="block text-[11px] font-semibold text-slate-700 dark:text-gray-300 uppercase tracking-wider mb-1">
                     Corrected Answer (Ground Truth):
                   </label>
                   <textarea
@@ -702,19 +702,19 @@ export const ChatPage: React.FC<ChatPageProps> = ({ currentWeather, langCode = '
                     placeholder="Enter the accurate, professional, user-friendly ground truth answer..."
                     value={trainAnswer}
                     onChange={(e) => setTrainAnswer(e.target.value)}
-                    className="w-full bg-black/40 border border-white/20 focus:border-amber-400 rounded-xl px-3 py-2.5 text-xs text-white placeholder-gray-500 focus:outline-none resize-none"
+                    className="w-full bg-slate-50 dark:bg-black/40 border border-slate-300 dark:border-white/20 focus:border-amber-400 rounded-xl px-3 py-2.5 text-xs text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none resize-none"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[11px] font-semibold text-gray-300 uppercase tracking-wider mb-1">
+                    <label className="block text-[11px] font-semibold text-slate-700 dark:text-gray-300 uppercase tracking-wider mb-1">
                       Intent Category:
                     </label>
                     <select
                       value={trainIntent}
                       onChange={(e) => setTrainIntent(e.target.value)}
-                      className="w-full bg-black/40 border border-white/20 focus:border-amber-400 rounded-xl px-3 py-2 text-xs text-white focus:outline-none"
+                      className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-white/20 focus:border-amber-400 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white focus:outline-none"
                     >
                       <option value="weather_correction">Weather Forecast & Rain</option>
                       <option value="activity_laundry">Outdoor Activity & Laundry</option>
@@ -726,13 +726,13 @@ export const ChatPage: React.FC<ChatPageProps> = ({ currentWeather, langCode = '
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-semibold text-gray-300 uppercase tracking-wider mb-1">
+                    <label className="block text-[11px] font-semibold text-slate-700 dark:text-gray-300 uppercase tracking-wider mb-1">
                       Response Language:
                     </label>
                     <select
                       value={trainLang}
                       onChange={(e) => setTrainLang(e.target.value)}
-                      className="w-full bg-black/40 border border-white/20 focus:border-amber-400 rounded-xl px-3 py-2 text-xs text-white focus:outline-none"
+                      className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-white/20 focus:border-amber-400 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white focus:outline-none"
                     >
                       <option value="en">English</option>
                       <option value="ta">Tamil (தமிழ்)</option>
@@ -833,17 +833,17 @@ export const ChatPage: React.FC<ChatPageProps> = ({ currentWeather, langCode = '
                           </div>
                         </div>
 
-                        <div className="text-gray-300 pl-4 border-l-2 border-amber-400/50 text-[11px] line-clamp-3">
-                          <span className="text-gray-400 font-semibold">A: </span>
+                        <div className="text-slate-700 dark:text-gray-300 pl-4 border-l-2 border-amber-400/50 text-[11px] line-clamp-3">
+                          <span className="text-slate-500 dark:text-gray-400 font-semibold">A: </span>
                           {rule.corrected_answer}
                         </div>
 
-                        <div className="flex items-center justify-between pt-1 text-[10px] text-gray-400">
+                        <div className="flex items-center justify-between pt-1 text-[10px] text-slate-500 dark:text-gray-400">
                           <span className="capitalize">Intent: {rule.target_intent.replace(/_/g, ' ')}</span>
                           <button
                             type="button"
                             onClick={() => handleTestTrainedRule(rule.query_pattern)}
-                            className="text-amber-400 hover:text-amber-300 font-semibold flex items-center gap-1"
+                            className="text-amber-700 dark:text-amber-400 hover:text-amber-600 dark:hover:text-amber-300 font-semibold flex items-center gap-1"
                           >
                             <span>⚡ Ask in Chat</span>
                           </button>

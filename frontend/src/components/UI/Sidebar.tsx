@@ -530,7 +530,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {navCategories.map((cat, catIdx) => (
         <div key={catIdx} className="space-y-1">
           {(!isCollapsed || isMobile) && (
-            <div className="px-3 text-[10px] font-extrabold uppercase tracking-wider text-saffron/90 font-heading">
+            <div className="px-3 text-[10px] font-extrabold uppercase tracking-wider text-amber-700 dark:text-saffron font-heading">
               {cat.title}
             </div>
           )}
@@ -551,10 +551,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   className={`w-full group relative flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all duration-200 ${
                     isActive
                       ? 'bg-gradient-to-r from-saffron to-amber-500 text-black font-extrabold shadow-md shadow-saffron/30 scale-[1.01]'
-                      : 'text-gray-300 hover:text-white hover:bg-white/10'
+                      : 'text-slate-700 dark:text-gray-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10'
                   }`}
                 >
-                  <Icon className={`w-4 h-4 shrink-0 transition-transform group-hover:scale-110 ${isActive ? 'text-black' : 'text-saffron'}`} />
+                  <Icon className={`w-4 h-4 shrink-0 transition-transform group-hover:scale-110 ${isActive ? 'text-black' : 'text-amber-600 dark:text-saffron'}`} />
 
                   {(!isCollapsed || isMobile) && (
                     <span className="truncate flex-1 text-left">{item.label}</span>
@@ -563,7 +563,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   {/* Badges */}
                   {(!isCollapsed || isMobile) && item.badge && (
                     <span className={`text-[9px] font-black uppercase px-1.5 py-0.5 rounded-full ${
-                      isActive ? 'bg-black/20 text-black' : 'bg-saffron/20 text-saffron border border-saffron/30'
+                      isActive ? 'bg-black/20 text-black' : 'bg-saffron/20 text-amber-700 dark:text-saffron border border-saffron/30'
                     }`}>
                       {item.badge}
                     </span>
@@ -660,7 +660,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <div className={`relative w-72 max-w-[85vw] h-full flex flex-col justify-between z-50 shadow-2xl overflow-y-auto animate-in slide-in-from-left duration-300 ${
             theme === 'light'
               ? 'bg-white text-slate-900 border-r border-slate-200'
-              : 'glass-panel text-white border-r border-white/15'
+              : 'bg-[#0B0F19] text-white border-r border-white/15'
           }`}>
             <div>
               {/* Drawer Header */}
@@ -670,7 +670,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 </div>
                 <button
                   onClick={() => setMobileDrawerOpen(false)}
-                  className="p-1.5 rounded-lg text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
+                  className="p-1.5 rounded-lg text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -684,9 +684,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     placeholder="Search city (e.g. Delhi, London)..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full glass-input text-xs pl-8 pr-3 py-1.5 rounded-xl border border-slate-200 dark:border-white/15 focus:border-saffron"
+                    className="w-full glass-input text-xs pl-8 pr-3 py-1.5 rounded-xl border border-slate-200 dark:border-white/15 focus:border-saffron text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-400"
                   />
-                  <Search className="w-3.5 h-3.5 text-gray-400 absolute left-2.5 top-2.5" />
+                  <Search className="w-3.5 h-3.5 text-slate-400 dark:text-gray-400 absolute left-2.5 top-2.5" />
                 </form>
               </div>
 
@@ -712,7 +712,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 {onOpenGuideModal && (
                   <button
                     onClick={() => { onOpenGuideModal(); setMobileDrawerOpen(false); }}
-                    className="p-2 rounded-xl glass-pill text-saffron hover:bg-saffron/20"
+                    className="p-2 rounded-xl glass-pill text-amber-600 dark:text-saffron hover:bg-slate-200 dark:hover:bg-saffron/20"
                     title="User Guide"
                   >
                     <HelpCircle className="w-4 h-4" />
@@ -736,34 +736,27 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* 💻 DESKTOP PERMANENT LEFT SIDEBAR (lg+ screens)        */}
       {/* ---------------------------------------------------- */}
       <aside
-        className={`hidden lg:flex fixed inset-y-0 left-0 z-40 flex-col justify-between glass-panel border-r border-white/10 transition-all duration-300 shadow-2xl ${
-          isCollapsed ? 'w-20' : 'w-64'
-        }`}
+        className={`hidden lg:flex fixed inset-y-0 left-0 z-40 flex-col justify-between transition-all duration-300 shadow-2xl ${
+          theme === 'light'
+            ? 'bg-white text-slate-900 border-r border-slate-200'
+            : 'bg-[#0B0F19]/95 backdrop-blur-xl text-white border-r border-white/10'
+        } ${isCollapsed ? 'w-20' : 'w-64'}`}
       >
         {/* Top Header: Brand & Collapse Toggle */}
         <div>
-          <div className="p-4 border-b border-white/10 flex items-center justify-between gap-2">
+          <div className="p-4 border-b border-slate-200 dark:border-white/10 flex items-center justify-between gap-2">
             <div 
               onClick={() => onSelectTab('home')} 
               className="cursor-pointer flex items-center gap-2 overflow-hidden"
               title="WeatherGPT Home"
             >
-              <ChakraLogo size="sm" />
-              {!isCollapsed && (
-                <div className="flex flex-col">
-                  <div className="flex items-center gap-1">
-                    <span className="font-extrabold text-sm text-white font-heading tracking-tight">WeatherGPT</span>
-                    <span className="w-1.5 h-1.5 rounded-full bg-saffron animate-pulse" />
-                  </div>
-                  <span className="text-[9px] text-gray-400 font-bold uppercase tracking-wider">AI Platform</span>
-                </div>
-              )}
+              <ChakraLogo size="sm" showText={!isCollapsed} showSubtitle={!isCollapsed} />
             </div>
 
             {onToggleCollapse && (
               <button
                 onClick={onToggleCollapse}
-                className="p-1 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors"
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
                 title={isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
               >
                 {isCollapsed ? <ChevronRight className="w-4 h-4 text-saffron" /> : <ChevronLeft className="w-4 h-4" />}
@@ -773,21 +766,21 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
           {/* City Autocomplete Search Bar */}
           {!isCollapsed && (
-            <div className="p-3 border-b border-white/10">
+            <div className="p-3 border-b border-slate-200 dark:border-white/10">
               <form onSubmit={handleSearchSubmit} className="relative">
                 <input
                   type="text"
                   placeholder={getSidebarText('search_placeholder', currentLang)}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full glass-input text-xs pl-8 pr-7 py-1.5 rounded-xl border border-white/15 focus:border-saffron placeholder-gray-400"
+                  className="w-full glass-input text-xs pl-8 pr-7 py-1.5 rounded-xl border border-slate-200 dark:border-white/15 focus:border-saffron placeholder-slate-400 dark:placeholder-gray-400 text-slate-900 dark:text-white"
                 />
-                <Search className="w-3.5 h-3.5 text-gray-400 absolute left-2.5 top-2.5" />
+                <Search className="w-3.5 h-3.5 text-slate-400 dark:text-gray-400 absolute left-2.5 top-2.5" />
 
                 <button
                   type="button"
                   onClick={onDetectCurrentLocation}
-                  className="absolute right-1.5 top-1.5 p-1 rounded-lg hover:bg-saffron text-gray-400 hover:text-black transition-colors"
+                  className="absolute right-1.5 top-1.5 p-1 rounded-lg hover:bg-saffron text-slate-400 hover:text-black transition-colors"
                   title="Detect GPS Live Location"
                 >
                   <Navigation className="w-3.5 h-3.5 text-saffron" />
@@ -796,8 +789,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
               {/* Autocomplete Dropdown */}
               {searchResults.length > 0 && (
-                <div className="mt-1.5 glass-panel rounded-xl border border-white/15 shadow-2xl p-1 z-50">
-                  <div className="text-[9px] text-saffron uppercase font-bold px-2 py-0.5">{getSidebarText('select_city', currentLang)}</div>
+                <div className="mt-1.5 glass-panel rounded-xl border border-slate-200 dark:border-white/15 shadow-2xl p-1 z-50">
+                  <div className="text-[9px] text-amber-700 dark:text-saffron uppercase font-bold px-2 py-0.5">{getSidebarText('select_city', currentLang)}</div>
                   {searchResults.map((loc, idx) => (
                     <button
                       key={idx}
@@ -806,10 +799,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         setSearchResults([]);
                         setSearchQuery('');
                       }}
-                      className="w-full text-left px-2 py-1 text-[11px] text-gray-200 hover:text-white hover:bg-saffron/20 rounded-lg flex items-center justify-between"
+                      className="w-full text-left px-2 py-1 text-[11px] text-slate-700 dark:text-gray-200 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-saffron/20 rounded-lg flex items-center justify-between"
                     >
                       <span className="font-semibold truncate">{loc.name}</span>
-                      <span className="text-[9px] text-gray-400 shrink-0">{loc.country}</span>
+                      <span className="text-[9px] text-slate-500 dark:text-gray-400 shrink-0">{loc.country}</span>
                     </button>
                   ))}
                 </div>
@@ -820,27 +813,27 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <button
                   type="button"
                   onClick={() => onSelectLocation(permanentLocation.name, permanentLocation.lat, permanentLocation.lon)}
-                  className="mt-2 w-full px-2.5 py-1 rounded-lg bg-saffron/10 hover:bg-saffron/20 border border-saffron/30 text-saffron text-[10px] font-bold flex items-center justify-between transition-all"
+                  className="mt-2 w-full px-2.5 py-1 rounded-lg bg-saffron/10 hover:bg-saffron/20 border border-saffron/30 text-amber-700 dark:text-saffron text-[10px] font-bold flex items-center justify-between transition-all"
                   title={`Go to Permanent Location: ${permanentLocation.name}`}
                 >
                   <span className="flex items-center gap-1 truncate">
                     <span>🏠 {getSidebarText('pinned_home', currentLang)}:</span>
-                    <strong className="text-white truncate">{permanentLocation.name}</strong>
+                    <strong className="text-slate-900 dark:text-white truncate">{permanentLocation.name}</strong>
                   </span>
-                  <span className="text-[9px] text-gray-400">{getSidebarText('pinned_badge', currentLang)}</span>
+                  <span className="text-[9px] text-slate-500 dark:text-gray-400">{getSidebarText('pinned_badge', currentLang)}</span>
                 </button>
               )}
             </div>
           )}
 
           {/* Scrollable Categories Navigation */}
-          <div className="overflow-y-auto max-h-[calc(100vh-270px)] scrollbar-thin scrollbar-thumb-white/10 hover:scrollbar-thumb-saffron/40">
+          <div className="overflow-y-auto max-h-[calc(100vh-270px)] scrollbar-thin scrollbar-thumb-slate-200 dark:scrollbar-thumb-white/10 hover:scrollbar-thumb-saffron/40">
             {renderNavList(false)}
           </div>
         </div>
 
         {/* Sidebar Bottom Controls: Language, Theme, Guide, Low-Data */}
-        <div className="p-3 border-t border-white/10 space-y-2 bg-black/40">
+        <div className="p-3 border-t border-slate-200 dark:border-white/10 space-y-2 bg-slate-50 dark:bg-black/40">
           {!isCollapsed ? (
             <>
               <div className="flex items-center justify-between gap-1.5">
@@ -848,7 +841,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 {onOpenLanguageModal && (
                   <button
                     onClick={onOpenLanguageModal}
-                    className="flex-1 px-2.5 py-1.5 rounded-xl glass-pill text-[11px] font-bold text-gray-200 hover:text-white hover:border-saffron/60 flex items-center gap-1.5 transition-all"
+                    className="flex-1 px-2.5 py-1.5 rounded-xl glass-pill text-[11px] font-bold text-slate-700 dark:text-gray-200 hover:text-slate-900 dark:hover:text-white hover:border-saffron/60 flex items-center gap-1.5 transition-all"
                     title="Change UI & Assistant Language"
                   >
                     <Globe className="w-3.5 h-3.5 text-saffron shrink-0" />
@@ -859,17 +852,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 {/* Theme Toggle Button */}
                 <button
                   onClick={onToggleTheme}
-                  className="p-1.5 rounded-xl glass-pill text-white hover:text-saffron transition-all"
+                  className="p-1.5 rounded-xl glass-pill text-slate-700 dark:text-white hover:text-saffron transition-all"
                   title={theme === 'dark' ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
                 >
-                  {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-indigo-400" />}
+                  {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-indigo-500" />}
                 </button>
 
                 {/* User Guide Button */}
                 {onOpenGuideModal && (
                   <button
                     onClick={onOpenGuideModal}
-                    className="p-1.5 rounded-xl glass-pill text-saffron hover:bg-saffron/20 transition-all"
+                    className="p-1.5 rounded-xl glass-pill text-amber-600 dark:text-saffron hover:bg-slate-200 dark:hover:bg-saffron/20 transition-all"
                     title="Open User Guide & Instructions"
                   >
                     <HelpCircle className="w-4 h-4" />
@@ -878,16 +871,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
               </div>
 
               {/* Data Saver Mode Pill */}
-              <div className="flex items-center justify-between px-1 text-[10px] text-gray-400">
+              <div className="flex items-center justify-between px-1 text-[10px] text-slate-600 dark:text-gray-400">
                 <span className="flex items-center gap-1">
-                  <Zap className={`w-3 h-3 ${isLowDataMode ? 'text-indiagreen' : 'text-gray-500'}`} />
+                  <Zap className={`w-3 h-3 ${isLowDataMode ? 'text-indiagreen' : 'text-slate-400 dark:text-gray-500'}`} />
                   <span>{getSidebarText('low_data', currentLang)}</span>
                 </span>
                 <input
                   type="checkbox"
                   checked={isLowDataMode}
                   onChange={(e) => setIsLowDataMode(e.target.checked)}
-                  className="rounded bg-black border-white/20 text-saffron focus:ring-saffron w-3 h-3 cursor-pointer"
+                  className="rounded bg-white dark:bg-black border-slate-300 dark:border-white/20 text-saffron focus:ring-saffron w-3 h-3 cursor-pointer"
                 />
               </div>
             </>
@@ -897,7 +890,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               {onOpenLanguageModal && (
                 <button
                   onClick={onOpenLanguageModal}
-                  className="p-2 rounded-xl text-saffron hover:bg-white/10"
+                  className="p-2 rounded-xl text-saffron hover:bg-slate-200 dark:hover:bg-white/10"
                   title={`Language (${currentLang.toUpperCase()})`}
                 >
                   <Globe className="w-4 h-4" />
@@ -905,15 +898,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
               )}
               <button
                 onClick={onToggleTheme}
-                className="p-2 rounded-xl text-white hover:bg-white/10"
+                className="p-2 rounded-xl text-slate-700 dark:text-white hover:bg-slate-200 dark:hover:bg-white/10"
                 title="Toggle Theme"
               >
-                {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-indigo-400" />}
+                {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-indigo-500" />}
               </button>
               {onOpenGuideModal && (
                 <button
                   onClick={onOpenGuideModal}
-                  className="p-2 rounded-xl text-saffron hover:bg-white/10"
+                  className="p-2 rounded-xl text-amber-600 dark:text-saffron hover:bg-slate-200 dark:hover:bg-white/10"
                   title="User Guide"
                 >
                   <HelpCircle className="w-4 h-4" />

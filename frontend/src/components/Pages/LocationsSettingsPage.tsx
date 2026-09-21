@@ -69,13 +69,13 @@ export const LocationsSettingsPage: React.FC<LocationsSettingsPageProps> = ({
   return (
     <div className="max-w-7xl mx-auto space-y-8">
       {/* Tab Switcher Header */}
-      <div className="flex p-1.5 glass-panel rounded-2xl border border-white/10 w-fit gap-2">
+      <div className="flex p-1.5 glass-panel rounded-2xl border border-slate-200 dark:border-white/10 w-fit gap-2">
         <button
           onClick={() => handleTabChange('locations')}
           className={`px-5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 transition-all ${
             subTab === 'locations' || subTab === 'all'
               ? 'bg-saffron text-black shadow-lg shadow-saffron/20'
-              : 'text-gray-400 hover:text-white hover:bg-white/5'
+              : 'text-slate-600 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5'
           }`}
         >
           <Bookmark className="w-4 h-4" />
@@ -87,7 +87,7 @@ export const LocationsSettingsPage: React.FC<LocationsSettingsPageProps> = ({
           className={`px-5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 transition-all ${
             subTab === 'settings'
               ? 'bg-saffron text-black shadow-lg shadow-saffron/20'
-              : 'text-gray-400 hover:text-white hover:bg-white/5'
+              : 'text-slate-600 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5'
           }`}
         >
           <Settings className="w-4 h-4" />
@@ -104,10 +104,10 @@ export const LocationsSettingsPage: React.FC<LocationsSettingsPageProps> = ({
                 <Bookmark className="w-7 h-7" />
               </div>
               <div>
-                <h2 className="text-2xl font-extrabold text-white font-heading">
+                <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white font-heading">
                   Saved Monitored Locations
                 </h2>
-                <p className="text-xs text-gray-400">
+                <p className="text-xs text-slate-600 dark:text-gray-400">
                   Manage home, farm, workplace, and college weather geofences
                 </p>
               </div>
@@ -115,19 +115,19 @@ export const LocationsSettingsPage: React.FC<LocationsSettingsPageProps> = ({
           </div>
 
           {/* Add Location Form */}
-          <form onSubmit={handleAddLocation} className="glass-panel p-4 rounded-2xl border border-white/10 flex flex-wrap items-center gap-3">
+          <form onSubmit={handleAddLocation} className="glass-panel p-4 rounded-2xl border border-slate-200 dark:border-white/10 flex flex-wrap items-center gap-3">
             <input
               type="text"
               placeholder="Enter city name (e.g., Chennai, Delhi)..."
               value={newCityName}
               onChange={(e) => setNewCityName(e.target.value)}
-              className="glass-input flex-1 text-xs px-4 py-2.5 rounded-xl border border-white/15 focus:border-saffron"
+              className="glass-input flex-1 text-xs px-4 py-2.5 rounded-xl text-slate-900 dark:text-white border border-slate-300 dark:border-white/15 focus:border-saffron"
             />
 
             <select
               value={newCategory}
               onChange={(e: any) => setNewCategory(e.target.value)}
-              className="glass-input text-xs px-3 py-2.5 rounded-xl border border-white/15 bg-black/60"
+              className="glass-input text-xs px-3 py-2.5 rounded-xl border border-slate-300 dark:border-white/15 bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
             >
               <option value="Home">Home</option>
               <option value="College">College</option>
@@ -147,27 +147,27 @@ export const LocationsSettingsPage: React.FC<LocationsSettingsPageProps> = ({
             {locations.map((loc) => (
               <div key={loc.id} className="glass-card p-5 space-y-3 relative group">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-saffron/20 text-saffron border border-saffron/40">
+                  <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-saffron/20 text-amber-800 dark:text-saffron border border-saffron/40">
                     {loc.category}
                   </span>
                   <button
                     onClick={() => handleDeleteLocation(loc.id)}
-                    className="text-gray-500 hover:text-red-400 p-1"
+                    className="text-slate-400 hover:text-red-500 p-1"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
 
                 <div>
-                  <h3 className="text-lg font-bold text-white">{loc.name}</h3>
-                  <p className="text-xs text-gray-400">{loc.conditionText} • {loc.currentTempC}°C</p>
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white">{loc.name}</h3>
+                  <p className="text-xs text-slate-600 dark:text-gray-400">{loc.conditionText} • {loc.currentTempC}°C</p>
                 </div>
 
-                <div className="pt-2 border-t border-white/10 flex items-center justify-between text-xs">
-                  <span className="text-gray-400">Radius: {loc.alertRadiusKm} km</span>
+                <div className="pt-2 border-t border-slate-200 dark:border-white/10 flex items-center justify-between text-xs">
+                  <span className="text-slate-600 dark:text-gray-400">Radius: {loc.alertRadiusKm} km</span>
                   <button
                     onClick={() => onSelectLocation(loc.name, loc.lat, loc.lon)}
-                    className="text-saffron font-bold hover:underline"
+                    className="text-amber-800 dark:text-saffron font-bold hover:underline"
                   >
                     View Intel →
                   </button>
@@ -181,17 +181,17 @@ export const LocationsSettingsPage: React.FC<LocationsSettingsPageProps> = ({
       {/* Settings & Alert Preferences */}
       {(subTab === 'settings' || subTab === 'all') && (
         <div className="glass-card p-6 space-y-6">
-          <div className="flex items-center gap-3 border-b border-white/10 pb-4">
+          <div className="flex items-center gap-3 border-b border-slate-200 dark:border-white/10 pb-4">
             <Settings className="w-6 h-6 text-saffron" />
-            <h3 className="text-xl font-bold text-white font-heading">
+            <h3 className="text-xl font-bold text-slate-900 dark:text-white font-heading">
               Emergency Notification & Geofence Settings
             </h3>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
             {Object.entries(notifications).map(([key, val]) => (
-              <label key={key} className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/10 cursor-pointer hover:border-saffron/40">
-                <span className="capitalize font-medium text-gray-200">
+              <label key={key} className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 cursor-pointer hover:border-saffron/40">
+                <span className="capitalize font-medium text-slate-800 dark:text-gray-200">
                   {key.replace(/([A-Z])/g, ' $1')}
                 </span>
                 <input

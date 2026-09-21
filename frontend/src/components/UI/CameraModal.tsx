@@ -115,7 +115,7 @@ export const CameraModal: React.FC<CameraModalProps> = ({ isOpen, onClose, onCap
               stopCamera();
               onClose();
             }}
-            className="px-4 py-2 rounded-xl text-xs font-semibold text-gray-300 hover:text-white bg-white/5 hover:bg-white/10"
+            className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-gray-300 hover:text-slate-900 dark:hover:text-white bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10"
           >
             Cancel
           </button>
