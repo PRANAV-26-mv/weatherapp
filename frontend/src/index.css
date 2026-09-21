@@ -173,11 +173,27 @@ html.dark .glass-input {
   box-shadow: 0 4px 20px rgba(239, 68, 68, 0.08);
 }
 
+.emergency-alert-banner h3 {
+  color: #0F172A !important;
+}
+
+.emergency-alert-banner p {
+  color: #1E293B !important;
+}
+
 html.dark .emergency-alert-banner {
   background: linear-gradient(135deg, rgba(239, 68, 68, 0.18) 0%, rgba(185, 28, 28, 0.12) 100%);
   border: 1px solid rgba(239, 68, 68, 0.4);
   color: #FFFFFF;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+html.dark .emergency-alert-banner h3 {
+  color: #FFFFFF !important;
+}
+
+html.dark .emergency-alert-banner p {
+  color: #F1F5F9 !important;
 }
 
 /* Leaflet Map Theme Adjustments */
